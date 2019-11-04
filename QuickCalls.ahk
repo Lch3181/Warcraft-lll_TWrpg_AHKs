@@ -69,13 +69,13 @@ return
 $+K::
 Reset()
 Valtora:= True
-CurrentBossGUI(Valtora, "Valt")
+CurrentBossGUI(Valtora, "VALT")
 return
 
 $+L::
 Reset()
 Ifrit:= True
-CurrentBossGUI(Ifrit, "Ifrit")
+CurrentBossGUI(Ifrit, "IFRIT")
 return
 
 ;----------------------Minis----------------------
@@ -85,7 +85,7 @@ if(Quickcalls)
 {
 	Reset()
 	Sylvanas:= True
-	CurrentMiniGUI(Sylvanas, "Sylv")
+	CurrentMiniGUI(Sylvanas, "SYLV")
 }
 return
 
@@ -94,7 +94,7 @@ if(Quickcalls)
 {
 	Reset()
 	Succubus:= True
-	CurrentMiniGUI(Succubus, "Succ")
+	CurrentMiniGUI(Succubus, "SUCC")
 }
 return
 
@@ -130,11 +130,11 @@ if(Quickcalls)
 {
 	if(Valtora)
 	{
-		Call("Top Line")
+		Call("TOP LINE")
 	}
 	else if(Ifrit)
 	{
-		Call("Charging Top")
+		Call("CHARGING TOP")
 	}
 }
 return
@@ -144,11 +144,11 @@ if(Quickcalls)
 {
 	if(Valtora)
 	{
-		Call("Left Line")
+		Call("LEFT LINE")
 	}
 	else if(Ifrit)
 	{
-		Call("Charging Left")
+		Call("CHARGING LEFT")
 	}
 }
 return
@@ -158,11 +158,11 @@ if(Quickcalls)
 {
 	if(Valtora)
 	{
-		Call("Bottom Line")
+		Call("BOTTOM LINE")
 	}
 	else if(Ifrit)
 	{
-		Call("Charging Bottom")
+		Call("CHARGING BOTTOM")
 	}
 }
 return
@@ -172,11 +172,11 @@ if(Quickcalls)
 {
 	if(Valtora)
 	{
-		Call("Right Line")
+		Call("RIGHT LINE")
 	}
 	else if(Ifrit)
 	{
-		Call("Charging Right")
+		Call("CHARGING RIGHT")
 	}
 }
 return
@@ -198,7 +198,7 @@ if(Quickcalls)
 	}
 	else if(DeathFiend)
 	{
-		Call("Coil")
+		Call("COIL")
 	}
 	else if(Valtora)
 	{
@@ -252,11 +252,11 @@ if(Quickcalls)
 	}
 	else if(Hellhound)
 	{
-		Call("HH NEEDS HEP")
+		Call("HH NEEDS HELP")
 	}
 	else if(DeathFiend)
 	{
-		Call("30% get ready")
+		Call("30% GET READY")
 	}
 	else if(Ifrit)
 	{
