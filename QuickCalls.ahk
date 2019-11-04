@@ -248,7 +248,7 @@ if(Quickcalls)
 {
 	if(Sylvanas)
 	{
-		Call("11111")
+		Call("33333")
 	}
 	else if(Hellhound)
 	{
@@ -270,7 +270,7 @@ if(Quickcalls)
 {
 	if(Sylvanas)
 	{
-		Call("33333")
+		Call("4444444 Arrow")
 	}
 	else if(DeathFiend)
 	{
@@ -288,7 +288,7 @@ if(Quickcalls)
 {
 	if(Sylvanas)
 	{
-		Call("4444444 Arrow")
+		Call("SLYV READY")
 	}
 	else if(Succubus)
 	{
