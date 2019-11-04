@@ -119,6 +119,7 @@ V:
 B: >>>-------HH READY-------<<<
 
 ## Inventory
+f2:On/Off
 
 1 = NUMPAD 7
 
@@ -145,3 +146,7 @@ Q W E R T F
 
 ## No Mouse
 For laptop users
+
+f4:On/Off
+
+Space bar = right click
