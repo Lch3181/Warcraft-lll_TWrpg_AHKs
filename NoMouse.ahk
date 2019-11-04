@@ -3,7 +3,7 @@ NoMouse:=False
 
 Gui, Font, s15
 Gui, Font, cRed
-Gui, Add, Text, vActive, % "No Mouse: " ((NoMouse) ? ("Enabled") : ("Disabled"))
+Gui, Add, Text, vActive x0 y0, % "No Mouse: " ((NoMouse) ? ("Enabled") : ("Disabled"))
 Gui, +LastFound +AlwaysOnTop -Caption
 Gui, Color, EEAA99
 WinSet, TransColor, EEAA99
