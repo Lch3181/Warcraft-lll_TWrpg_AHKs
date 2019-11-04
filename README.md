@@ -1,5 +1,5 @@
 # Twrpg AHK
-make life easier
+Make life easier
 
 ## Quick Calls
 f6: On/Off
@@ -119,8 +119,15 @@ V:
 B: >>>-------HH READY-------<<<
 
 ## Quick Cast
+Automatically left click after clicking spells' hotkeys
+
+f3: On/Off
 
 Q W E R T F
 
 1 = NUMPAD 7
+
 2 = NUMPAD 8
+
+## No Mouse
+For laptop users
