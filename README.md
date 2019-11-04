@@ -117,3 +117,10 @@ C: >>>-------HH NEEDS HELP-------<<<
 V:
 
 B: >>>-------HH READY-------<<<
+
+## Quick Cast
+
+Q W E R T F
+
+1 = NUMPAD 7
+2 = NUMPAD 8
