@@ -150,3 +150,12 @@ For laptop users
 f4:On/Off
 
 Space bar = right click
+
+## PB
+For meme class
+
+f5:On/Off
+
+hold A = spam A
+
+hold D = spam Q W A
