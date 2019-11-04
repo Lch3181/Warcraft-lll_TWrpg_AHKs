@@ -118,6 +118,20 @@ V:
 
 B: >>>-------HH READY-------<<<
 
+## Inventory
+
+1 = NUMPAD 7
+
+2 = NUMPAD 8
+
+3 = NUMPAD 4
+
+4 = NUMPAD 5
+
+5 = NUMPAD 1
+
+6 = NUMPAD 2
+
 ## Quick Cast
 Automatically left click after clicking spells' hotkeys
 
