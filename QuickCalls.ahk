@@ -48,7 +48,7 @@ CurrentMiniGUI(VName, Name)
 Call(String)
 {
 	SendInput, {Enter}
-	SendInput, >>>-------%String%-------<<<
+	SendInput, {Text}>>>-------%String%-------<<<
 	SendInput, {Enter}
 	return
 }
