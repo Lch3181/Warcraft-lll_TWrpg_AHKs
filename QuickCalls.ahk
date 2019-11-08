@@ -11,10 +11,10 @@ global Succubus:= False
 Gui, +LastFound +AlwaysOnTop -Caption
 Gui, Font, s15
 Gui, Font, cRed
-Gui, Add, Text, vGuide x200 y0, % "F6:On/Off J:Sylv, K:Succ, L:HH, Shift+J:DF, Shift+K:VALT, Shift+L:IFRIT"
-Gui, Add, Text, vCurrentBoss x200 y20, % "Current Boss: None"
-Gui, Add, Text, vCurrentMini x200 y40, % "Current Mini: None"
-Gui, Add, Text, vQuickCalls x200 y60, % "Quick Calls: Disabled"
+Gui, Add, Text, vGuide x200 y0, F6:On/Off J:Sylvanas, K:Succubus, L:Hellhound, Shift+J:DeathFiend, Shift+K:Valtora, Shift+L:Ifrit
+Gui, Add, Text, vCurrentBoss x200 y20, Current Boss: None
+Gui, Add, Text, vCurrentMini x200 y40, Current Mini: None
+Gui, Add, Text, vQuickCalls x200 y60, Quick Calls: Disabled
 Gui, Color, EEAA99
 WinSet, TransColor, EEAA99
 Gui, Show, x0 y0
@@ -28,27 +28,27 @@ Reset()
 	Sylvanas:= False
 	Succubus:= False
 	Hellhound:= False
-	CurrentBossGUI(null, "None")
-	CurrentMiniGUI(null, "None")
+	CurrentBossGUI("None")
+	CurrentMiniGUI("None")
 	return
 }
 
-CurrentBossGUI(VName, Name)
+CurrentBossGUI(Name)
 {
-	GuiControl, Text, CurrentBoss, % "Current Boss: " ((VName) ? (Name) : ("None"))
+	GuiControl, Text, CurrentBoss, Current Boss: %Name%
 	return
 }
 
-CurrentMiniGUI(VName, Name)
+CurrentMiniGUI(Name)
 {
-	GuiControl, Text, CurrentMini, % "Current Mini: " ((VName) ? (Name) : ("None"))
+	GuiControl, Text, CurrentMini, Current Mini: %Name%
 	return
 }
 
 Call(String)
 {
 	SendInput, {Enter}
-	SendInput, {Text}>>>-------%String%-------<<<
+	SendInput, {Text}>>%String%<<
 	SendInput, {Enter}
 	return
 }
@@ -63,48 +63,39 @@ return
 $+J::
 Reset()
 DeathFiend:= True
-CurrentBossGUI(DeathFiend, "DF")
+CurrentBossGUI("DF")
 return
 
 $+K::
 Reset()
 Valtora:= True
-CurrentBossGUI(Valtora, "VALT")
+CurrentBossGUI("valt")
 return
 
 $+L::
 Reset()
 Ifrit:= True
-CurrentBossGUI(Ifrit, "IFRIT")
+CurrentBossGUI("Ifrit")
 return
 
 ;----------------------Minis----------------------
 
 ~J::
-if(Quickcalls)
-{
-	Reset()
-	Sylvanas:= True
-	CurrentMiniGUI(Sylvanas, "SYLV")
-}
+Reset()
+Sylvanas:= True
+CurrentMiniGUI("sylv")
 return
 
 ~K::
-if(Quickcalls)
-{
-	Reset()
-	Succubus:= True
-	CurrentMiniGUI(Succubus, "SUCC")
-}
+Reset()
+Succubus:= True
+CurrentMiniGUI("succ")
 return
 
 ~L::
-if(Quickcalls)
-{
-	Reset()
-	Hellhound:= True
-	CurrentMiniGUI(Hellhound, "HH")
-}
+Reset()
+Hellhound:= True
+CurrentMiniGUI("HH")
 return
 
 ;-----------------------Calls-----------------------
@@ -198,7 +189,7 @@ if(Quickcalls)
 	}
 	else if(DeathFiend)
 	{
-		Call("COIL")
+		Call("Coil")
 	}
 	else if(Valtora)
 	{
@@ -225,7 +216,7 @@ if(Quickcalls)
 	}
 	else if(Hellhound)
 	{
-		Call("ORBS")
+		Call("Orbs")
 	}
 	else if(DeathFiend)
 	{
