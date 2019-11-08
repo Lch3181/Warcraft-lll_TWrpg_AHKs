@@ -20,38 +20,38 @@ L:Hellhound
 
 Common
 
-S: >>>-------WAIT!!-------<<<
+S: >>WAIT!!<<
 
-D: >>>-------READY!!-------<<<
+D: >>READY!!<<
 
 
 DeathFiend
 
-Z: >>>-------Coil-------<<<
+Z: >>Coil<<
 
-X: >>>-------Howl-------<<<
+X: >>Howl<<
 
-C: >>>-------30% get ready-------<<<
+C: >>30% get ready<<
 
-V: >>>-------PROCCING 20%-------<<<
+V: >>PROCCING 20%<<
 
-B: >>>-------DF READY-------<<<
+B: >>DF READY<<
 
 
 
 Valtora
 
-Shift+W: >>>-------Top Line-------<<<
+Shift+W: >>Top Line<<
 
-Shift+A: >>>-------Left Line-------<<<
+Shift+A: >>Left Line<<
 
-Shift+S: >>>-------Bottom Line-------<<<
+Shift+S: >>Bottom Line<<
 
-Shift+D: >>>-------Right Line-------<<<
+Shift+D: >>Right Line<<
 
-Z: >>>-------MAGNET DIED-------<<<
+Z: >>MAGNET DIED<<
 
-X: >>>-------LINK DIED-------<<<
+X: >>LINK DIED<<
 
 C: 
 
@@ -62,63 +62,63 @@ B:
 
 Ifrit
 
-Shift+W: >>>-------Charging Top-------<<<
+Shift+W: >>Charging Top<<
 
-Shift+A: >>>-------Charging Left-------<<<
+Shift+A: >>Charging Left<<
 
-Shift+S: >>>-------Charging Bottom-------<<<
+Shift+S: >>Charging Bottom<<
 
-Shift+D: >>>-------Charging Right-------<<<
+Shift+D: >>Charging Right<<
 
-Z: >>>-------PROCCING ELS-------<<<
+Z: >>PROCCING ELS<<
 
-X: >>>-------BOMBS COUNTING DOWN-------<<<
+X: >>BOMBS COUNTING DOWN<<
 
-C: >>>-------CLEANSING BOMB-------<<<
+C: >>CLEANSING BOMB<<
 
-V: >>>-------GOLEM CHARGING-------<<<
+V: >>GOLEM CHARGING<<
 
 B:
 
 
 Sylvanas
 
-Z: >>>-------11111-------<<<
+Z: >>11111<<
 
-X: >>>-------22222-------<<<
+X: >>22222<<
 
-C: >>>-------33333-------<<<
+C: >>33333<<
 
-V: >>>-------4444444 Arrow-------<<<
+V: >>4444444 Arrow<<
 
-B: >>>-------SYL READY-------<<<
+B: >>SYL READY<<
 
 
 
 Succubus
 
-Z: >>>-------TELEPORTING-------<<<
+Z: >>TELEPORTING<<
 
-X: >>>-------WAVE-------<<<
+X: >>WAVE<<
 
 C: 
 
 V: 
 
-B: >>>-------SUCC READY-------<<<
+B: >>SUCC READY<<
 
 
 Hellhound
 
-Z: >>>-------CHARGING-------<<<
+Z: >>CHARGING<<
 
-X: >>>-------ORBS-------<<<
+X: >>ORBS<<
 
-C: >>>-------HH NEEDS HELP-------<<<
+C: >>HH NEEDS HELP<<
 
 V:
 
-B: >>>-------HH READY-------<<<
+B: >>HH READY<<
 
 ## Inventory
 f2:On/Off
