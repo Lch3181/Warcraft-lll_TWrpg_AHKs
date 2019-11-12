@@ -48,12 +48,16 @@ CurrentMiniGUI(Name)
 Call(String)
 {
 	SendInput, {Enter}
-	SendInput, {Text}>>%String%<<
+	SendInput, {Text}>> %String% <<
 	SendInput, {Enter}
 	return
 }
 
 ;Toggle
+~Enter::
+QuickCalls := False
+GuiControl, Text, QuickCalls, % "Quick Calls: " ((QuickCalls) ? ("Enabled") : ("Disabled"))
+return
 
 $F6::
 QuickCalls := !QuickCalls
@@ -61,42 +65,60 @@ GuiControl, Text, QuickCalls, % "Quick Calls: " ((QuickCalls) ? ("Enabled") : ("
 return
 
 $+J::
-Reset()
-DeathFiend:= True
-CurrentBossGUI("DF")
-return
+if(QuickCalls)
+{
+	Reset()
+	DeathFiend:= True
+	CurrentBossGUI("DF")
+	return
+}
+
 
 $+K::
-Reset()
-Valtora:= True
-CurrentBossGUI("valt")
-return
-
+if(QuickCalls)
+{
+	Reset()
+	Valtora:= True
+	CurrentBossGUI("valt")
+	return
+}
 $+L::
-Reset()
-Ifrit:= True
-CurrentBossGUI("Ifrit")
-return
+if(QuickCalls)
+{
+	Reset()
+	Ifrit:= True
+	CurrentBossGUI("Ifrit")
+	return
+}
 
 ;----------------------Minis----------------------
 
 ~J::
-Reset()
-Sylvanas:= True
-CurrentMiniGUI("sylv")
-return
+if(QuickCalls)
+{
+	Reset()
+	Sylvanas:= True
+	CurrentMiniGUI("sylv")
+	return
+}
 
 ~K::
-Reset()
-Succubus:= True
-CurrentMiniGUI("succ")
-return
+if(QuickCalls)
+{
+	Reset()
+	Succubus:= True
+	CurrentMiniGUI("succ")
+	return
+}
 
 ~L::
-Reset()
-Hellhound:= True
-CurrentMiniGUI("HH")
-return
+if(QuickCalls)
+{
+	Reset()
+	Hellhound:= True
+	CurrentMiniGUI("HH")
+	return
+}
 
 ;-----------------------Calls-----------------------
 
@@ -248,6 +270,10 @@ if(Quickcalls)
 	else if(DeathFiend)
 	{
 		Call("30% GET READY")
+	}
+	else if(Valtora)
+	{
+		
 	}
 	else if(Ifrit)
 	{
