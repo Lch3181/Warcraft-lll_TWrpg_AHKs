@@ -273,7 +273,7 @@ if(Quickcalls)
 	}
 	else if(Valtora)
 	{
-		
+		Call("HAMMER DIED")
 	}
 	else if(Ifrit)
 	{

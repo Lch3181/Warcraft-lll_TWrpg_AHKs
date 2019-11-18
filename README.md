@@ -53,7 +53,7 @@ Z: >> MAGNET DIED <<
 
 X: >> LINK DIED <<
 
-C: 
+C: >> HAMMER DIED <<
 
 V: 
 
