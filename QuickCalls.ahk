@@ -122,22 +122,6 @@ if(QuickCalls)
 
 ;-----------------------Calls-----------------------
 
-
-~S::
-if(Quickcalls)
-{
-	Call("WAIT")
-}
-return
-
-~D::
-if(Quickcalls)
-{
-	Call("READY")
-}
-return
-
-
 $+W::
 if(Quickcalls)
 {
@@ -219,7 +203,7 @@ if(Quickcalls)
 	}
 	else if(Ifrit)
 	{
-		Call("PROCCING ELS")
+		Call("ELS")
 	}
 }
 return
@@ -250,7 +234,7 @@ if(Quickcalls)
 	}
 	else if(Ifrit)
 	{
-		Call("BOMBS COUNTING DOWN")
+		Call("BOMBS")
 	}
 }
 return
@@ -277,7 +261,7 @@ if(Quickcalls)
 	}
 	else if(Ifrit)
 	{
-		Call("CLEANSING BOMB")
+		Call("BOMB GOING OFF")
 	}
 }
 return
@@ -295,7 +279,7 @@ if(Quickcalls)
 	}
 	else if(Ifrit)
 	{
-		Call("GOLEM CHARGING")
+		Call("CHARGING")
 	}
 }
 return

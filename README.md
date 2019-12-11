@@ -18,13 +18,6 @@ K:Succubus
 
 L:Hellhound
 
-Common
-
-S: >> WAIT!! <<
-
-D: >> READY!! <<
-
-
 DeathFiend
 
 Z: >> Coil <<
@@ -70,13 +63,13 @@ Shift+S: >> Charging Bottom <<
 
 Shift+D: >> Charging Right <<
 
-Z: >> PROCCING ELS <<
+Z: >> ELS <<
 
-X: >> BOMBS COUNTING DOWN <<
+X: >> BOMBS <<
 
 C: >> CLEANSING BOMB <<
 
-V: >> GOLEM CHARGING <<
+V: >> CHARGING <<
 
 B:
 
@@ -154,10 +147,13 @@ f4:On/Off
 Space bar = right click
 
 ## PB
-For meme class
 
 f5:On/Off
 
 hold A = spam A
 
-hold D = spam Q W A
+hold E = spam Q W A
+
+D = quickcast
+
+T = auto cast refresh ring, inventory 1
