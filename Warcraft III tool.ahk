@@ -2,6 +2,7 @@
 global _ini := "Warcraft III Tool Data.ini"
 global Inventory := False
 global QuickCast := False
+#InstallMouseHook
 
 ;Main Gui
 Gui, Color, DCDCDC
@@ -68,11 +69,11 @@ init()
 		Loop, 6
 		{
 			Iniwrite, %A_Index%, %_ini%, Keys, Inventory%A_Index%
-			Iniwrite, 0, %_ini%, Keys, InventoryQuickCast%A_Index%			
+			Iniwrite, 0, %_ini%, InventoryQuickCast, InventoryQuickCast%A_Index%			
 		}
 		;Quick Cast
 		Iniwrite, F3, %_ini%, Keys, QuickCastToggle
-		aQuickCast := ["m","s","h","a","p","d","t","f","q","w","e","r"]
+		aQuickCast := ["m","","","a","p","d","t","f","q","w","e","r"]
 		For index, element in aQuickCast
 		{
 			Iniwrite, %element%, %_ini%, Keys, QuickCast%A_Index%
@@ -90,7 +91,7 @@ init()
 			Iniread, Output, %_ini%, Keys, Inventory%A_Index%
 			GuiControl,, Inventory%A_Index%, %Output%
 			HotKey, ~%Output%, Inventory%A_Index%, On
-			Iniread, Output, %_ini%, Keys, InventoryQuickCast%A_Index%
+			Iniread, Output, %_ini%, InventoryQuickCast, InventoryQuickCast%A_Index%
 			
 		}
 		;QuickCast
@@ -131,7 +132,7 @@ SetHotKeys(Key, Value, Section)
 
 GetKey:
 	Duplicate := False
-	SingleKey = % KeyWaitAny("V")
+	SingleKey = % KeyWaitAny("B V I T3 L1, {LButton}")
 	;check Duplication
 	
 	Loop, Read, %_ini%
@@ -161,7 +162,7 @@ GetKey:
 	return
 	
 GetSetCheckBoxValue:
-	Iniwrite, % GetGuiValue(A_GuiControl), %_ini%, Keys, %A_GuiControl%
+	Iniwrite, % GetGuiValue(A_GuiControl), %_ini%, InventoryQuickCast, %A_GuiControl%
 	return
 	
 GetGuiValue(GuiID)
