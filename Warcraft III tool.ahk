@@ -1,4 +1,6 @@
 ;Warcraft III Tool
+#InstallKeybdHook
+#KeyHistory 20
 global _ini := "data.ini"
 global Inventory := False
 
@@ -32,12 +34,15 @@ Gui, 2: Show, x0 y0
 init()
 {
 	if !FileExist(_ini)
+	{
 		Iniwrite, f2, %_ini%, Inventory, InventoryToggle
 		Loop, 6
 		{
 			Iniwrite, %A_Index%, %_ini%, Inventory, Inventory%A_Index%
 		}
+	}
 	if FileExist(_ini)
+	{
 		Iniread, Output, %_ini%, Inventory, InventoryToggle
 		GuiControl,, InventoryToggle, %Output%
 		HotKey, $%Output%, InventoryToggle, On
@@ -47,22 +52,35 @@ init()
 			GuiControl,, Inventory%A_Index%, %Output%
 			HotKey, $%Output%, Inventory%A_Index%, On
 		}
+	}
 	return
 }
 
 init()
 
+return ;End Main
+
+KeyWaitAny(Options:="")
+{
+	ih := InputHook(Options)
+	ih.KeyOpt("{All}", "ES") ; End and Suppress
+	ih.Start()
+	ErrorLevel := ih.Wait()
+	return ih.EndKey
+}
+
 SetInventoryHotKeys(Key, Value)
 {
 	Iniwrite, %Value%, %_ini%, Inventory, %Key%
 	HotKey, $%Value%, %Key%, On
+	msgbox, %Value%, %Key%
 	return
 }
 
 GetKey:
 	Duplicate := False
-	Input, SingleKey, L1 T3, {esc}{enter}{tab}
-	if(ErrorLevel = "Timeout")
+	SingleKey = % KeyWaitAny("V")
+	if(ErrorLevel = "Timeout" or SingleKey = "")
 		return
 	Loop, 6
 	{
