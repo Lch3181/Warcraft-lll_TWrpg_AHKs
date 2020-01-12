@@ -2,18 +2,20 @@
 global _ini := "Warcraft III Tool Data.ini"
 global Inventory := False
 global QuickCast := False
+global KeyWaiting := False
 #InstallMouseHook
 
 ;Main Gui
 Gui, Color, DCDCDC
-Gui, Add, Tab3, x0 y0 w400 h400 +BackgroundTrans, Inventory|Quick Cast|Smart Cast|Quick Call|No Mouse|Pantom Blade
+Gui, Add, Tab3, x0 y0 w400 h400 +BackgroundTrans, Inventory|Quick Cast|Quick Call|No Mouse|Setting
 
 Gui, Tab, Inventory
 Gui, Add, Picture, y+50 Icon1, Inventory.jpg
 Gui, Font, s12
 Gui, Add, Text,   x10 y30, Enable/Disable
-Gui, Add, Button, x+5 w50 h20      gGetKey vInventoryToggle
-Gui, Add, Text, x10 y+2, CheckBox for Quick Cast
+Gui, Add, Text,   x10 y50, CheckBox for Quick Cast
+Gui, Font, s8
+Gui, Add, Button, x120 y30 w50 h20      gGetKey vInventoryToggle
 Gui, Add, Button, x21 y112 w50 h20 gGetKey vInventory1
 Gui, Add, Button, x+21 w50 h20     gGetKey vInventory2
 Gui, Add, Button, x21 y+50 w50 h20 gGetKey vInventory3
@@ -31,6 +33,7 @@ Gui, Tab, Quick Cast
 Gui, Add, Picture, y+40 Icon1, Spells.jpg
 Gui, Font, s12
 Gui, Add, Text,   x10 y30, Enable/Disable
+Gui, Font, s8
 Gui, Add, Button, x+10 w50 h20     gGetKey vQuickCastToggle
 Gui, Add, Button, x27 y118 w61 h20 gGetKey vQuickCast1
 Gui, Add, Button, x+17 w61 h20 	   gGetKey vQuickCast2
@@ -114,25 +117,42 @@ return ;End Main
 
 KeyWaitAny(Options:="")
 {
-	ih := InputHook(Options)
-	ih.KeyOpt("{All}", "ES") ; End and Suppress
-	ih.Start()
-	ErrorLevel := ih.Wait()
-	if(ih.EndKey = "Escape")
-		return ""
-	return ih.EndKey
+	if(!KeyWaiting)
+	{
+		KeyWaiting := True
+		ih := InputHook(Options)
+		ih.KeyOpt("{All}", "ES") ; End and Suppress
+		ih.Start()
+		ih.OnKeyDown := Func("OnKeyDown")
+		ErrorLevel := ih.Wait()
+		KeyWaiting := False
+		if(ih.EndKey = "Escape")
+			return ""
+		return ih.EndKey		
+	}
+	else
+	{
+		return -1
+	}
+}
+
+OnKeyDown(ih, vk, sc)
+{
+	msgbox, %vk% %sc%
 }
 
 SetHotKeys(Key, Value, Section)
 {
 	Iniwrite, %Value%, %_ini%, Keys, %Key%
-	HotKey, ~%Value%, %Key%
+	HotKey, ~%Value%, %Key%, On
 	return
 }
 
 GetKey:
 	Duplicate := False
-	SingleKey = % KeyWaitAny("B V I T3 L1, {LButton}")
+	SingleKey = % KeyWaitAny("B V I E")
+	if(SingleKey = -1)
+		return
 	;check Duplication
 	
 	Loop, Read, %_ini%
