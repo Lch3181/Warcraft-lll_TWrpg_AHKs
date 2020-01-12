@@ -1,6 +1,14 @@
 # Twrpg AHK
 Make life easier
 
+## User Friendly All in One Tool
+In progress.
+
+How to use:
+
+Press the button to edit the trigger key by pressing the key you want on keyboard or press Escape to unsign.
+
+## Independent scripts
 ![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/GUI.png)
 
 ## Quick Calls

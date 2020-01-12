@@ -1,14 +1,153 @@
 ;Warcraft III Tool
+#Singleinstance Force
 global _ini := "Warcraft III Tool Data.ini"
 global Inventory := False
 global QuickCast := False
+global QuickCall := False
 global NoMouse := False
 global KeyWaiting := False
-#InstallMouseHook
 
-;Main Gui
 Gui, Color, DCDCDC
-Gui, Add, Tab3, x0 y0 w400 h400 +BackgroundTrans, Inventory|Quick Cast|Quick Call|No Mouse|Setting
+;Quick Call Sub Tab
+Gui, Add, Tab3, x0 y60 w400 h340 vSubQuickCall Hidden, Death Fiend|Sylvanas|Succubus|Hell Hound|Valtora|Ifrit|Nereid
+
+Gui, Tab, Death Fiend
+Gui, Font, s12
+Gui, Add, Text, x10 y+10, Enable/Disable
+Gui, Add, CheckBox, x+5 gToggleTarge vDeathFiendToggle
+Gui, Font, s8
+Gui, Add, Button, x10 y+10 w50 h20 gGetKey vDeathFiend1
+Gui, Add, Button, x10 y+10 w50 h20 gGetKey vDeathFiend2
+Gui, Add, Button, x10 y+10 w50 h20 gGetKey vDeathFiend3
+Gui, Add, Button, x10 y+10 w50 h20 gGetKey vDeathFiend4
+Gui, Add, Button, x10 y+10 w50 h20 gGetKey vDeathFiend5
+Gui, Add, Button, x10 y+10 w50 h20 gGetKey vDeathFiend6
+Gui, Add, Edit, x+10 y123 w320 h18 vDeathFiendText1
+Gui, Add, Edit,      y+12 w320 h18 vDeathFiendText2
+Gui, Add, Edit,      y+12 w320 h18 vDeathFiendText3
+Gui, Add, Edit,      y+12 w320 h18 vDeathFiendText4
+Gui, Add, Edit,      y+12 w320 h18 vDeathFiendText5
+Gui, Add, Edit,      y+12 w320 h18 vDeathFiendText6
+Gui, Add, Button, x340 y+12 w50 h20, update
+
+Gui, Tab, Sylvanas
+Gui, Font, s12
+Gui, Add, Text, x+10 y+10, Enable/Disable
+Gui, Add, CheckBox, x+5 gToggleTarge vSylvanasToggle
+Gui, Font, s8
+Gui, Add, Button, x10 y+10 w50 h20 gGetKey vSylvanas1
+Gui, Add, Button, x10 y+10 w50 h20 gGetKey vSylvanas2
+Gui, Add, Button, x10 y+10 w50 h20 gGetKey vSylvanas3
+Gui, Add, Button, x10 y+10 w50 h20 gGetKey vSylvanas4
+Gui, Add, Button, x10 y+10 w50 h20 gGetKey vSylvanas5
+Gui, Add, Button, x10 y+10 w50 h20 gGetKey vSylvanas6
+Gui, Add, Edit, x+10 y123 w320 h18 vSylvanasText1
+Gui, Add, Edit,      y+12 w320 h18 vSylvanasText2
+Gui, Add, Edit,      y+12 w320 h18 vSylvanasText3
+Gui, Add, Edit,      y+12 w320 h18 vSylvanasText4
+Gui, Add, Edit,      y+12 w320 h18 vSylvanasText5
+Gui, Add, Edit,      y+12 w320 h18 vSylvanasText6
+
+
+Gui, Tab, Succubus
+Gui, Font, s12
+Gui, Add, Text, x+10 y+10, Enable/Disable
+Gui, Add, CheckBox, x+5 gToggleTarge vSuccubusToggle
+Gui, Font, s8
+Gui, Add, Button, x10 y+10 w50 h20 gGetKey vSuccubus1
+Gui, Add, Button, x10 y+10 w50 h20 gGetKey vSuccubus2
+Gui, Add, Button, x10 y+10 w50 h20 gGetKey vSuccubus3
+Gui, Add, Button, x10 y+10 w50 h20 gGetKey vSuccubus4
+Gui, Add, Button, x10 y+10 w50 h20 gGetKey vSuccubus5
+Gui, Add, Button, x10 y+10 w50 h20 gGetKey vSuccubus6
+Gui, Add, Edit, x+10 y123 w320 h18 vSuccubusText1
+Gui, Add, Edit,      y+12 w320 h18 vSuccubusText2
+Gui, Add, Edit,      y+12 w320 h18 vSuccubusText3
+Gui, Add, Edit,      y+12 w320 h18 vSuccubusText4
+Gui, Add, Edit,      y+12 w320 h18 vSuccubusText5
+Gui, Add, Edit,      y+12 w320 h18 vSuccubusText6
+
+
+Gui, Tab, Hell Hound
+Gui, Font, s12
+Gui, Add, Text, x+10 y+10, Enable/Disable
+Gui, Add, CheckBox, x+5 gToggleTarge vHellHoundToggle
+Gui, Font, s8
+Gui, Add, Button, x10 y+10 w50 h20 gGetKey vHellHound1
+Gui, Add, Button, x10 y+10 w50 h20 gGetKey vHellHound2
+Gui, Add, Button, x10 y+10 w50 h20 gGetKey vHellHound3
+Gui, Add, Button, x10 y+10 w50 h20 gGetKey vHellHound4
+Gui, Add, Button, x10 y+10 w50 h20 gGetKey vHellHound5
+Gui, Add, Button, x10 y+10 w50 h20 gGetKey vHellHound6
+Gui, Add, Edit, x+10 y123 w320 h18 vHellHoundText1
+Gui, Add, Edit,      y+12 w320 h18 vHellHoundText2
+Gui, Add, Edit,      y+12 w320 h18 vHellHoundText3
+Gui, Add, Edit,      y+12 w320 h18 vHellHoundText4
+Gui, Add, Edit,      y+12 w320 h18 vHellHoundText5
+Gui, Add, Edit,      y+12 w320 h18 vHellHoundText6
+
+
+Gui, Tab, Valtora
+Gui, Font, s12
+Gui, Add, Text, x+10 y+10, Enable/Disable
+Gui, Add, CheckBox, x+5 gToggleTarge vValtoraToggle
+Gui, Font, s8
+Gui, Add, Button, x10 y+10 w50 h20 gGetKey vValtora1
+Gui, Add, Button, x10 y+10 w50 h20 gGetKey vValtora2
+Gui, Add, Button, x10 y+10 w50 h20 gGetKey vValtora3
+Gui, Add, Button, x10 y+10 w50 h20 gGetKey vValtora4
+Gui, Add, Button, x10 y+10 w50 h20 gGetKey vValtora5
+Gui, Add, Button, x10 y+10 w50 h20 gGetKey vValtora6
+Gui, Add, Edit, x+10 y123 w320 h18 vValtoraText1
+Gui, Add, Edit,      y+12 w320 h18 vValtoraText2
+Gui, Add, Edit,      y+12 w320 h18 vValtoraText3
+Gui, Add, Edit,      y+12 w320 h18 vValtoraText4
+Gui, Add, Edit,      y+12 w320 h18 vValtoraText5
+Gui, Add, Edit,      y+12 w320 h18 vValtoraText6
+
+
+Gui, Tab, Ifrit
+Gui, Font, s12
+Gui, Add, Text, x+10 y+10, Enable/Disable
+Gui, Add, CheckBox, x+5 gToggleTarge vIfritToggle
+Gui, Font, s8
+Gui, Add, Button, x10 y+10 w50 h20 gGetKey vIfrit1
+Gui, Add, Button, x10 y+10 w50 h20 gGetKey vIfrit2
+Gui, Add, Button, x10 y+10 w50 h20 gGetKey vIfrit3
+Gui, Add, Button, x10 y+10 w50 h20 gGetKey vIfrit4
+Gui, Add, Button, x10 y+10 w50 h20 gGetKey vIfrit5
+Gui, Add, Button, x10 y+10 w50 h20 gGetKey vIfrit6
+Gui, Add, Edit, x+10 y123 w320 h18 vIfritText1
+Gui, Add, Edit,      y+12 w320 h18 vIfritText2
+Gui, Add, Edit,      y+12 w320 h18 vIfritText3
+Gui, Add, Edit,      y+12 w320 h18 vIfritText4
+Gui, Add, Edit,      y+12 w320 h18 vIfritText5
+Gui, Add, Edit,      y+12 w320 h18 vIfritText6
+
+
+Gui, Tab, Nereid
+Gui, Font, s12
+Gui, Add, Text, x+10 y+10, Enable/Disable
+Gui, Add, CheckBox, x+5 gToggleTarge vNereidToggle
+Gui, Font, s8
+Gui, Add, Button, x10 y+10 w50 h20 gGetKey vNereid1
+Gui, Add, Button, x10 y+10 w50 h20 gGetKey vNereid2
+Gui, Add, Button, x10 y+10 w50 h20 gGetKey vNereid3
+Gui, Add, Button, x10 y+10 w50 h20 gGetKey vNereid4
+Gui, Add, Button, x10 y+10 w50 h20 gGetKey vNereid5
+Gui, Add, Button, x10 y+10 w50 h20 gGetKey vNereid6
+Gui, Add, Edit, x+10 y123 w320 h18 vNereidText1
+Gui, Add, Edit,      y+12 w320 h18 vNereidText2
+Gui, Add, Edit,      y+12 w320 h18 vNereidText3
+Gui, Add, Edit,      y+12 w320 h18 vNereidText4
+Gui, Add, Edit,      y+12 w320 h18 vNereidText5
+Gui, Add, Edit,      y+12 w320 h18 vNereidText6
+
+Gui, Tab
+
+;Main Tab
+Gui, Font, s8
+Gui, Add, Tab2, x0 y0 w400 h400 gTabSwitched vMainTab, Inventory|Quick Cast|Quick Call|No Mouse|Setting
 
 Gui, Tab, Inventory
 Gui, Add, Picture, y+50 Icon1, Inventory.jpg
@@ -49,6 +188,12 @@ Gui, Add, Button, x+17 w61 h20     gGetKey vQuickCast10
 Gui, Add, Button, x+17 w61 h20     gGetKey vQuickCast11
 Gui, Add, Button, x+17 w61 h20     gGetKey vQuickCast12
 
+Gui, Tab, Quick Call
+Gui, Font, s12
+Gui, Add, Text, x10 y30, Enable/Disable
+Gui, Font, s8
+Gui, Add, Button, x+10 w50 h20 gGetKey vQuickCallToggle
+
 Gui, Tab, No Mouse
 Gui, Add, Picture, w100 h100 y+40 Icon1, Mouse.png
 Gui, Font, s12
@@ -58,15 +203,25 @@ Gui, Add, Button, x+10 w50 h20 gGetKey vNoMouseToggle
 Gui, Add, Button, x8 y60 w50 h20 gGetKey vNoMouse1
 Gui, Add, Button, x+8 w50 h20 gGetKey vNoMouse2
 
+Gui, Tab, Setting
+Gui, Font, s12
+Gui, Add, Text, x10 y30, Show/Hide
+Gui, Font, s8
+Gui, Add, Button, x+10 w50 h20
+
+Gui, Tab
+
 gui, show, w400 h400
 
 ;Toggles Gui
 Gui, 2: +LastFound +AlwaysOnTop -Caption
 Gui, 2: Font, s15
 Gui, 2: Font, cRed
-Gui, 2: Add, Text, vActiveInventory x0 y0 , % "Inventory: " ((Inventory) ? ("Enabled") : ("Disabled"))
-Gui, 2: Add, Text, vActiveQuickCast x0 y+0, % "Quick Cast: " ((QuickCast) ? ("Enabled") : ("Disabled"))
-Gui, 2: Add, Text, vActiveNoMouse   x0 y+0, % "No Mouse: " ((NoMouse) ? ("Enabled") : ("Disabled"))
+Gui, 2: Add, Text, vActiveInventory x0 y0 , % "Inventory:   " ((Inventory) ? ("Enabled") : ("Disabled"))
+Gui, 2: Add, Text, vActiveQuickCast x0 y20, % "Quick Cast: " ((QuickCast) ? ("Enabled") : ("Disabled"))
+Gui, 2: Add, Text, vActiveQuickCall x0 y40, % "Quick Call: " ((QuickCall) ? ("Enabled") : ("Disabled"))
+Gui, 2: Add, Text, vTarget x+5, No Target  
+Gui, 2: Add, Text, vActiveNoMouse   x0 y60, % "No Mouse: " ((NoMouse) ? ("Enabled") : ("Disabled"))
 Gui, 2: Color, EEAA99
 WinSet, TransColor, EEAA99
 Gui, 2: Show, x0 y0
@@ -96,8 +251,28 @@ init()
 		{
 			Iniwrite, %element%, %_ini%, Keys, QuickCast%A_Index%
 		}
+		;Quick Call
+		Iniwrite, F4, %_ini%, Keys, QuickCallToggle
+		static DeathFiend := [{z:"Coil"}, {x:"Howl"}, {c:"30% Get Ready"}, {v:"20% Procing"}, {b:"DF Ready"}, {n:"GO"}]
+		static Sylvanas   := [{z:"111"},{x:"222"},{c:"333"},{v:"44444"},{b:"Svly Ready"},{n:"GO"}]
+		static Succubus   := [{z:"Teleport"},{x:"Wave"},{c:""},{v:""},{b:"Succ Ready"},{n:"GO"}]
+		static HellHound  := [{z:"Charging"},{x:"Orbs"},{c:"HH Help"},{v:""},{b:"HH Ready"},{n:"GO"}]
+		static Valtora    := [{z:"Guard Break"},{x:"Aids"},{c:"Magnet Died"},{v:"Link Died"},{b:"Hammer"},{n:""}]
+		static Ifrit      := [{z:"ELS"},{x:"Bombs"},{c:"Procing/Cleansing Bombs"},{v:"Charging"},{b:""},{n:""}]
+		static Nereid     := [{z:""},{x:""},{c:""},{v:""},{b:""},{n:""}]
+		aQuickCall  := ["DeathFiend", "Sylvanas", "Succubus", "HellHound", "Valtora", "Ifrit", "Nereid"]
+		For _count, boss in aQuickCall
+		{
+			For index, element in %boss%
+			{
+				For key, value in % element
+				{
+					Iniwrite, %key%:%value%, %_ini%, %boss%, % boss . index
+				}
+			}		
+		}
 		;No Mouse
-		Iniwrite, F4, %_ini%, Keys, NoMouseToggle
+		Iniwrite, F5, %_ini%, Keys, NoMouseToggle
 		aNoMouse := ["space",""]
 		For index, element in aNoMouse
 		{
@@ -107,40 +282,56 @@ init()
 	;read .ini
 	if FileExist(_ini)
 	{
+		aObject := [{}]
 		;Inventory
-		Iniread, Output, %_ini%, Keys, InventoryToggle
-		GuiControl,, InventoryToggle, %Output%
-		HotKey, $%Output%, InventoryToggle, On
+		IniReadSetHotKey(_ini, "Keys", "InventoryToggle")
 		Loop, 6
 		{
-			Iniread, Output, %_ini%, Keys, Inventory%A_Index%
-			GuiControl,, Inventory%A_Index%, %Output%
-			HotKey, $%Output%, Inventory%A_Index%, On
+			IniReadSetHotKey(_ini, "Keys", "Inventory"A_Index)
 			Iniread, Output, %_ini%, InventoryQuickCast, InventoryQuickCast%A_Index%
-			
 		}
 		;QuickCast
-		Iniread, Output, %_ini%, Keys, QuickCastToggle
-		GuiControl,, QuickCastToggle, %Output%
-		HotKey, $%Output%, QuickCastToggle, On
+		IniReadSetHotKey(_ini, "Keys", "QuickCastToggle")
 		Loop, 12
 		{
-			Iniread, Output, %_ini%, Keys, QuickCast%A_Index%
-			GuiControl,, QuickCast%A_Index%, %Output%
-			HotKey, $%Output%, QuickCast%A_Index%, On
+			IniReadSetHotKey(_ini, "Keys", "QuickCast"A_Index)
 		}
+		;QuickCall
+		IniReadSetHotKey(_ini, "Keys", "QuickCallToggle")
+		aQuickCall  := ["DeathFiend", "Sylvanas", "Succubus", "HellHound", "Valtora", "Ifrit", "Nereid"]
+		For _count, boss in aQuickCall
+		{
+			Loop, 6
+			{
+				Iniread, Output, %_ini%, %boss%, % boss . A_Index
+				aObject[A_Index, StrSplit(Output, "`:").1] := StrSplit(Output, "`:").2
+				For index, element in aObject
+				{
+					For key, value in % element
+					{
+						GuiControl,, % boss . index, %key%
+						Hotkey, $%key%, % boss . index
+						GuiControl,, % boss . "Text" . index, %value%
+					}
+				}
+			}
+		}
+
 		;No Mouse
-		Iniread, Output, %_ini%, Keys, NoMouseToggle
-		GuiControl,, NoMouseToggle, %Output%
-		HotKey, $%Output%, NoMouseToggle, On
+		IniReadSetHotKey(_ini, "Keys", "NoMouseToggle")
 		Loop, 2
 		{
-			Iniread, Output, %_ini%, Keys, NoMouse%A_Index%
-			GuiControl,, NoMouse%A_Index%, %Output%
-			HotKey, $%Output%, NoMouse%A_Index%, On
+			IniReadSetHotKey(_ini, "Keys", "NoMouse"A_Index)
 		}
 	}
 	return
+}
+
+IniReadSetHotKey(IniFile, IniSection, Key)
+{
+	Iniread, Output, %_ini%, %IniSection%, %Key%
+	GuiControl,, %Key%, %Output%
+	HotKey, $%Output%, %Key%, On
 }
 
 KeyWaitAny(Options:="")
@@ -164,16 +355,10 @@ KeyWaitAny(Options:="")
 	}
 }
 
-OnKeyDown(ih, vk, sc)
-{
-	msgbox, %vk% %sc%
-}
-
 SetHotKeys(Key, Value, Section)
 {
 	Iniwrite, %Value%, %_ini%, Keys, %Key%
 	HotKey, $%Value%, %Key%, On
-	return
 }
 	
 GetGuiValue(GuiID)
@@ -187,10 +372,36 @@ GetHotKey()
 	return % "{" . SubStr(A_ThisHotKey, 2, StrLen(A_ThisHotKey)) . "}"
 }
 
+GetQuickCallText()
+{
+	return % SubStr(A_ThisLabel, 1, StrLen(A_ThisLabel) - 1) . "Text" . SubStr(A_ThisLabel, -0)
+}
+
+Call(String)
+{
+	SendInput, {Enter}
+	SendInput, {Text}>> %String% <<
+	SendInput, {Enter}
+}
+
 ;Labels
+TabSwitched:
+	Gui, Submit, Nohide
+	if(MainTab = "Quick Call")
+	{
+		GuiControl, Show, SubQuickCall
+	}
+	else
+	{
+		GuiControl, Hide, SubQuickCall
+	}
+	Gui, +LastFound
+	Winset, Redraw
+	return
+
 GetKey:
 	Duplicate := False
-	SingleKey = % KeyWaitAny("B V I E")
+	SingleKey = % KeyWaitAny("B V I E C")
 	if(SingleKey = -1)
 		return
 	;check Duplication
@@ -224,11 +435,19 @@ GetKey:
 GetSetCheckBoxValue:
 	Iniwrite, % GetGuiValue(A_GuiControl), %_ini%, InventoryQuickCast, %A_GuiControl%
 	return
+
+ToggleTarge:
+	if (GetGuiValue(A_GuiControl))
+		GuiControl, 2: Text, Target, % SubStr(A_GuiControl, 1, StrLen(A_GuiControl) - 6)
+	else
+		GuiControl, 2: Text, Target, % "No Target"
+	return
+
 ;HotKey's Label
 ;Inventory
 InventoryToggle:
 Inventory := !Inventory
-GuiControl, 2: Text, ActiveInventory, % "Inventory: " ((Inventory) ? ("Enabled") : ("Disabled"))
+GuiControl, 2: Text, ActiveInventory, % "Inventory:   " ((Inventory) ? ("Enabled") : ("Disabled"))
 return
 
 Inventory1:
@@ -333,6 +552,117 @@ else
 	SendInput, % GetHotKey()
 return
 
+;Quick Call
+QuickCallToggle:
+QuickCall := !QuickCall
+GuiControl, 2: Text, ActiveQuickCall, % "Quick Call: " ((QuickCall) ? ("Enabled") : ("Disabled"))
+return 
+
+DeathFiend1:
+DeathFiend2:
+DeathFiend3:
+DeathFiend4:
+DeathFiend5:
+DeathFiend6:
+if(GetGuiValue("DeathFiendToggle")) && (GetGuiValue("QuickCallToggle"))
+{
+	Name := GetHotKey()
+	Call(GetGuiValue(GetQuickCallText()))
+}
+else
+	SendInput, % GetHotKey()
+return
+
+Sylvanas1:
+Sylvanas2:
+Sylvanas3:
+Sylvanas4:
+Sylvanas5:
+Sylvanas6:
+if(GetGuiValue("SylvanasToggle")) && (GetGuiValue("QuickCallToggle"))
+{
+	Name := GetHotKey()
+	Call(GetGuiValue(GetQuickCallText()))
+}
+else
+	SendInput, % GetHotKey()
+return
+
+Succubus1:
+Succubus2:
+Succubus3:
+Succubus4:
+Succubus5:
+Succubus6:
+if(GetGuiValue("SuccubusToggle")) && (GetGuiValue("QuickCallToggle"))
+{
+	Name := GetHotKey()
+	Call(GetGuiValue(GetQuickCallText()))
+}
+else
+	SendInput, % GetHotKey()
+return
+
+HellHound1:
+HellHound2:
+HellHound3:
+HellHound4:
+HellHound5:
+HellHound6:
+if(GetGuiValue("HellHoundToggle")) && (GetGuiValue("QuickCallToggle"))
+{
+	Name := GetHotKey()
+	Call(GetGuiValue(GetQuickCallText()))
+}
+else
+	SendInput, % GetHotKey()
+return
+
+Valtora1:
+Valtora2:
+Valtora3:
+Valtora4:
+Valtora5:
+Valtora6:
+if(GetGuiValue("ValtoraToggle")) && (GetGuiValue("QuickCallToggle"))
+{
+	Name := GetHotKey()
+	Call(GetGuiValue(GetQuickCallText()))
+}
+else
+	SendInput, % GetHotKey()
+return
+
+Ifrit1:
+Ifrit2:
+Ifrit3:
+Ifrit4:
+Ifrit5:
+Ifrit6:
+if(GetGuiValue("IfritToggle")) && (GetGuiValue("QuickCallToggle"))
+{
+	Name := GetHotKey()
+	Call(GetGuiValue(GetQuickCallText()))
+}
+else
+	SendInput, % GetHotKey()
+return
+
+Nereid1:
+Nereid2:
+Nereid3:
+Nereid4:
+Nereid5:
+Nereid6:
+if(GetGuiValue("NereidToggle")) && (GetGuiValue("QuickCallToggle"))
+{
+	Name := GetHotKey()
+	Call(GetGuiValue(GetQuickCallText()))
+}
+else
+	SendInput, % GetHotKey()
+return
+
 ;No Mouse
 NoMouseToggle:
 NoMouse := !NoMouse
@@ -354,6 +684,17 @@ else
 return
 
 ;Common
+~Enter::
+Inventory := False
+QuickCast := False
+QuickCall := False
+NoMouse   := False
+GuiControl, 2: Text, ActiveNoMouse  , % "No Mouse: " ((NoMouse) ? ("Enabled") : ("Disabled"))
+GuiControl, 2: Text, ActiveQuickCast, % "Quick Cast: " ((QuickCast) ? ("Enabled") : ("Disabled"))
+GuiControl, 2: Text, ActiveQuickCall, % "Quick Call: " ((QuickCall) ? ("Enabled") : ("Disabled"))
+GuiControl, 2: Text, ActiveInventory, % "Inventory: " ((Inventory) ? ("Enabled") : ("Disabled"))
+return
+
 
 GuiEscape:
 GuiClose:
