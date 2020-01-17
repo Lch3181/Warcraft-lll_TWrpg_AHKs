@@ -401,7 +401,7 @@ GetQuickCallText()
 Call(String)
 {
 	SendInput, {Enter}
-	SendInput, {Text} %String% 
+	SendInput, {Text}%String%
 	SendInput, {Enter}
 }
 
@@ -771,7 +771,6 @@ GuiControl, 2: Text, ActiveQuickCast, % "Quick Cast: " ((QuickCast) ? ("Enabled"
 GuiControl, 2: Text, ActiveQuickCall, % "Quick Call: " ((QuickCall) ? ("Enabled") : ("Disabled"))
 GuiControl, 2: Text, ActiveInventory, % "Inventory: " ((Inventory) ? ("Enabled") : ("Disabled"))
 return
-
 
 GuiEscape:
 GuiClose:
