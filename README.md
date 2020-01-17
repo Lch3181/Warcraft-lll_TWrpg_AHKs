@@ -9,9 +9,17 @@ Make life easier
 ![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/NoMouseGUI.png)
 ![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/SettingGUI.png)
 
-How to use:
-
+## How to use:
 Press the button to edit the Hotkey by pressing the key you want on keyboard or press Escape to unsign.
+
+## FQA: 
+Q: Why I cant assgin my hotkey.
+
+A: Properly that key is assgined to something already.
+
+Q: Can I use with lee's twrpg loader?
+
+A: Yes, but you have to suspend(Ctrl+S) this tool first; use twrpg loader;then un-suspend this tool again.
 
 ## Independent scripts
 ![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/GUI.png)
