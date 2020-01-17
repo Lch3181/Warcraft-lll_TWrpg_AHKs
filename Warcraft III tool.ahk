@@ -268,12 +268,12 @@ init()
 		;Quick Call
 		Iniwrite, F4, %_ini%, Keys, QuickCallToggle
 		static aBossToggle := ["h", "j", "k", "l", "", "", ""]
-		static DeathFiend := [{z:"Coil"}, {x:"Howl"}, {c:"30% Get Ready"}, {v:"20% Procing"}, {b:"DF Ready"}, {n:"GO"}]
-		static Sylvanas   := [{z:"111"},{x:"222"},{c:"333"},{v:"44444"},{b:"Svly Ready"},{n:"GO"}]
-		static Succubus   := [{z:"Teleport"},{x:"Wave"},{c:""},{v:""},{b:"Succ Ready"},{n:"GO"}]
-		static HellHound  := [{z:"Charging"},{x:"Orbs"},{c:"HH Help"},{v:""},{b:"HH Ready"},{n:"GO"}]
-		static Valtora    := [{z:"Guard Break"},{x:"Aids"},{c:"Magnet Died"},{v:"Link Died"},{b:"Hammer"},{n:""}]
-		static Ifrit      := [{z:"ELS"},{x:"Bombs"},{c:"Procing/Cleansing Bombs"},{v:"Charging"},{b:""},{n:""}]
+		static DeathFiend := [{z:"> > Coil < <"}, {x:"> > Howl < <"}, {c:"> > 30% Get Ready < <"}, {v:"> > 20% Procing < <"}, {b:"> > DF Ready < <"}, {n:"> > GO < <"}]
+		static Sylvanas   := [{z:"> > 111 < <"},{x:"> > 222 < <"},{c:"> > 333 < <"},{v:"> > 44444 < <"},{b:"> > Svly Ready < <"},{n:"> > GO < <"}]
+		static Succubus   := [{z:"> > Teleport < <"},{x:"> > Wave < <"},{c:""},{v:""},{b:"> > Succ Ready < <"},{n:"> > GO < <"}]
+		static HellHound  := [{z:"> > Charging < <"},{x:"> > Orbs < <"},{c:"> > HH Help < <"},{v:""},{b:"> > HH Ready < <"},{n:"> > GO < <"}]
+		static Valtora    := [{z:"> > Guard Break < <"},{x:"> > Aids < <"},{c:"> > Magnet Died < <"},{v:"> > Link Died < <"},{b:"> > Hammer < <"},{n:""}]
+		static Ifrit      := [{z:"> > ELS < <"},{x:"> > Bombs < <"},{c:"> > Procing/Cleansing Bombs < <"},{v:"> > Charging < <"},{b:""},{n:""}]
 		static Nereid     := [{z:""},{x:""},{c:""},{v:""},{b:""},{n:""}]
 		For _count, boss in aQuickCall
 		{
@@ -370,7 +370,7 @@ KeyWaitAny(Options:="")
 
 SetHotKeys(Key, Value, Section)
 {
-	Iniwrite, %Value%, %_ini%, Keys, %Key%
+	Iniwrite, %Value%, %_ini%, %Section%, %Key%
 	HotKey, $%Value%, %Key%, On
 }
 
@@ -401,7 +401,7 @@ GetQuickCallText()
 Call(String)
 {
 	SendInput, {Enter}
-	SendInput, {Text}>> %String% <<
+	SendInput, {Text} %String% 
 	SendInput, {Enter}
 }
 
@@ -432,9 +432,15 @@ TabSwitched:
 
 GetKey:
 	Duplicate := False
+	;Set GuiValue for temporary
+	OriginalHotKey := GetGuiValue(A_GuiControl)
+	GuiControl,, %A_GuiControl%, Editing
 	SingleKey = % KeyWaitAny("V E C M")
 	if(SingleKey = -1)
+	{
+		GuiControl,, %A_GuiControl%, %OriginalHotKey%
 		return
+	}
 	;check Duplication
 	Loop, Read, %_ini%
 	{
@@ -442,6 +448,10 @@ GetKey:
 		{
 			StringSplit, Field, A_LoopReadLine, = 
 			Iniread, Output, %_ini%, Keys, %Field1%
+			if (InStr(A_LoopReadLine, "[DeathFiend]") >= 1) ;Only check upto before QuickCall
+			{
+				Break
+			}
 			if (SingleKey = Output) && (Output != "") || (Duplicate)
 			{
 				Duplicate = True
@@ -452,12 +462,22 @@ GetKey:
 	if !Duplicate
 	{
 		GuiControlGet, Value,, % A_GuiControl
-		HotKey, $%Value%, off
+		HotKey, $%OriginalHotKey%, off
 		GuiControl,, %A_GuiControl%, %SingleKey%
-		SetHotKeys(A_GuiControl, SingleKey, "Keys")
+		if (InStr(A_GuiControl, "ToggleButton") >= 1)
+			SetHotKeys(A_GuiControl, SingleKey, SubStr(A_GuiControl, 1, StrLen(A_GuiControl) - 12))
+		else
+			SetHotKeys(A_GuiControl, SingleKey, "Keys")
+		
+		;For User
+		if(SingleKey = "")
+			msgbox, % "Unsigned " . A_GuiControl
+		else
+			msgbox, % SingleKey . " is assgined to " . A_GuiControl
 	}
 	else
 	{
+		GuiControl,, %A_GuiControl%, %OriginalHotKey%
 		Msgbox, %SingleKey% is used
 	}
 	return
