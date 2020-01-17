@@ -1,6 +1,7 @@
 ;Warcraft III Tool
 #Singleinstance Force
 global _ini := "Warcraft III Tool Data.ini"
+global GUIShow := True
 global aQuickCall  := ["DeathFiend", "Sylvanas", "Succubus", "HellHound", "Valtora", "Ifrit", "Nereid"]
 global Inventory := False
 global QuickCast := False
@@ -164,7 +165,7 @@ Gui, Font, s8
 Gui, Add, Tab2, x0 y0 w400 h400 gTabSwitched vMainTab, Inventory|Quick Cast|Quick Call|No Mouse|Setting
 
 Gui, Tab, Inventory
-Gui, Add, Picture, y+50 Icon1, Inventory.jpg
+Gui, Add, Picture, y+50 Icon1, Images\Inventory.jpg
 Gui, Font, s12
 Gui, Add, Text,   x10 y30, Enable/Disable
 Gui, Add, Text,   x10 y50, CheckBox for Quick Cast
@@ -221,7 +222,7 @@ Gui, Tab, Setting
 Gui, Font, s12
 Gui, Add, Text, x10 y30, Show/Hide
 Gui, Font, s8
-Gui, Add, Button, x+10 w50 h20
+Gui, Add, Button, x+10 w50 h20 gGetKey vShowHideMain
 
 Gui, Tab
 
@@ -293,6 +294,8 @@ init()
 		{
 			Iniwrite, %element%, %_ini%, Keys, NoMouse%A_Index%
 		}
+		;Setting
+		Iniwrite, F7, %_ini%, Keys, ShowHideMain
 	}
 	;read .ini
 	if FileExist(_ini)
@@ -337,6 +340,8 @@ init()
 		{
 			IniReadSetHotKey(_ini, "Keys", "NoMouse"A_Index)
 		}
+		;Setting
+		IniReadSetHotKey(_ini, "Keys", "ShowHideMain")
 	}
 	return
 }
@@ -760,6 +765,15 @@ else
 	SendInput, % GetHotKey()
 return
 
+;Setting
+ShowHideMain:
+GUIShow := !GUIShow
+if (GUIShow)
+	Gui, Show, w400 h400
+else
+	Gui, Hide
+return
+
 ;Common
 ~Enter::
 Inventory := False
@@ -774,6 +788,7 @@ return
 
 GuiEscape:
 GuiClose:
+GUIShow := False
 Gui, Hide
 return
 

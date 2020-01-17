@@ -2,14 +2,19 @@
 Make life easier
 
 ## User Friendly All in One Tool
-In progress.
+![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/Toggle.png)
+![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/InventoryGUI.png)
+![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/QuickCastGUI.png)
+![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/QuickCallGUI.png)
+![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/NoMouseGUI.png)
+![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/GUI.png)
 
 How to use:
 
-Press the button to edit the trigger key by pressing the key you want on keyboard or press Escape to unsign.
+Press the button to edit the Hotkey by pressing the key you want on keyboard or press Escape to unsign.
 
 ## Independent scripts
-![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/GUI.png)
+![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/GUI.png)
 
 ## Quick Calls
 f6: On/Off
