@@ -185,7 +185,7 @@ Gui, Add, CheckBox, x39 y+56 w13 h13 gGetSetCheckBoxValue vInventoryQuickCast5
 Gui, Add, CheckBox, x+58 w13 h13     gGetSetCheckBoxValue vInventoryQuickCast6
 
 Gui, Tab, Quick Cast
-Gui, Add, Picture, y+40 Icon1, Spells.jpg
+Gui, Add, Picture, y+40 Icon1, Images\Spells.jpg
 Gui, Font, s12
 Gui, Add, Text,   x10 y30, Enable/Disable
 Gui, Font, s8
@@ -210,7 +210,7 @@ Gui, Font, s8
 Gui, Add, Button, x+10 w50 h20 gGetKey vQuickCallToggle
 
 Gui, Tab, No Mouse
-Gui, Add, Picture, w100 h100 y+40 Icon1, Mouse.png
+Gui, Add, Picture, w100 h100 y+40 Icon1, Images\Mouse.png
 Gui, Font, s12
 Gui, Add, Text, x10 y30, Enable/Disable
 Gui, Font, s8
@@ -221,8 +221,10 @@ Gui, Add, Button, x+8 w50 h20 gGetKey vNoMouse2
 Gui, Tab, Setting
 Gui, Font, s12
 Gui, Add, Text, x10 y30, Show/Hide
+Gui, Add, Text, x10 y50, Suspend
 Gui, Font, s8
-Gui, Add, Button, x+10 w50 h20 gGetKey vShowHideMain
+Gui, Add, Button, x100 y30 w50 h20 gGetKey vShowHideMain
+Gui, Add, Button, x100 y50 w50 h20 disabled, Ctrl+S
 
 Gui, Tab
 
@@ -794,6 +796,10 @@ return
 
 ^r::
 reload
+return
+
+^s::
+suspend
 return
 
 ^esc::
