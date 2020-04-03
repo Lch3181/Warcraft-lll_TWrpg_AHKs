@@ -1,5 +1,6 @@
 ;Warcraft III Tool
 #Singleinstance Force
+SetMouseDelay, 0
 global _ini := "Warcraft III Tool Data.ini"
 global GUIShow := True
 global aQuickCall  := ["DeathFiend", "Sylvanas", "Succubus", "HellHound", "Valtora", "Ifrit", "Nereid"]
@@ -8,13 +9,15 @@ global QuickCast := False
 global QuickCall := False
 global NoMouse := False
 global KeyWaiting := False
+global aAFKLocations := []
 
 Gui, Color, DCDCDC
 ;Quick Call Sub Tab
-Gui, Add, Tab3, x0 y60 w400 h340 vSubQuickCall Hidden, Death Fiend|Sylvanas|Succubus|Hell Hound|Valtora|Ifrit|Nereid
+Gui, Add, Tab3, x0 y60 w400 h340 vSubQuickCall Hidden, 1|2|3|4|5|6|7
 
-Gui, Tab, Death Fiend
+Gui, Tab, 1
 Gui, Font, s12
+Gui, Add, Edit, x10 y+10 w100 h20, Death Fiend 
 Gui, Add, Text, x10 y+10, Enable/Disable
 Gui, Add, CheckBox, x+5 gToggleTarge vDeathFiendToggle
 Gui, Font, s8
@@ -25,7 +28,7 @@ Gui, Add, Button, x10 y+10 w50 h20 gGetKey vDeathFiend3
 Gui, Add, Button, x10 y+10 w50 h20 gGetKey vDeathFiend4
 Gui, Add, Button, x10 y+10 w50 h20 gGetKey vDeathFiend5
 Gui, Add, Button, x10 y+10 w50 h20 gGetKey vDeathFiend6
-Gui, Add, Edit, x+10 y123 w320 h18 vDeathFiendText1
+Gui, Add, Edit, x+10 y153 w320 h18 vDeathFiendText1
 Gui, Add, Edit,      y+12 w320 h18 vDeathFiendText2
 Gui, Add, Edit,      y+12 w320 h18 vDeathFiendText3
 Gui, Add, Edit,      y+12 w320 h18 vDeathFiendText4
@@ -33,7 +36,7 @@ Gui, Add, Edit,      y+12 w320 h18 vDeathFiendText5
 Gui, Add, Edit,      y+12 w320 h18 vDeathFiendText6
 Gui, Add, Button, x340 y+12 w50 h20 gUpdate vDeathFiendUpdate, update
 
-Gui, Tab, Sylvanas
+Gui, Tab, 2
 Gui, Font, s12
 Gui, Add, Text, x+10 y+10, Enable/Disable
 Gui, Add, CheckBox, x+5 gToggleTarge vSylvanasToggle
@@ -54,7 +57,7 @@ Gui, Add, Edit,      y+12 w320 h18 vSylvanasText6
 Gui, Add, Button, x340 y+12 w50 h20 h20 gUpdate vSylvanasUpdate, update
 
 
-Gui, Tab, Succubus
+Gui, Tab, 3
 Gui, Font, s12
 Gui, Add, Text, x+10 y+10, Enable/Disable
 Gui, Add, CheckBox, x+5 gToggleTarge vSuccubusToggle
@@ -75,7 +78,7 @@ Gui, Add, Edit,      y+12 w320 h18 vSuccubusText6
 Gui, Add, Button, x340 y+12 w50 h20 h20 gUpdate vSuccubusUpdate, update
 
 
-Gui, Tab, Hell Hound
+Gui, Tab, 4
 Gui, Font, s12
 Gui, Add, Text, x+10 y+10, Enable/Disable
 Gui, Add, CheckBox, x+5 gToggleTarge vHellHoundToggle
@@ -96,7 +99,7 @@ Gui, Add, Edit,      y+12 w320 h18 vHellHoundText6
 Gui, Add, Button, x340 y+12 w50 h20 h20 gUpdate vHellHoundUpdate, update
 
 
-Gui, Tab, Valtora
+Gui, Tab, 5
 Gui, Font, s12
 Gui, Add, Text, x+10 y+10, Enable/Disable
 Gui, Add, CheckBox, x+5 gToggleTarge vValtoraToggle
@@ -117,7 +120,7 @@ Gui, Add, Edit,      y+12 w320 h18 vValtoraText6
 Gui, Add, Button, x340 y+12 w50 h20 h20 gUpdate vValtoraUpdate, update
 
 
-Gui, Tab, Ifrit
+Gui, Tab, 6
 Gui, Font, s12
 Gui, Add, Text, x+10 y+10, Enable/Disable
 Gui, Add, CheckBox, x+5 gToggleTarge vIfritToggle
@@ -138,7 +141,7 @@ Gui, Add, Edit,      y+12 w320 h18 vIfritText6
 Gui, Add, Button, x340 y+12 w50 h20 h20 gUpdate vIfritUpdate, update
 
 
-Gui, Tab, Nereid
+Gui, Tab, 7
 Gui, Font, s12
 Gui, Add, Text, x+10 y+10, Enable/Disable
 Gui, Add, CheckBox, x+5 gToggleTarge vNereidToggle
@@ -162,7 +165,7 @@ Gui, Tab
 
 ;Main Tab
 Gui, Font, s8
-Gui, Add, Tab2, x0 y0 w400 h400 gTabSwitched vMainTab, Inventory|Quick Cast|Quick Call|No Mouse|Setting
+Gui, Add, Tab2, x0 y0 w400 h400 gTabSwitched vMainTab, Inventory|Quick Cast|Quick Call|No Mouse|AFK Farm|Setting
 
 Gui, Tab, Inventory
 Gui, Add, Picture, y+50 Icon1, Images\Inventory.jpg
@@ -218,13 +221,32 @@ Gui, Add, Button, x+10 w50 h20 gGetKey vNoMouseToggle
 Gui, Add, Button, x8 y60 w50 h20 gGetKey vNoMouse1
 Gui, Add, Button, x+8 w50 h20 gGetKey vNoMouse2
 
+Gui, Tab, AFK Farm
+Gui, Font, s8
+Gui, Add, Text, x10 y+10, Enable/Disable
+Gui, Add, Checkbox, x+5 vAFKFarmToggle
+Gui, Add, Text, x10 y+10, Setup farming rotation by using Shift + A
+Gui, Add, Text, x10 y+10, Add Location
+Gui, Add, Button, x+10 w50 h20 gGetKey vAddAFKLocation
+Gui, Add, Text, x10 y+10, Start adding 500 loops (Escape to interupt)
+Gui, Add, Button, x+10 w50 h20 gGetKey vAFKLoop
+Gui, Add, Text, x10 y+10, Clear Locations
+Gui, Add, Button, x+10 w50 h20 gClearLocations, clear
+Gui, Add, Text, x10 y+10 vLocationsLabel, Locations (00)
+Gui, Add, Edit, x10 y+10 r14 w135 ReadOnly vAFKLocations
+
+
 Gui, Tab, Setting
 Gui, Font, s12
 Gui, Add, Text, x10 y30, Show/Hide
 Gui, Add, Text, x10 y50, Suspend
+Gui, Add, Text, x10 y70, Reload
+Gui, Add, Text, x10 y90, Exit
 Gui, Font, s8
 Gui, Add, Button, x100 y30 w50 h20 gGetKey vShowHideMain
-Gui, Add, Button, x100 y50 w50 h20 disabled, Ctrl+S
+Gui, Add, Button, x100 y50 w50 h20 disabled, Alt+S
+Gui, Add, Button, x100 y70 w50 h20 disabled, Alt+R
+Gui, Add, Button, x100 y90 w50 h20 disabled, Alt+ESC
 
 Gui, Tab
 
@@ -232,13 +254,13 @@ gui, show, w400 h400
 
 ;Toggles Gui
 Gui, 2: +LastFound +AlwaysOnTop -Caption
-Gui, 2: Font, s15
+Gui, 2: Font, s12
 Gui, 2: Font, cRed
-Gui, 2: Add, Text, vActiveInventory x0 y0 , % "Inventory:   " ((Inventory) ? ("Enabled") : ("Disabled"))
-Gui, 2: Add, Text, vActiveQuickCast x0 y20, % "Quick Cast: " ((QuickCast) ? ("Enabled") : ("Disabled"))
-Gui, 2: Add, Text, vActiveQuickCall x0 y40, % "Quick Call: " ((QuickCall) ? ("Enabled") : ("Disabled"))
-Gui, 2: Add, Text, vTarget x+5, No Target  
-Gui, 2: Add, Text, vActiveNoMouse   x0 y60, % "No Mouse: " ((NoMouse) ? ("Enabled") : ("Disabled"))
+Gui, 2: Add, Text, vActiveInventory x0 y0 , % "Inventory: " ((Inventory) ? ("Enabled") : ("Disabled"))
+Gui, 2: Add, Text, vActiveQuickCast x0 y+0, % "Quick Cast: " ((QuickCast) ? ("Enabled") : ("Disabled"))
+Gui, 2: Add, Text, vActiveQuickCall x0 y+0, % "Quick Call: " ((QuickCall) ? ("Enabled") : ("Disabled"))
+Gui, 2: Add, Text, vTarget x+5, No Target
+Gui, 2: Add, Text, vActiveNoMouse   x0 y+0, % "No Mouse: " ((NoMouse) ? ("Enabled") : ("Disabled"))
 Gui, 2: Color, EEAA99
 WinSet, TransColor, EEAA99
 Gui, 2: Show, x0 y0
@@ -248,111 +270,73 @@ init()
 return ;End Main
 
 ;Functions
-;read write data
 init()
 {
-	;write .ini
-	if !FileExist(_ini)
+	;Inventory
+	IniGetSetHotKey(_ini, "Keys", "InventoryToggle", "F2")
+	Loop, 6
 	{
-		;Inventory
-		Iniwrite, F2, %_ini%, Keys, InventoryToggle
-		Loop, 6
-		{
-			Iniwrite, %A_Index%, %_ini%, Keys, Inventory%A_Index%
-			Iniwrite, 0, %_ini%, InventoryQuickCast, InventoryQuickCast%A_Index%			
-		}
-		;Quick Cast
-		Iniwrite, F3, %_ini%, Keys, QuickCastToggle
-		aQuickCast := ["m","","","a","p","d","t","f","q","w","e","r"]
-		For index, element in aQuickCast
-		{
-			Iniwrite, %element%, %_ini%, Keys, QuickCast%A_Index%
-		}
-		;Quick Call
-		Iniwrite, F4, %_ini%, Keys, QuickCallToggle
-		static aBossToggle := ["h", "j", "k", "l", "", "", ""]
-		static DeathFiend := [{z:"> > Coil < <"}, {x:"> > Howl < <"}, {c:"> > 30% Get Ready < <"}, {v:"> > 20% Procing < <"}, {b:"> > DF Ready < <"}, {n:"> > GO < <"}]
-		static Sylvanas   := [{z:"> > 111 < <"},{x:"> > 222 < <"},{c:"> > 333 < <"},{v:"> > 44444 < <"},{b:"> > Svly Ready < <"},{n:"> > GO < <"}]
-		static Succubus   := [{z:"> > Teleport < <"},{x:"> > Wave < <"},{c:""},{v:""},{b:"> > Succ Ready < <"},{n:"> > GO < <"}]
-		static HellHound  := [{z:"> > Charging < <"},{x:"> > Orbs < <"},{c:"> > HH Help < <"},{v:""},{b:"> > HH Ready < <"},{n:"> > GO < <"}]
-		static Valtora    := [{z:"> > Guard Break < <"},{x:"> > Aids < <"},{c:"> > Magnet Died < <"},{v:"> > Link Died < <"},{b:"> > Hammer < <"},{n:""}]
-		static Ifrit      := [{z:"> > ELS < <"},{x:"> > Bombs < <"},{c:"> > Procing/Cleansing Bombs < <"},{v:"> > Charging < <"},{b:""},{n:""}]
-		static Nereid     := [{z:""},{x:""},{c:""},{v:""},{b:""},{n:""}]
-		For _count, boss in aQuickCall
-		{
-			IniWrite, % aBossToggle[_count], %_ini%, %boss%, % Boss . "ToggleButton"
-			For index, element in %boss%
-			{
-				For key, value in % element
-				{
-					Iniwrite, %key%:%value%, %_ini%, %boss%, % boss . index
-				}
-			}		
-		}
-		;No Mouse
-		Iniwrite, F5, %_ini%, Keys, NoMouseToggle
-		aNoMouse := ["space",""]
-		For index, element in aNoMouse
-		{
-			Iniwrite, %element%, %_ini%, Keys, NoMouse%A_Index%
-		}
-		;Setting
-		Iniwrite, F7, %_ini%, Keys, ShowHideMain
+		IniGetSetHotKey(_ini, "Keys", "Inventory"A_Index, "$~"A_Index)
+		IniGetSetHotKey(_ini, "InventoryQuickCast", "InventoryQuickCast"A_Index, 0, False)
 	}
-	;read .ini
-	if FileExist(_ini)
+	;Quick Cast
+	IniGetSetHotKey(_ini, "Keys", "QuickCastToggle", "F3")
+	static aQuickCast := ["m","","","a","p","d","t","f","q","w","e","r"]
+	For index, element in aQuickCast
 	{
-		aObject := [{}]
-		;Inventory
-		IniReadSetHotKey(_ini, "Keys", "InventoryToggle")
-		Loop, 6
-		{
-			IniReadSetHotKey(_ini, "Keys", "Inventory"A_Index)
-			Iniread, Output, %_ini%, InventoryQuickCast, InventoryQuickCast%A_Index%
-		}
-		;QuickCast
-		IniReadSetHotKey(_ini, "Keys", "QuickCastToggle")
-		Loop, 12
-		{
-			IniReadSetHotKey(_ini, "Keys", "QuickCast"A_Index)
-		}
-		;QuickCall
-		IniReadSetHotKey(_ini, "Keys", "QuickCallToggle")
-		For _count, boss in aQuickCall
-		{
-			IniReadSetHotKey(_ini, boss, Boss . "ToggleButton")
-			Loop, 6
-			{
-				Iniread, Output, %_ini%, %boss%, % boss . A_Index
-				aObject[A_Index, StrSplit(Output, "`:").1] := StrSplit(Output, "`:").2
-			}
-			For index, element in aObject
-			{
-				For key, value in % element
-				{
-					GuiControl,, % boss . index, %key%
-					GuiControl,, % boss . "Text" . index, %value%
-				}
-			}
-		}
-
-		;No Mouse
-		IniReadSetHotKey(_ini, "Keys", "NoMouseToggle")
-		Loop, 2
-		{
-			IniReadSetHotKey(_ini, "Keys", "NoMouse"A_Index)
-		}
-		;Setting
-		IniReadSetHotKey(_ini, "Keys", "ShowHideMain")
+		IniGetSetHotKey(_ini, "Keys", "QuickCast"A_Index, "$~"element)
 	}
-	return
+	;Quick Call
+	IniGetSetHotKey(_ini, "Keys", "QuickCallToggle", "F4")
+	static aBossToggle= ["h", "j", "k", "l", "", "", ""]
+	static aBossText  = ["z", "x", "c", "v", "b", "n"]
+	static DeathFiend = ["> > Coil < <", "> > Howl < <", "> > 30% Get Ready < <", "> > 20% Procig < <", "> > DF Ready < <", "> > GO < <"]
+	static Sylvanas   = ["> > 111 < <","> > 222 < <","> > 333 < <","> > 44444 < <","> > Sylv Ready < <","> > GO < <"]
+	static Succubus   = ["> > Teleport < <","> > Wave < <","","","> > Succ Ready < <","> > GO < <"]
+	static HellHound  = ["> > Charging < <","> > Orbs < <","> > HH Help < <","","> > HH Ready < <","> > GO < <"]
+	static Valtora    = ["> > Guard Break < <","> > Aids < <","> > Manget Died < <","> > Link Died < <","> > Hammer < <",""]
+	static Ifrit      = ["> > ELS < <","> > Bombs < <","> > Procig/Cleansig Bombs < <","> > Charging < <","",""]
+	static Nereid     = ["","","","","",""]
+	For _count, boss in aQuickCall
+	{
+		IniGetSetHotKey(_ini, "keys", boss . "ToggleButton", "$~" . aBossToggle[_count])
+		For index, element in %boss%
+		{
+			IniGetSetHotKey(_ini, boss, boss . index, "$~" . abossText[index]) ;Boss Key
+			IniGetSetHotKey(_ini, boss, boss . "Text" . index, element, False) ;Boss Text
+		}
+	}
+	;No Mouse
+	IniGetSetHotKey(_ini, "Keys", "NoMouseToggle", "F5")
+	IniGetSetHotKey(_ini, "Keys", "NoMouse1", "")
+	IniGetSetHotKey(_ini, "Keys", "NoMouse2", "$space")
+	;AFK Farm
+	IniGetSetHotKey(_ini, "Keys", "AddAFKLocation", "$~u")
+	IniGetSetHotKey(_ini, "Keys", "AFKLoop", "$~i")
+	;Setting
+	IniGetSetHotKey(_ini, "Keys", "ShowHideMain", "F7")
 }
 
-IniReadSetHotKey(IniFile, IniSection, Key)
+IniGetSetHotKey(iniFileName, iniSection, iniKey, _HotKey, isHotKey := True)
 {
-	Iniread, Output, %_ini%, %IniSection%, %Key%
-	GuiControl,, %Key%, %Output%
-	HotKey, $%Output%, %Key%, On
+	Iniread, Output, %iniFileName%, %iniSection%, %iniKey%
+	if(Output != "ERROR")
+	{
+		GuiControl,, %iniKey%, % RegExReplace(Output, "[\$~]", "")
+		if(isHotKey && RegExReplace(Output, "[\$~]", "") != "")
+			Hotkey, %Output%, %iniKey%, On
+	}
+	else
+	{
+		Iniwrite, %_HotKey%, %iniFileName%, %iniSection%, %iniKey%
+		IniGetSetHotKey(iniFileName, iniSection, iniKey, _HotKey, isHotKey)
+	}
+}
+
+IniSetHotKey(iniFileName, iniSection, iniKey, _HotKey)
+{
+	Iniwrite, %_HotKey%, %iniFileName%, %iniSection%, %iniKey%
+	IniGetSetHotKey(iniFileName, iniSection, iniKey, _HotKey)
 }
 
 KeyWaitAny(Options:="")
@@ -362,12 +346,20 @@ KeyWaitAny(Options:="")
 		KeyWaiting := True
 		ih := InputHook(Options)
 		ih.KeyOpt("{All}", "ES") ; End and Suppress
+		ih.KeyOpt("{LCtrl}{RCtrl}{LAlt}{RAlt}{LShift}{RShift}{LWin}{RWin}", "-ES") ; Exclude the modifiers
 		ih.Start()
-		ErrorLevel := ih.Wait()
+		ErrorLevel := ih.Wait() ; Store EndReason in ErrorLevel
 		KeyWaiting := False
-		if(ih.EndKey = "Escape")
+		msgbox, % ih.EndMods . "+" . ih.EndKey
+		switch ih.EndKey
+		{
+		case "Escape":
 			return ""
-		return ih.EndKey		
+		case "space":
+			return "$space"
+		default:
+			return "$~" . ih.EndMods . ih.EndKey
+		}
 	}
 	else
 	{
@@ -397,7 +389,7 @@ GetGuiValue(GuiID)
 
 GetHotKey()
 {
-	return % "{" . SubStr(A_ThisHotKey, 2, StrLen(A_ThisHotKey)) . "}"
+	return % "{" . RegExReplace(A_ThisHotkey, "[\$~]", "") . "}"
 }
 
 GetQuickCallText()
@@ -422,6 +414,16 @@ ResetTargetToggles(Exclude:="")
 	}
 }
 
+ShowAFKLocations(array)
+{
+	_string := ""
+	for index, element in aAFKLocations
+	{
+		_string := % _string . element . "`n"
+	}
+	return % _string
+}
+
 ;Labels
 TabSwitched:
 	Gui, Submit, Nohide
@@ -440,7 +442,10 @@ TabSwitched:
 GetKey:
 	Duplicate := False
 	;Set GuiValue for temporary
-	OriginalHotKey := GetGuiValue(A_GuiControl)
+	iniread, output, %_ini%, "Keys", %A_GuiControl%
+	if (output = "ERROR")
+		output := ""
+	OriginalHotKey := % output
 	GuiControl,, %A_GuiControl%, Editing
 	SingleKey = % KeyWaitAny("V E C M")
 	if(SingleKey = -1)
@@ -469,23 +474,20 @@ GetKey:
 	if !Duplicate
 	{
 		GuiControlGet, Value,, % A_GuiControl
-		HotKey, $%OriginalHotKey%, off
+		if(OriginalHotKey != "")
+			HotKey, %OriginalHotKey%, off
 		GuiControl,, %A_GuiControl%, %SingleKey%
-		if (InStr(A_GuiControl, "ToggleButton") >= 1)
-			SetHotKeys(A_GuiControl, SingleKey, SubStr(A_GuiControl, 1, StrLen(A_GuiControl) - 12))
-		else
-			SetHotKeys(A_GuiControl, SingleKey, "Keys")
-		
+		IniSetHotKey(_ini, "Keys", A_GuiControl, SingleKey)
 		;For User
 		if(SingleKey = "")
 			msgbox, % "Unsigned " . A_GuiControl
 		else
-			msgbox, % SingleKey . " is assgined to " . A_GuiControl
+			msgbox, % RegExReplace(SingleKey, "[\$~]", "") . " is assgined to " . A_GuiControl
 	}
 	else
 	{
 		GuiControl,, %A_GuiControl%, %OriginalHotKey%
-		Msgbox, %SingleKey% is used
+		Msgbox, % RegExReplace(SingleKey, "[\$~]", "") . " is used"
 	}
 	return
 	
@@ -508,15 +510,21 @@ Update:
 	Loop, 6
 	{
 		Name := % SubStr(A_GuiControl, 1, StrLen(A_GuiControl) - 6)
-		Iniwrite, % GetGuiValue(Name . A_Index) . "`:" GetGuiValue(Name . "Text" . A_Index), %_ini%, %Name%, % Name . A_Index
+		Iniwrite, % GetGuiValue(Name . "Text" . A_Index), %_ini%, %Name%, % Name . "Text" . A_Index
 	}
 	return
+
+ClearLocations:
+aAFKLocations := []
+GuiControl,, LocationsLabel, Locations (00)
+GuiControl,, AFKLocations, % ShowAFKLocations(aAFKLocations)
+return
 
 ;HotKey's Label
 ;Inventory
 InventoryToggle:
 Inventory := !Inventory
-GuiControl, 2: Text, ActiveInventory, % "Inventory:   " ((Inventory) ? ("Enabled") : ("Disabled"))
+GuiControl, 2: Text, ActiveInventory, % "Inventory: " ((Inventory) ? ("Enabled") : ("Disabled"))
 return
 
 Inventory1:
@@ -526,7 +534,7 @@ if(Inventory)
 	if(GetGuiValue("InventoryQuickCast1"))
 		MouseClick, Left
 }
-else
+else if(GetHotKey() = "{space}")
 	SendInput, % GetHotKey()
 return
 
@@ -537,7 +545,7 @@ if(Inventory)
 	if(GetGuiValue("InventoryQuickCast2"))
 		MouseClick, Left
 }
-else
+else if(GetHotKey() = "{space}")
 	SendInput, % GetHotKey()
 return
 
@@ -548,7 +556,7 @@ if(Inventory)
 	if(GetGuiValue("InventoryQuickCast3"))
 		MouseClick, Left
 }
-else
+else if(GetHotKey() = "{space}")
 	SendInput, % GetHotKey()
 return
 
@@ -559,7 +567,7 @@ if(Inventory)
 	if(GetGuiValue("InventoryQuickCast4"))
 		MouseClick, Left
 }
-else
+else if(GetHotKey() = "{space}")
 	SendInput, % GetHotKey()
 return
 
@@ -570,7 +578,7 @@ if(Inventory)
 	if(GetGuiValue("InventoryQuickCast5"))
 		MouseClick, Left
 }
-else
+else if(GetHotKey() = "{space}")
 	SendInput, % GetHotKey()
 return
 
@@ -581,7 +589,7 @@ if(Inventory)
 	if(GetGuiValue("InventoryQuickCast6"))
 		MouseClick, Left
 }
-else
+else if(GetHotKey() = "{space}")
 	SendInput, % GetHotKey()
 return
 
@@ -593,8 +601,6 @@ InventoryQuickCast5:
 InventoryQuickCast6:
 if(Inventory)
 	MouseClick, Left
-else
-	SendInput, % GetHotKey()
 return
 
 ;Quick Cast
@@ -620,7 +626,7 @@ if(QuickCast)
 	SendInput, % GetHotKey()
 	MouseClick, Left
 }
-else
+else if(GetHotKey() = "{space}")
 	SendInput, % GetHotKey()
 return
 
@@ -638,7 +644,8 @@ ValtoraToggleButton:
 IfritToggleButton:
 NereidToggleButton:
 GuiControl,, % SubStr(A_ThisLabel, 1, StrLen(A_Thislabel) - 6), % !GetGuiValue(SubStr(A_ThisLabel, 1, StrLen(A_Thislabel) - 6))
-SendInput, % GetHotKey()
+if(GetHotKey() = "{space}")
+	SendInput, % GetHotKey()
 if (GetGuiValue(SubStr(A_ThisLabel, 1, StrLen(A_Thislabel) - 6)))
 {
 	ResetTargetToggles(SubStr(A_ThisLabel, 1, StrLen(A_Thislabel) - 6))
@@ -659,8 +666,7 @@ if(GetGuiValue("DeathFiendToggle")) && (QuickCall)
 {
 	Call(GetGuiValue(GetQuickCallText()))
 }
-else
-	SendInput, % GetHotKey()
+SendInput, % GetHotKey()
 return
 
 Sylvanas1:
@@ -673,8 +679,7 @@ if(GetGuiValue("SylvanasToggle")) && (QuickCall)
 {
 	Call(GetGuiValue(GetQuickCallText()))
 }
-else
-	SendInput, % GetHotKey()
+SendInput, % GetHotKey()
 return
 
 Succubus1:
@@ -687,8 +692,7 @@ if(GetGuiValue("SuccubusToggle")) && (QuickCall)
 {
 	Call(GetGuiValue(GetQuickCallText()))
 }
-else
-	SendInput, % GetHotKey()
+SendInput, % GetHotKey()
 return
 
 HellHound1:
@@ -701,8 +705,7 @@ if(GetGuiValue("HellHoundToggle")) && (QuickCall)
 {
 	Call(GetGuiValue(GetQuickCallText()))
 }
-else
-	SendInput, % GetHotKey()
+SendInput, % GetHotKey()
 return
 
 Valtora1:
@@ -715,8 +718,7 @@ if(GetGuiValue("ValtoraToggle")) && (QuickCall)
 {
 	Call(GetGuiValue(GetQuickCallText()))
 }
-else
-	SendInput, % GetHotKey()
+SendInput, % GetHotKey()
 return
 
 Ifrit1:
@@ -729,8 +731,7 @@ if(GetGuiValue("IfritToggle")) && (QuickCall)
 {
 	Call(GetGuiValue(GetQuickCallText()))
 }
-else
-	SendInput, % GetHotKey()
+SendInput, % GetHotKey()
 return
 
 Nereid1:
@@ -743,8 +744,7 @@ if(GetGuiValue("NereidToggle")) && (QuickCall)
 {
 	Call(GetGuiValue(GetQuickCallText()))
 }
-else
-	SendInput, % GetHotKey()
+SendInput, % GetHotKey()
 return
 
 ;No Mouse
@@ -756,14 +756,14 @@ return
 NoMouse1:
 if(NoMouse)
 	MouseClick, Left
-else
+else if(GetHotKey() = "{space}")
 	SendInput, % GetHotKey()
 return
 
 NoMouse2:
 if(NoMouse)
 	MouseClick, Right
-else
+else if(GetHotKey() = "{space}")
 	SendInput, % GetHotKey()
 return
 
@@ -775,6 +775,44 @@ if (GUIShow)
 else
 	Gui, Hide
 return
+
+;AFK Farm
+AddAFKLocation:
+if(GetGuiValue("AFKFarmToggle"))
+{
+	MouseGetPos, xpos, ypos
+	aAFKLocations.Push(xpos . "," . ypos)
+	GuiControl,, LocationsLabel, % "Locations (" . aAFKLocations.MaxIndex() . ")"
+	GuiControl,, AFKLocations, % ShowAFKLocations(aAFKLocations)
+}
+else if(GetHotKey() = "{space}")
+	SendInput, % GetHotKey()
+return
+
+AFKLoop:
+if(GetGuiValue("AFKFarmToggle"))
+{
+	SendInput, {Shift down}{a}
+	Loop, 500
+	{
+		if GetKeyState("Escape", "P")
+			break
+		for index, element in aAFKLocations
+		{
+			_pos := StrSplit(element, ",")
+			MouseMove, % _pos[1], % _pos[2], 0
+			Sleep, 1
+			MouseClick, Left
+			Sleep, 1
+		}
+	}
+	SendInput, {Shift up}
+	GuiControl,, AFKFarmToggle, 0
+}
+else if(GetHotKey() = "{space}")
+	SendInput, % GetHotKey()
+return
+
 
 ;Common
 ~Enter::
@@ -794,14 +832,14 @@ GUIShow := False
 Gui, Hide
 return
 
-^r::
+!r::
 reload
 return
 
-^s::
+!s::
 suspend
 return
 
-^esc::
+!esc::
 ExitApp
 return

@@ -23,12 +23,12 @@ if(pb)
 }
 return
 
-$e::
+$w::
 if(pb)
 {
 	loop
 	{
-		if !GetKeyState("e", "P")
+		if !GetKeyState("w", "P")
 			break
 		SendInput, {q}
 		Sleep, 50
@@ -40,7 +40,7 @@ if(pb)
 }
 else
 {
-	SendInput, {e}
+	SendInput, {w}
 }
 return
 
@@ -54,8 +54,12 @@ return
 ~t::
 if(pb)
 {
-	SendInput, {Numpad1}
-	SendInput, {5}
+	loop, 5
+	{
+		SendInput, {Numpad1}
+		SendInput, {5}
+		sleep, 50
+	}
 }
 return
 
