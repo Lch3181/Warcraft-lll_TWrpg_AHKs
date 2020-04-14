@@ -254,7 +254,7 @@ gui, show, w400 h400
 
 ;Toggles Gui
 Gui, 2: +LastFound +AlwaysOnTop -Caption
-Gui, 2: Font, s12
+Gui, 2: Font, s10
 Gui, 2: Font, cRed
 Gui, 2: Add, Text, vActiveInventory x0 y0 , % "Inventory: " ((Inventory) ? ("Enabled") : ("Disabled"))
 Gui, 2: Add, Text, vActiveQuickCast x0 y+0, % "Quick Cast: " ((QuickCast) ? ("Enabled") : ("Disabled"))
@@ -350,7 +350,6 @@ KeyWaitAny(Options:="")
 		ih.Start()
 		ErrorLevel := ih.Wait() ; Store EndReason in ErrorLevel
 		KeyWaiting := False
-		msgbox, % ih.EndMods . "+" . ih.EndKey
 		switch ih.EndKey
 		{
 		case "Escape":
@@ -480,14 +479,21 @@ GetKey:
 		IniSetHotKey(_ini, "Keys", A_GuiControl, SingleKey)
 		;For User
 		if(SingleKey = "")
-			msgbox, % "Unsigned " . A_GuiControl
+		{
+			ToolTip, % "Unsigned " . A_GuiControl
+			SetTimer, RemoveToolTip, -5000
+		}
 		else
-			msgbox, % RegExReplace(SingleKey, "[\$~]", "") . " is assgined to " . A_GuiControl
+		{
+			ToolTip, % RegExReplace(SingleKey, "[\$~+]", "") . " is assgined to " . A_GuiControl
+			SetTimer, RemoveToolTip, -5000
+		}
 	}
 	else
 	{
 		GuiControl,, %A_GuiControl%, %OriginalHotKey%
-		Msgbox, % RegExReplace(SingleKey, "[\$~]", "") . " is used"
+		ToolTip, % RegExReplace(SingleKey, "[\$~+]", "") . " is used"
+		SetTimer, RemoveToolTip, -5000
 	}
 	return
 	
@@ -518,6 +524,10 @@ ClearLocations:
 aAFKLocations := []
 GuiControl,, LocationsLabel, Locations (00)
 GuiControl,, AFKLocations, % ShowAFKLocations(aAFKLocations)
+return
+
+RemoveToolTip:
+ToolTip
 return
 
 ;HotKey's Label
