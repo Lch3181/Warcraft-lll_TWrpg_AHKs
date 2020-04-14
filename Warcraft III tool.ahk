@@ -441,7 +441,7 @@ TabSwitched:
 GetKey:
 	Duplicate := False
 	;Set GuiValue for temporary
-	iniread, output, %_ini%, "Keys", %A_GuiControl%
+	Iniread, output, %_ini%, Keys, %A_GuiControl%
 	if (output = "ERROR")
 		output := ""
 	OriginalHotKey := % output
@@ -449,7 +449,7 @@ GetKey:
 	SingleKey = % KeyWaitAny("V E C M")
 	if(SingleKey = -1)
 	{
-		GuiControl,, %A_GuiControl%, %OriginalHotKey%
+		GuiControl,, %A_GuiControl%, % RegExReplace(OriginalHotKey, "[\$~+]", "")
 		return
 	}
 	;check Duplication
@@ -825,7 +825,7 @@ return
 
 
 ;Common
-~Enter::
+$~Enter::
 Inventory := False
 QuickCast := False
 QuickCall := False
