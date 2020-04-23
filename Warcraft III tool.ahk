@@ -9,6 +9,7 @@ global QuickCast := False
 global QuickCall := False
 global NoMouse := False
 global KeyWaiting := False
+global TargetLocation := "0,0"
 global aAFKLocations := []
 
 Gui, Color, DCDCDC
@@ -239,14 +240,16 @@ Gui, Add, Edit, x10 y+10 r14 w135 ReadOnly vAFKLocations
 Gui, Tab, Setting
 Gui, Font, s12
 Gui, Add, Text, x10 y30, Show/Hide
-Gui, Add, Text, x10 y50, Suspend
-Gui, Add, Text, x10 y70, Reload
-Gui, Add, Text, x10 y90, Exit
+Gui, Add, Text,     y+0, Suspend
+Gui, Add, Text,     y+0, Reload
+Gui, Add, Text,     y+0, Exit
+Gui, Add, Text,     y+0, Lazy LM Ult
 Gui, Font, s8
 Gui, Add, Button, x100 y30 w50 h20 gGetKey vShowHideMain
-Gui, Add, Button, x100 y50 w50 h20 disabled, Alt+S
-Gui, Add, Button, x100 y70 w50 h20 disabled, Alt+R
-Gui, Add, Button, x100 y90 w50 h20 disabled, Alt+ESC
+Gui, Add, Button,      y+0 w50 h20 disabled, Alt+S
+Gui, Add, Button,      y+0 w50 h20 disabled, Alt+R
+Gui, Add, Button,      y+0 w50 h20 disabled, Alt+ESC
+Gui, Add, Checkbox,    y+5 vLazyLMToggle
 
 Gui, Tab
 
@@ -423,6 +426,23 @@ ShowAFKLocations(array)
 	return % _string
 }
 
+LazyLMUlt(CurrentLocation)
+{
+	_pos1 := StrSplit(CurrentLocation, ",")
+	_pos2 := StrSplit(TargetLocation, ",")
+	; Move away from target for max Ult range
+	SendInput, {e}
+	sleep, 50
+	MouseClick, Right, % _pos1[1], % _pos1[2], 3
+	Sleep, 300
+	; Toggle E again to interupt spell
+	SendInput, {e}
+	; Use Ult on Target
+	MouseMove, % _pos2[1], % _pos2[2]
+	SendInput, {f}
+	MouseClick, Left
+}
+
 ;Labels
 TabSwitched:
 	Gui, Submit, Nohide
@@ -491,7 +511,7 @@ GetKey:
 	}
 	else
 	{
-		GuiControl,, %A_GuiControl%, %OriginalHotKey%
+		GuiControl,, %A_GuiControl%, % RegExReplace(OriginalHotKey, "[\$~+]", "")
 		ToolTip, % RegExReplace(SingleKey, "[\$~+]", "") . " is used"
 		SetTimer, RemoveToolTip, -5000
 	}
@@ -631,13 +651,25 @@ QuickCast9:
 QuickCast10:
 QuickCast11:
 QuickCast12:
-if(QuickCast)
-{
-	SendInput, % GetHotKey()
-	MouseClick, Left
-}
-else if(GetHotKey() = "{space}")
-	SendInput, % GetHotKey()
+if (RegExReplace(A_ThisHotkey, "[\$~]", "") = "f" && GetGuiValue("LazyLMToggle") && QuickCast) ;Lazy LM Ult
+	{
+		MouseGetPos, xpos, ypos
+		LazyLMUlt(xpos . "," . ypos)
+	}
+else if(QuickCast)
+	{
+		SendInput, % GetHotKey()
+		MouseClick, Left
+	}
+else if (GetHotKey() = "{space}")
+	{
+		SendInput, % GetHotKey()
+	}
+if (RegExReplace(A_ThisHotkey, "[\$~]", "") = "r") ;Get Target location for Lazy LM Ult
+	{
+		MouseGetPos, xpos, ypos
+		TargetLocation := % xpos . "," . ypos
+	}
 return
 
 ;Quick Call
