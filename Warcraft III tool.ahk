@@ -243,7 +243,7 @@ Gui, Add, Text, x10 y30, Show/Hide
 Gui, Add, Text,     y+0, Suspend
 Gui, Add, Text,     y+0, Reload
 Gui, Add, Text,     y+0, Exit
-Gui, Add, Text,     y+0, Lazy LM Ult
+Gui, Add, Text,     y+0, Lazy LM
 Gui, Font, s8
 Gui, Add, Button, x100 y30 w50 h20 gGetKey vShowHideMain
 Gui, Add, Button,      y+0 w50 h20 disabled, Alt+S
@@ -441,6 +441,31 @@ LazyLMUlt(CurrentLocation)
 	MouseMove, % _pos2[1], % _pos2[2]
 	SendInput, {f}
 	MouseClick, Left
+}
+
+LazyLMStar()
+{
+	_pos1 := StrSplit(TargetLocation, ",")
+	r := 200
+	a := Format("{:0.3f}", 0.1)
+	pi := Format("{:0.3f}", 3.14)
+	; Wait R finish casting
+	Sleep, 1800
+	; Use E to draw a star
+	SendInput, {e}
+	aStarLocation := [0, Format("{:0.3f}", 4*pi/5), Format("{:0.3f}", 8*pi/5), Format("{:0.3f}", 2*pi/5), Format("{:0.3f}", 6*pi/5)]
+	Loop, 5
+	{
+		MouseClick, Right, % _pos1[1] + r * cos(a + aStarLocation[A_Index]), % _pos1[2] + r * sin(a + aStarLocation[A_Index]), 2
+		Sleep, 220
+	}
+	Loop, 3
+	{
+		MouseClick, Right, % _pos1[1] + r * cos(a + aStarLocation[A_Index]), % _pos1[2] + r * sin(a + aStarLocation[A_Index]), 2
+		Sleep, 220
+	}
+	; turn off E
+	SendInput, {e}
 }
 
 ;Labels
@@ -651,7 +676,7 @@ QuickCast9:
 QuickCast10:
 QuickCast11:
 QuickCast12:
-if (RegExReplace(A_ThisHotkey, "[\$~]", "") = "f" && GetGuiValue("LazyLMToggle") && QuickCast) ;Lazy LM Ult
+if (RegExReplace(A_ThisHotkey, "[\$~]", "") = "f" && GetGuiValue("LazyLMToggle") && QuickCast) ; Lazy LM Ult
 	{
 		MouseGetPos, xpos, ypos
 		LazyLMUlt(xpos . "," . ypos)
@@ -665,10 +690,15 @@ else if (GetHotKey() = "{space}")
 	{
 		SendInput, % GetHotKey()
 	}
-if (RegExReplace(A_ThisHotkey, "[\$~]", "") = "r") ;Get Target location for Lazy LM Ult
+if (RegExReplace(A_ThisHotkey, "[\$~]", "") = "r" && GetGuiValue("LazyLMToggle") && QuickCast) ; Get Target location for Lazy LM Ult and lazy star combo
 	{
 		MouseGetPos, xpos, ypos
 		TargetLocation := % xpos . "," . ypos
+		if(A_TimeSincePriorHotkey < 500) and (A_TimeSincePriorHotkey <> -1) ; Double click R to do star combo
+		{
+			MouseClick, Right,,, 2
+			LazyLMStar()
+		}
 	}
 return
 
