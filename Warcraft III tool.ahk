@@ -450,7 +450,7 @@ LazyLMStar()
 	a := Format("{:0.3f}", 0.1)
 	pi := Format("{:0.3f}", 3.14)
 	; Wait R finish casting
-	Sleep, 1800
+	Sleep, 1200
 	; Use E to draw a star
 	SendInput, {e}
 	aStarLocation := [0, Format("{:0.3f}", 4*pi/5), Format("{:0.3f}", 8*pi/5), Format("{:0.3f}", 2*pi/5), Format("{:0.3f}", 6*pi/5)]
@@ -459,7 +459,7 @@ LazyLMStar()
 		MouseClick, Right, % _pos1[1] + r * cos(a + aStarLocation[A_Index]), % _pos1[2] + r * sin(a + aStarLocation[A_Index]), 2
 		Sleep, 220
 	}
-	Loop, 3
+	Loop, 5
 	{
 		MouseClick, Right, % _pos1[1] + r * cos(a + aStarLocation[A_Index]), % _pos1[2] + r * sin(a + aStarLocation[A_Index]), 2
 		Sleep, 220
