@@ -447,28 +447,23 @@ LazyLMStar()
 {
 	SendInput, {f1}
 	_pos1 := StrSplit(TargetLocation, ",")
-	r := 200
-	a := Format("{:0.3f}", 0.1)
+	r := 150
+	a := Format("{:0.3f}", 0)
 	pi := Format("{:0.3f}", 3.14)
-	; Wait R finish casting
-	Sleep, 1200
+	Sleep, 100
 	; Use E to draw a star
 	SendInput, {e}
-	aStarLocation := [0, Format("{:0.3f}", 4*pi/5), Format("{:0.3f}", 8*pi/5), Format("{:0.3f}", 2*pi/5), Format("{:0.3f}", 6*pi/5)]
+	aStarLocation := [0, Format("{:0.3f}", a + 4*pi/5), Format("{:0.3f}", a + 8*pi/5), Format("{:0.3f}", a + 2*pi/5), Format("{:0.3f}", a + 6*pi/5)]
+	aStarDelay := [200, 270, 270, 290, 290]
 	Loop, 5
 	{
-		MouseClick, Right, % _pos1[1] + r * cos(a + aStarLocation[A_Index]), % _pos1[2] + r * sin(a + aStarLocation[A_Index]), 2
-		Sleep, 230
-	}
-	Loop, 5
-	{
-		MouseClick, Right, % _pos1[1] + r * cos(a + aStarLocation[A_Index]), % _pos1[2] + r * sin(a + aStarLocation[A_Index]), 2
-		Sleep, 230
+		MouseClick, Right, % _pos1[1] + r * cos(aStarLocation[A_Index]), % _pos1[2] + r * sin(aStarLocation[A_Index]), 2
+		Sleep, % aStarDelay[A_Index]
 	}
 	MouseClick, Right, % _pos1[1], % _pos1[2], 2
-	Sleep, 115
+	Sleep, 220
 	; Use T and turn off E
-	SendInput, {t}{e}
+	SendInput, {e}
 }
 
 ;Labels
@@ -693,17 +688,18 @@ else if (GetHotKey() = "{space}")
 	{
 		SendInput, % GetHotKey()
 	}
-if (RegExReplace(A_ThisHotkey, "[\$~]", "") = "r" && GetGuiValue("LazyLMToggle") && QuickCast) ; Get Target location for Lazy LM Ult and lazy star combo
+if (RegExReplace(A_ThisHotkey, "[\$~]", "") = "r" && GetGuiValue("LazyLMToggle") && QuickCast) ; Get Target location
 	{
-		sleep, 150
+		sleep, 200
 		MouseClick, Right,,, 2
 		MouseGetPos, xpos, ypos
 		TargetLocation := % xpos . "," . ypos
-		if(A_TimeSincePriorHotkey < 500) and (A_TimeSincePriorHotkey <> -1) and (RegExReplace(A_PriorHotkey, "[\$~]", "") = "r") ; Double click R to do star combo
-		{
-			LazyLMStar()
-		}
 	}
+return
+
+$~G::
+if (GetGuiValue("LazyLMToggle") && QuickCast)
+	LazyLMStar()
 return
 
 ;Quick Call
