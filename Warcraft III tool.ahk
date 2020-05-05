@@ -240,12 +240,14 @@ Gui, Add, Edit, x10 y+10 r14 w135 ReadOnly vAFKLocations
 Gui, Tab, Setting
 Gui, Font, s12
 Gui, Add, Text, x10 y30, Show/Hide
+Gui, Add, Text,     y+0, CharLoader
 Gui, Add, Text,     y+0, Suspend
 Gui, Add, Text,     y+0, Reload
 Gui, Add, Text,     y+0, Exit
 Gui, Add, Text,     y+0, Lazy LM
 Gui, Font, s8
 Gui, Add, Button, x100 y30 w50 h20 gGetKey vShowHideMain
+Gui, Add, Button,      y+0 w50 h20 gGetKey vCharacterLoader
 Gui, Add, Button,      y+0 w50 h20 disabled, Alt+S
 Gui, Add, Button,      y+0 w50 h20 disabled, Alt+R
 Gui, Add, Button,      y+0 w50 h20 disabled, Alt+ESC
@@ -293,12 +295,12 @@ init()
 	IniGetSetHotKey(_ini, "Keys", "QuickCallToggle", "F4")
 	static aBossToggle= ["h", "j", "k", "l", "", "", ""]
 	static aBossText  = ["z", "x", "c", "v", "b", "n"]
-	static DeathFiend = ["> > Coil < <", "> > Howl < <", "> > 30% Get Ready < <", "> > 20% Procig < <", "> > DF Ready < <", "> > GO < <"]
+	static DeathFiend = ["> > Coil < <", "> > Howl < <", "> > 30% Get Ready < <", "> > 20% Procing < <", "> > DF Ready < <", "> > GO < <"]
 	static Sylvanas   = ["> > 111 < <","> > 222 < <","> > 333 < <","> > 44444 < <","> > Sylv Ready < <","> > GO < <"]
-	static Succubus   = ["> > Teleport < <","> > Wave < <","","","> > Succ Ready < <","> > GO < <"]
+	static Succubus   = ["> > Teleporting < <","> > Teleported < <","> > Wave < <","","> > Succ Ready < <","> > GO < <"]
 	static HellHound  = ["> > Charging < <","> > Orbs < <","> > HH Help < <","","> > HH Ready < <","> > GO < <"]
 	static Valtora    = ["> > Guard Break < <","> > Aids < <","> > Manget Died < <","> > Link Died < <","> > Hammer < <",""]
-	static Ifrit      = ["> > ELS < <","> > Bombs < <","> > Procig/Cleansig Bombs < <","> > Charging < <","",""]
+	static Ifrit      = ["> > ELS < <","> > Bombs < <","> > Procing/Cleansing Bombs < <","> > Charging < <","",""]
 	static Nereid     = ["","","","","",""]
 	For _count, boss in aQuickCall
 	{
@@ -318,6 +320,7 @@ init()
 	IniGetSetHotKey(_ini, "Keys", "AFKLoop", "$~i")
 	;Setting
 	IniGetSetHotKey(_ini, "Keys", "ShowHideMain", "F7")
+	IniGetSetHotKey(_ini, "Keys", "CharacterLoader", "F8")
 }
 
 IniGetSetHotKey(iniFileName, iniSection, iniKey, _HotKey, isHotKey := True)
@@ -454,7 +457,7 @@ LazyLMStar()
 	; Use E to draw a star
 	SendInput, {e}
 	aStarLocation := [0, Format("{:0.3f}", a + 4*pi/5), Format("{:0.3f}", a + 8*pi/5), Format("{:0.3f}", a + 2*pi/5), Format("{:0.3f}", a + 6*pi/5)]
-	aStarDelay := [200, 270, 270, 290, 290]
+	aStarDelay := [200, 260, 260, 270, 270]
 	Loop, 5
 	{
 		MouseClick, Right, % _pos1[1] + r * cos(aStarLocation[A_Index]), % _pos1[2] + r * sin(aStarLocation[A_Index]), 2
@@ -847,6 +850,10 @@ if (GUIShow)
 else
 	Gui, Hide
 return
+
+CharacterLoader:
+Run *RunAs "%A_ScriptDir%\wc3rpgLoader.ahk"
+ExitApp
 
 ;AFK Farm
 AddAFKLocation:
