@@ -293,7 +293,7 @@ init()
 	}
 	;Quick Call
 	IniGetSetHotKey(_ini, "Keys", "QuickCallToggle", "F4")
-	static aBossToggle= ["h", "j", "k", "l", "", "", ""]
+	static aBossToggle= ["<+j", "j", "k", "l", "", "", ""]
 	static aBossText  = ["z", "x", "c", "v", "b", "n"]
 	static DeathFiend = ["> > Coil < <", "> > Howl < <", "> > 30% Get Ready < <", "> > 20% Procing < <", "> > DF Ready < <", "> > GO < <"]
 	static Sylvanas   = ["> > 111 < <","> > 222 < <","> > 333 < <","> > 44444 < <","> > Sylv Ready < <","> > GO < <"]
@@ -531,14 +531,14 @@ GetKey:
 		}
 		else
 		{
-			ToolTip, % RegExReplace(SingleKey, "[\$~+]", "") . " is assgined to " . A_GuiControl
+			ToolTip, % RegExReplace(SingleKey, "[\$~]", "") . " is assgined to " . A_GuiControl
 			SetTimer, RemoveToolTip, -5000
 		}
 	}
 	else
 	{
 		GuiControl,, %A_GuiControl%, % RegExReplace(OriginalHotKey, "[\$~+]", "")
-		ToolTip, % RegExReplace(SingleKey, "[\$~+]", "") . " is used"
+		ToolTip, % RegExReplace(SingleKey, "[\$~]", "") . " is used"
 		SetTimer, RemoveToolTip, -5000
 	}
 	return
@@ -853,7 +853,7 @@ return
 
 CharacterLoader:
 Run *RunAs "%A_ScriptDir%\wc3rpgLoader.ahk"
-ExitApp
+return
 
 ;AFK Farm
 AddAFKLocation:

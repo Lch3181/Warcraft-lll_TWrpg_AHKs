@@ -17,7 +17,7 @@ Q: Why I cant assgin my hotkey.
 
 A: Properly that key is assgined to something already.
 
-Q: Can I use with lee's twrpg loader?
+Q: Can I use with lee's twrpg character loader?
 
 A: Yes, but you have to rename it to wc3rpgLoader.ahk and put it into the same folder
 
