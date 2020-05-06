@@ -564,6 +564,8 @@ Update:
 		Name := % SubStr(A_GuiControl, 1, StrLen(A_GuiControl) - 6)
 		Iniwrite, % GetGuiValue(Name . "Text" . A_Index), %_ini%, %Name%, % Name . "Text" . A_Index
 	}
+	ToolTip, Updated
+	SetTimer, RemoveToolTip, 5000
 	return
 
 ClearLocations:
