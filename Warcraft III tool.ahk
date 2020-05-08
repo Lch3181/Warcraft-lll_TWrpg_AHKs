@@ -190,6 +190,9 @@ Gui, Add, CheckBox, x+58 w13 h13     gGetSetCheckBoxValue vInventoryQuickCast6
 
 Gui, Tab, Quick Cast
 Gui, Add, Picture, y+40 Icon1, Images\Spells.jpg
+Gui, Add, Picture, x28 y+5 w60 h60 Icon1, Images\Probe.png
+Gui, Add, Picture, x+18     w60 h60 Icon1, Images\Probe.png
+Gui, Add, Picture, x+18     w60 h60 Icon1, Images\Probe.png
 Gui, Font, s12
 Gui, Add, Text,   x10 y30, Enable/Disable
 Gui, Font, s8
@@ -206,6 +209,9 @@ Gui, Add, Button, x27 y+57 w61 h20 gGetKey vQuickCast9
 Gui, Add, Button, x+17 w61 h20     gGetKey vQuickCast10
 Gui, Add, Button, x+17 w61 h20     gGetKey vQuickCast11
 Gui, Add, Button, x+17 w61 h20     gGetKey vQuickCast12
+Gui, Add, Button, x27 y+75 w61 h20 gGetKey vQuickCast13 ; shooter probes
+Gui, Add, Button, x+17 w61 h20     gGetKey vQuickCast14
+Gui, Add, Button, x+17 w61 h20     gGetKey vQuickCast15
 
 Gui, Tab, Quick Call
 Gui, Font, s12
@@ -244,13 +250,15 @@ Gui, Add, Text,     y+0, CharLoader
 Gui, Add, Text,     y+0, Suspend
 Gui, Add, Text,     y+0, Reload
 Gui, Add, Text,     y+0, Exit
+Gui, Add, Text,     y+0, Disable All on Enter
 Gui, Add, Text,     y+0, Lazy LM
 Gui, Font, s8
-Gui, Add, Button, x100 y30 w50 h20 gGetKey vShowHideMain
+Gui, Add, Button, x200 y30 w50 h20 gGetKey vShowHideMain
 Gui, Add, Button,      y+0 w50 h20 gGetKey vCharacterLoader
 Gui, Add, Button,      y+0 w50 h20 disabled, Alt+S
 Gui, Add, Button,      y+0 w50 h20 disabled, Alt+R
 Gui, Add, Button,      y+0 w50 h20 disabled, Alt+ESC
+Gui, Add, Checkbox,    y+5 vDisableAll checked
 Gui, Add, Checkbox,    y+5 vLazyLMToggle
 
 Gui, Tab
@@ -279,14 +287,14 @@ init()
 {
 	;Inventory
 	IniGetSetHotKey(_ini, "Keys", "InventoryToggle", "F2")
-	Loop, 6
+	Loop, 5
 	{
 		IniGetSetHotKey(_ini, "Keys", "Inventory"A_Index, "$~"A_Index)
 		IniGetSetHotKey(_ini, "InventoryQuickCast", "InventoryQuickCast"A_Index, 0, False)
 	}
 	;Quick Cast
 	IniGetSetHotKey(_ini, "Keys", "QuickCastToggle", "F3")
-	static aQuickCast := ["m","","","a","p","d","t","f","q","w","e","r"]
+	static aQuickCast := ["m","","","a","p","d","t","f","q","w","e","r","6","7","8"]
 	For index, element in aQuickCast
 	{
 		IniGetSetHotKey(_ini, "Keys", "QuickCast"A_Index, "$~"element)
@@ -702,6 +710,17 @@ if (RegExReplace(A_ThisHotkey, "[\$~]", "") = "r" && GetGuiValue("LazyLMToggle")
 	}
 return
 
+; shooter probes
+QuickCast13:
+QuickCast14:
+QuickCast15:
+if(QuickCast)
+{
+	MouseClick, Right
+	SendInput, {f1}
+}
+return
+
 $~G::
 if (GetGuiValue("LazyLMToggle") && QuickCast)
 	LazyLMStar()
@@ -897,19 +916,23 @@ return
 
 ;Common
 $~Enter::
-Inventory := False
-QuickCast := False
-QuickCall := False
-NoMouse   := False
-GuiControl, 2: Text, ActiveNoMouse  , % "No Mouse: " ((NoMouse) ? ("Enabled") : ("Disabled"))
-GuiControl, 2: Text, ActiveQuickCast, % "Quick Cast: " ((QuickCast) ? ("Enabled") : ("Disabled"))
-GuiControl, 2: Text, ActiveQuickCall, % "Quick Call: " ((QuickCall) ? ("Enabled") : ("Disabled"))
-GuiControl, 2: Text, ActiveInventory, % "Inventory: " ((Inventory) ? ("Enabled") : ("Disabled"))
+if(GetGuiValue("DisableAll"))
+{
+	Inventory := False
+	QuickCast := False
+	QuickCall := False
+	NoMouse   := False
+	GuiControl, 2: Text, ActiveNoMouse  , % "No Mouse: " ((NoMouse) ? ("Enabled") : ("Disabled"))
+	GuiControl, 2: Text, ActiveQuickCast, % "Quick Cast: " ((QuickCast) ? ("Enabled") : ("Disabled"))
+	GuiControl, 2: Text, ActiveQuickCall, % "Quick Call: " ((QuickCall) ? ("Enabled") : ("Disabled"))
+	GuiControl, 2: Text, ActiveInventory, % "Inventory: " ((Inventory) ? ("Enabled") : ("Disabled"))
+}
 return
 
 GuiEscape:
 GuiClose:
 GUIShow := False
+ToolTip
 Gui, Hide
 return
 
