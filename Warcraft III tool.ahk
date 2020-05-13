@@ -458,7 +458,7 @@ LazyLMStar()
 {
 	SendInput, {f1}
 	_pos1 := StrSplit(TargetLocation, ",")
-	r := 150
+	r := 170
 	a := Format("{:0.3f}", 0)
 	pi := Format("{:0.3f}", 3.14)
 	Sleep, 100
@@ -471,7 +471,7 @@ LazyLMStar()
 		MouseClick, Right, % _pos1[1] + r * cos(aStarLocation[A_Index]), % _pos1[2] + r * sin(aStarLocation[A_Index]), 2
 		Sleep, % aStarDelay[A_Index]
 	}
-	MouseClick, Right, % _pos1[1], % _pos1[2], 2
+	MouseClick, Right, % _pos1[1] + r * cos(aStarLocation[1]), % _pos1[2] + r * sin(aStarLocation[1]), 2
 	Sleep, 220
 	; Use T and turn off E
 	SendInput, {e}
@@ -739,6 +739,8 @@ HellHoundToggleButton:
 ValtoraToggleButton:
 IfritToggleButton:
 NereidToggleButton:
+if(QuickCall)
+{
 GuiControl,, % SubStr(A_ThisLabel, 1, StrLen(A_Thislabel) - 6), % !GetGuiValue(SubStr(A_ThisLabel, 1, StrLen(A_Thislabel) - 6))
 if(GetHotKey() = "{space}")
 	SendInput, % GetHotKey()
@@ -750,6 +752,7 @@ if (GetGuiValue(SubStr(A_ThisLabel, 1, StrLen(A_Thislabel) - 6)))
 }
 else
 	GuiControl, 2: Text, Target, % "No Target"
+}
 return
 
 DeathFiend1:
@@ -762,7 +765,6 @@ if(GetGuiValue("DeathFiendToggle")) && (QuickCall)
 {
 	Call(GetGuiValue(GetQuickCallText()))
 }
-SendInput, % GetHotKey()
 return
 
 Sylvanas1:
@@ -775,7 +777,6 @@ if(GetGuiValue("SylvanasToggle")) && (QuickCall)
 {
 	Call(GetGuiValue(GetQuickCallText()))
 }
-SendInput, % GetHotKey()
 return
 
 Succubus1:
@@ -788,7 +789,6 @@ if(GetGuiValue("SuccubusToggle")) && (QuickCall)
 {
 	Call(GetGuiValue(GetQuickCallText()))
 }
-SendInput, % GetHotKey()
 return
 
 HellHound1:
@@ -801,7 +801,6 @@ if(GetGuiValue("HellHoundToggle")) && (QuickCall)
 {
 	Call(GetGuiValue(GetQuickCallText()))
 }
-SendInput, % GetHotKey()
 return
 
 Valtora1:
@@ -814,7 +813,6 @@ if(GetGuiValue("ValtoraToggle")) && (QuickCall)
 {
 	Call(GetGuiValue(GetQuickCallText()))
 }
-SendInput, % GetHotKey()
 return
 
 Ifrit1:
@@ -827,7 +825,6 @@ if(GetGuiValue("IfritToggle")) && (QuickCall)
 {
 	Call(GetGuiValue(GetQuickCallText()))
 }
-SendInput, % GetHotKey()
 return
 
 Nereid1:
@@ -840,7 +837,6 @@ if(GetGuiValue("NereidToggle")) && (QuickCall)
 {
 	Call(GetGuiValue(GetQuickCallText()))
 }
-SendInput, % GetHotKey()
 return
 
 ;No Mouse
@@ -936,14 +932,14 @@ ToolTip
 Gui, Hide
 return
 
-!r::
+$~!r::
 reload
 return
 
-!s::
+$~!s::
 suspend
 return
 
-!esc::
+$~!esc::
 ExitApp
 return
