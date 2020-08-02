@@ -251,7 +251,7 @@ Gui, Add, Text,     y+0, Suspend
 Gui, Add, Text,     y+0, Reload
 Gui, Add, Text,     y+0, Exit
 Gui, Add, Text,     y+0, Disable All on Enter
-Gui, Add, Text,     y+0, Lazy LM
+;Gui, Add, Text,     y+0, Lazy LM
 Gui, Font, s8
 Gui, Add, Button, x200 y30 w50 h20 gGetKey vShowHideMain
 Gui, Add, Button,      y+0 w50 h20 gGetKey vCharacterLoader
@@ -259,7 +259,7 @@ Gui, Add, Button,      y+0 w50 h20 disabled, Alt+S
 Gui, Add, Button,      y+0 w50 h20 disabled, Alt+R
 Gui, Add, Button,      y+0 w50 h20 disabled, Alt+ESC
 Gui, Add, Checkbox,    y+5 vDisableAll checked
-Gui, Add, Checkbox,    y+5 vLazyLMToggle
+;Gui, Add, Checkbox,    y+5 vLazyLMToggle 
 
 Gui, Tab
 
@@ -415,6 +415,7 @@ Call(String)
 	SendInput, {Enter}
 	SendInput, {Text}%String%
 	SendInput, {Enter}
+	return
 }
 
 ResetTargetToggles(Exclude:="")
@@ -441,17 +442,23 @@ LazyLMUlt(CurrentLocation)
 {
 	_pos1 := StrSplit(CurrentLocation, ",")
 	_pos2 := StrSplit(TargetLocation, ",")
-	; Move away from target for max Ult range
-	SendInput, {e}
-	sleep, 50
-	MouseClick, Right, % _pos1[1], % _pos1[2], 3
-	Sleep, 300
-	; Toggle E again to interupt spell
-	SendInput, {e}
-	; Use Ult on Target
-	MouseMove, % _pos2[1], % _pos2[2]
-	SendInput, {f}
-	MouseClick, Left
+	;; Move away from target for max Ult range
+	;SendInput, {e}
+	;sleep, 50
+	;MouseClick, Right, % _pos1[1], % _pos1[2], 3
+	;Sleep, 300
+	;; Toggle E again to interupt spell
+	;SendInput, {e}
+	;; Use Ult on Target
+	;MouseMove, % _pos2[1], % _pos2[2]
+	;SendInput, {f}
+	;MouseClick, Left
+	SendInput, {w}
+	MouseClick, Left, % _pos1[1], % _pos1[2]
+	sleep, 200
+	SendInput, {Numpad7}{Numpad4}
+	SendInput, {s}{f}
+	MouseClick, Left,  % _pos2[1], % _pos2[2]
 }
 
 LazyLMStar()
@@ -465,16 +472,18 @@ LazyLMStar()
 	; Use E to draw a star
 	SendInput, {e}
 	aStarLocation := [0, Format("{:0.3f}", a + 4*pi/5), Format("{:0.3f}", a + 8*pi/5), Format("{:0.3f}", a + 2*pi/5), Format("{:0.3f}", a + 6*pi/5)]
-	aStarDelay := [200, 260, 260, 270, 270]
+	aStarDelay := [200, 200, 200, 200, 200] ;[200, 260, 260, 270, 270]
 	Loop, 5
 	{
 		MouseClick, Right, % _pos1[1] + r * cos(aStarLocation[A_Index]), % _pos1[2] + r * sin(aStarLocation[A_Index]), 2
 		Sleep, % aStarDelay[A_Index]
 	}
 	MouseClick, Right, % _pos1[1] + r * cos(aStarLocation[1]), % _pos1[2] + r * sin(aStarLocation[1]), 2
-	Sleep, 220
-	; Use T and turn off E
-	SendInput, {e}
+	Sleep, 200
+	MouseClick, Right, % _pos1[1], % _pos1[2], 2
+	Sleep, 100
+	; Use T or turn off E
+	SendInput, {t}
 }
 
 ;Labels
@@ -765,6 +774,8 @@ if(GetGuiValue("DeathFiendToggle")) && (QuickCall)
 {
 	Call(GetGuiValue(GetQuickCallText()))
 }
+else
+	SendInput, % GetHotKey()
 return
 
 Sylvanas1:
@@ -777,6 +788,8 @@ if(GetGuiValue("SylvanasToggle")) && (QuickCall)
 {
 	Call(GetGuiValue(GetQuickCallText()))
 }
+else
+	SendInput, % GetHotKey()
 return
 
 Succubus1:
@@ -789,6 +802,8 @@ if(GetGuiValue("SuccubusToggle")) && (QuickCall)
 {
 	Call(GetGuiValue(GetQuickCallText()))
 }
+else
+	SendInput, % GetHotKey()
 return
 
 HellHound1:
@@ -801,6 +816,8 @@ if(GetGuiValue("HellHoundToggle")) && (QuickCall)
 {
 	Call(GetGuiValue(GetQuickCallText()))
 }
+else
+	SendInput, % GetHotKey()
 return
 
 Valtora1:
@@ -813,6 +830,8 @@ if(GetGuiValue("ValtoraToggle")) && (QuickCall)
 {
 	Call(GetGuiValue(GetQuickCallText()))
 }
+else
+	SendInput, % GetHotKey()
 return
 
 Ifrit1:
@@ -825,6 +844,8 @@ if(GetGuiValue("IfritToggle")) && (QuickCall)
 {
 	Call(GetGuiValue(GetQuickCallText()))
 }
+else
+	SendInput, % GetHotKey()
 return
 
 Nereid1:
@@ -836,6 +857,10 @@ Nereid6:
 if(GetGuiValue("NereidToggle")) && (QuickCall)
 {
 	Call(GetGuiValue(GetQuickCallText()))
+}
+else if(GetGuiValue("NereidToggle"))
+{
+	SendInput, % GetHotKey()
 }
 return
 

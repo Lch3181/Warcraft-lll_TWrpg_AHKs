@@ -64,7 +64,7 @@ QuickCalls := !QuickCalls
 GuiControl, Text, QuickCalls, % "Quick Calls: " ((QuickCalls) ? ("Enabled") : ("Disabled"))
 return
 
-$+J::
+$~+J::
 if(QuickCalls)
 {
 	Reset()
@@ -74,7 +74,7 @@ if(QuickCalls)
 }
 
 
-$+K::
+$~+K::
 if(QuickCalls)
 {
 	Reset()
@@ -82,7 +82,7 @@ if(QuickCalls)
 	CurrentBossGUI("valt")
 	return
 }
-$+L::
+$~+L::
 if(QuickCalls)
 {
 	Reset()
@@ -253,7 +253,7 @@ if(Quickcalls)
 	}
 	else if(DeathFiend)
 	{
-		Call("30% GET READY")
+		Call("20%//20%//20%//Finish//Finish")
 	}
 	else if(Valtora)
 	{
@@ -273,10 +273,6 @@ if(Quickcalls)
 	{
 		Call("4444444 Arrow")
 	}
-	else if(DeathFiend)
-	{
-		Call("PROCCING 20%")
-	}
 	else if(Ifrit)
 	{
 		Call("CHARGING")
@@ -289,11 +285,11 @@ if(Quickcalls)
 {
 	if(Sylvanas)
 	{
-		Call("SLYV READY")
+		Call("Sylvanas READY")
 	}
 	else if(Succubus)
 	{
-		Call("SUCC READY")
+		Call("Succubus READY")
 	}
 	else if(Hellhound)
 	{
