@@ -18,6 +18,8 @@ if(pb)
 	{
 		if !GetKeyState("a", "P")
 			break
+		SendInput, {a}
+		Sleep, 50
 		if (DuringT)
 		{
 			SendInput, {w}
@@ -25,8 +27,6 @@ if(pb)
 			SendInput, {e}
 			Sleep, 50
 		}
-		SendInput, {a}
-		Sleep, 50
 	}
 }
 return
@@ -44,7 +44,6 @@ if(pb)
 	loop, 5
 	{
 		SendInput, {Numpad1}
-		SendInput, {5}
 		sleep, 50
 		SetTimer, T_DurationTimer, -8000
 		DuringT := True

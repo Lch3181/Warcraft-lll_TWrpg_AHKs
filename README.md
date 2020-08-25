@@ -17,10 +17,6 @@ Q: Why I cant assgin my hotkey.
 
 A: Properly that key is assgined to something already.
 
-Q: Can I use with lee's twrpg character loader?
-
-A: Yes, but you have to rename it to wc3rpgLoader.ahk and put it into the same folder
-
 ## Independent scripts
 ![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/GUI.png)
 
@@ -173,7 +169,7 @@ f5:On/Off
 
 hold A = spam A
 
-hold E = spam Q W A
+hold A during T duration = spam Q W A
 
 D = quickcast
 
