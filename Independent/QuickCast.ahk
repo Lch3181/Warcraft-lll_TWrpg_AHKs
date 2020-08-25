@@ -16,40 +16,10 @@ GuiControl, 3: Text, ActiveQuickCast, % "QuickCast: " ((QuickCast) ? ("Enabled")
 return
 
 ~q::
-if(QuickCast)
-{
-	MouseClick, Left
-}
-return
-
 ~w::
-if(QuickCast)
-{
-	MouseClick, Left
-}
-return
-
 ~e::
-if(QuickCast)
-{
-	MouseClick, Left
-}
-return
-
 ~r::
-if(QuickCast)
-{
-	MouseClick, Left
-}
-return
-
 ~t::
-if(QuickCast)
-{
-	MouseClick, Left
-}
-return
-
 ~f::
 if(QuickCast)
 {
