@@ -1,5 +1,6 @@
-#SingleInstance, Force
+﻿#SingleInstance, Force
 #MaxThreadsPerHotKey 2
+FileEncoding UTF-8-RAW
 SendMode Input
 SetWorkingDir, %A_ScriptDir%
 SetTitleMatchMode 2
@@ -11,11 +12,9 @@ SetWinDelay, -1
 SetBatchLines, -1
 SetControlDelay -1
 Thread, interrupt, 0
-global iniFile := "wc3rpgLoader2Data.ini"
+global iniFile := "wc3rpgLoaderData.ini"
 ;Includes the specified file inside the compiled version of the script.
 FileInstall, SearchIcon.png, SearchIcon.png
-
-;Main
 
 ;GUI
 ;-------------------------------------------Loader Tab---------------------------------------------------
@@ -108,7 +107,11 @@ twrpg:
 
         ;output to wc3 chat
         WC3Chat(IniRead("LoadingString", GetGuiValue(A_Gui,"HeroChoice")))
-        WC3Chat("-convert "charName)
+        OutputDebug, % code
+        OutputDebug, % charName
+        if(charName != "")
+            WC3Chat("-convert "charName)
+        WC3Chat("-refresh")
         sleep, 100
 
         i := 1
@@ -227,13 +230,16 @@ HerosEditorButton:
 return
 
 AddHeroSubmit:
+    ;get rpg name for loader
     WinGetActiveTitle, OutputVar
     OutputVar := RegExReplace(OutputVar, "^(.*?)\s.*", "$1")
+    ;check if inputs are correct
     if(FileExistCheck() != 1)
     {
         MsgBox, 1, % GetGuiValue(A_Gui,"HeroChoice")".txt", % FileExistCheck()
         IfMsgBox, OK
         {
+            ; update ini file
             IniWrite, % GetGuiValue(A_Gui,"HeroChoice"), %iniFile%, LastLoaded, Hero
             IniWrite, % GetGuiValue(A_Gui,"URL"), %iniFile%, % OutputVar "Heros", % GetGuiValue(A_Gui,"HeroChoice")
             IniWrite, % GetGuiValue(A_Gui,"LoadingString"), %iniFile%, LoadingString, % GetGuiValue(A_Gui,"HeroChoice")
@@ -250,6 +256,8 @@ AddHeroSubmit:
         MsgBox, File Does Not Exist`, Please Double Check.
         ToolTip
     }
+    ;close gui
+    Gui, Hide
 return
 
 EditHeroSubmit:
@@ -257,11 +265,16 @@ EditHeroSubmit:
 return
 
 DeleteHeroSubmit:
+    ;get rpg name from win title
     WinGetActiveTitle, OutputVar
     OutputVar := RegExReplace(OutputVar, "^(.*?)\s.*", "$1")
+    ;update inifile
     IniDelete, %iniFile%, % OutputVar "Heros", % GetGuiValue(A_Gui,"HeroChoice")
+    IniDelete, %iniFile%, LoadingString, % GetGuiValue(A_Gui,"HeroChoice")
     ToolTip, % GetGuiValue(A_Gui, "HeroChoice") . " Deleted"
     GetSetAllHeros()
+    ;close gui
+    Gui, Hide
 return
 
 ;------------------------------------Functions-------------------------------------
@@ -289,11 +302,13 @@ DownloadFileFromUrl(URL)
 {
     WC3Chat("Downloading Save File From Cloud Service")
     whr := ComObjCreate("WinHttp.WinHttpRequest.5.1")
-    whr.Open("GET", URL, true)
+    whr.Open("GET", URL, false)
     whr.Send()
-    ; Using 'true' above and the call below allows the script to remain responsive.
-    whr.WaitForResponse()
-    result := whr.ResponseText
+
+    arr := whr.ResponseBody
+    pData := NumGet(ComObjValue(arr) + 8 + A_PtrSize)
+    length := arr.MaxIndex() + 1
+    result := StrGet(pData, length, "utf-8")
     ;Error Page
     if(InStr(result, "<html>"))
         Run, %URL%
@@ -318,7 +333,6 @@ GetSetAllHeros()
         if(StrSplit(lines[A_Index], "=")[1] = IniRead("LastLoaded", "Hero")) ; set default hero by last loaded hero
             TwrpgHeros .= "|"
     }
-    OutputDebug, % TwrpgHeros
     GuiControl, 1:, HeroChoice, %TwrpgHeros%
     GuiControl, 2:, HeroChoice, %TwrpgHeros%
     GuiControl, 2:, URL, % IniRead("TWrpgHeros", GetGuiValue("2", "HeroChoice"))
@@ -343,10 +357,17 @@ FileExistCheck()
     }
 }
 
+;Hotkeys
 GuiClose:
 2GuiClose:
 GuiEscape:
 2GuiEscape:
     Gui, %A_Gui%:Hide
     ToolTip
-    return
+return
+
+!r::reload
+
+^esc::ExitApp
+
+!s::suspend
