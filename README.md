@@ -13,6 +13,9 @@ Loading hero on first time, select the twrpg save folder on the bottom; next, cl
 
 Hosting on the first time, type the bot's name, map load command if any, and game name; then click private/public to host. Everything will be saved for the next time when you want to host. Click Delete Bot History to delete the selected bot info.
 
+## Important:
+Download URL has to be a direct download link instead of a share link(google if you do not know how to get it from a share link)
+
 ## Installation:
 [Download](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/releases/tag/v1.0)
 
