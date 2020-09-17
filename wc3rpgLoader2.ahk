@@ -63,9 +63,6 @@ Gui, 2: Add, Button, x+20 w100 h30 gDeleteHeroSubmit, Delete
 GetSetAllHeros()
 GetSetAllBots()
 
-;temp debug
-Gui, Show, w380 h220, Pick Your Load Code
-
 ;----------------------------------------------------------------------------------
 ;----------------------------------- Load Code ------------------------------------
 ;----------------------------------------------------------------------------------
@@ -194,6 +191,7 @@ Pub:
     IniWrite, %BotCommand%, %iniFile%, TWrpgBots, %BotChoice%
     IniWrite, %BotCommandToggle%, %iniFile%, Settings, BotCommandToggle
     IniWrite, %GameNamePlusToggle%, %iniFile%, Settings, GameNamePlusToggle
+    ;refresh gui
     GetSetAllBots()
 Return
 ;----------------------------------------------------------------------------------
@@ -226,6 +224,7 @@ Priv:
     IniWrite, %BotCommand%, %iniFile%, TWrpgBots, %BotChoice%
     IniWrite, %BotCommandToggle%, %iniFile%, Settings, BotCommandToggle
     IniWrite, %GameNamePlusToggle%, %iniFile%, Settings, GameNamePlusToggle
+    ;refresh gui
     GetSetAllBots()
 Return
 ;----------------------------------------------------------------------------------
@@ -408,8 +407,8 @@ GetSetAllBots()
     if IniRead("Settings", "BotCommandToggle") is Digit
         GuiControl, 1:, BotCommandToggle, % IniRead("Settings", "BotCommandToggle")
     GuiControl, 1:, GN, % IniRead("LastLoaded", "GameName")
-        if IniRead("Settings", "GameNamePlusToggle") is Digit
-    GuiControl, 1:, GameNamePlusToggle, % IniRead("Settings", "GameNamePlusToggle")
+    if IniRead("Settings", "GameNamePlusToggle") is Digit
+        GuiControl, 1:, GameNamePlusToggle, % IniRead("Settings", "GameNamePlusToggle")
 }
 
 FileExistCheck()
@@ -421,8 +420,24 @@ FileExistCheck()
     else ;if URL exist
         code := DownloadFileFromUrl(IniRead("TWrpgHeros", GetGuiValue(A_Gui,"HeroChoice")))
 
+    temp := StrReplace(code, "-load", "-load", count) ;count load codes
+
+    res := RegExMatch(code, "(User Name|아이디:\s(?:[^""]|\\"")*)", Match) ;find character name
+    codeChecker := Match1 . "`n"
+
+    ;find all load codes
+    i := 1
+    while(i <= count){
+        pos := InStr(code, "-load",, 1, i)
+        result := RegExMatch(code, "-load [a-zA-Z\d\?@#$%&-]*", Match, pos)
+        codeChecker .= Match . "`n"
+
+        i := i + 1
+    }
+    code =
+
     if not ErrorLevel{
-        return code
+        return codeChecker
     }
     else
     {
