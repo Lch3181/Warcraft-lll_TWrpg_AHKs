@@ -36,7 +36,7 @@ Gui, Add, Tab2, x0 y0 w380 h220 gTabSwitched vMainTab, Loader|Host
 ;---- For Hosting
 Gui, Tab, Host
 Gui, Add, Text, x20 y30, Pick:
-Gui, Add, ComboBox, y+5 w100 h150 vBotChoice gOnSelectBot
+Gui, Add, ComboBox, y+5 w100 R10 vBotChoice gOnSelectBot
 Gui, Add, Text, x20 y+10, Map Load Command:
 Gui, Add, Edit, y+5 w100 h20 vBotCommand
 Gui, Add, Checkbox, x+10 vBotCommandToggle, Enable/Disable
@@ -194,6 +194,7 @@ Pub:
     IniWrite, %BotCommand%, %iniFile%, TWrpgBots, %BotChoice%
     IniWrite, %BotCommandToggle%, %iniFile%, Settings, BotCommandToggle
     IniWrite, %GameNamePlusToggle%, %iniFile%, Settings, GameNamePlusToggle
+    GetSetAllBots()
 Return
 ;----------------------------------------------------------------------------------
 Priv:
@@ -225,6 +226,7 @@ Priv:
     IniWrite, %BotCommand%, %iniFile%, TWrpgBots, %BotChoice%
     IniWrite, %BotCommandToggle%, %iniFile%, Settings, BotCommandToggle
     IniWrite, %GameNamePlusToggle%, %iniFile%, Settings, GameNamePlusToggle
+    GetSetAllBots()
 Return
 ;----------------------------------------------------------------------------------
 ;----------------------------------- Load Code ------------------------------------
