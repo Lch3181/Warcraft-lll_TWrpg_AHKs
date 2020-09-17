@@ -19,7 +19,7 @@ FileInstall, SearchIcon.png, SearchIcon.png
 ;GUI
 ;-------------------------------------------Loader Tab---------------------------------------------------
 Gui, Color, DCDCDC
-Gui, Add, Tab3, x0 y20 w380 h200 vSubLoader, TWrpg|MAYBE
+Gui, Add, Tab3, x0 y20 w380 h200 vSubLoader, TWrpg
 ;--------------- For TWRPG ---------------
 Gui, Tab, TWRPG
 Gui, Add, Text, x20 y50, Hero:
@@ -377,7 +377,8 @@ GetSetAllHeros()
             TwrpgHeros .= "|"
     }
     GuiControl, 1:, HeroChoice, %TwrpgHeros%
-    GuiControl, 1:, ConvertToggle, % IniRead("Settings", "ConvertToggle")
+    if IniRead("Settings", "ConvertToggle") is Digit
+        GuiControl, 1:, ConvertToggle, % IniRead("Settings", "ConvertToggle")
     GuiControl, 2:, HeroChoice, %TwrpgHeros%
     if(GetGuiValue("2", "HeroChoice") != "")
     {
@@ -402,8 +403,10 @@ GetSetAllBots()
         GuiControl, 1:, BotCommand, % IniRead("TwrpgBots", GetGuiValue("1", "BotChoice"))
     else
         GuiControl, 1:, BotCommand, 
-    GuiControl, 1:, BotCommandToggle, % IniRead("Settings", "BotCommandToggle")
+    if IniRead("Settings", "BotCommandToggle") is Digit
+        GuiControl, 1:, BotCommandToggle, % IniRead("Settings", "BotCommandToggle")
     GuiControl, 1:, GN, % IniRead("LastLoaded", "GameName")
+        if IniRead("Settings", "GameNamePlusToggle") is Digit
     GuiControl, 1:, GameNamePlusToggle, % IniRead("Settings", "GameNamePlusToggle")
 }
 
