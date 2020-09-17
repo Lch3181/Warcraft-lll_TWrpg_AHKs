@@ -19,11 +19,12 @@ FileInstall, SearchIcon.png, SearchIcon.png
 ;GUI
 ;-------------------------------------------Loader Tab---------------------------------------------------
 Gui, Color, DCDCDC
-Gui, Add, Tab3, x0 y20 w380 h280 vSubLoader, TWrpg|MAYBE
+Gui, Add, Tab3, x0 y20 w380 h200 vSubLoader, TWrpg|MAYBE
 ;--------------- For TWRPG ---------------
 Gui, Tab, TWRPG
 Gui, Add, Text, x20 y50, Hero:
 Gui, Add, DropDownList, y+5 w340 R10 vHeroChoice
+Gui, Add, Checkbox, y+10 vConvertToggle, -Convert for Warcraft III Reforged
 Gui, Add, Button, x20 y+10 w150 h30 gtwrpg , Load
 Gui, Add, Button, x+20 w170 h30 gHerosEditorButton, Add/Edit/Delete
 Gui, Add, Text, x20 y+10 , TWRPG Folder:
@@ -31,22 +32,20 @@ Gui, Add, Edit, x20 y+10 w310 h30 R1 vTWrpgFolderAddress ReadOnly, % IniRead("Ad
 Gui, Add, Picture, x+10 w20 h20 vTWrpgFolder gGetSetFolder, SearchIcon.png
 ;Gui, Add, Button,  x+10 w40 h22 vTWrpgFolder gGetSetFolder, Open
 ;-------------------------------------------Main Tab-------------------------------------------------------
-Gui, Add, Tab2, x0 y0 w380 h300 gTabSwitched vMainTab, Loader|Host
+Gui, Add, Tab2, x0 y0 w380 h220 gTabSwitched vMainTab, Loader|Host
 ;---- For Hosting
 Gui, Tab, Host
 Gui, Add, Text, x20 y30, Pick:
-Gui, Add, DropDownList, y+5 w100 h150 vBot , leebot|macibot|maci886|Idolbot||
-Gui, Add, Text, y+10, Game Name:
-Gui, Add, Edit , y+5 w100 h20 vGN , sey
-Gui, Add, Button , x+0 w30 h20 gPlus , +1
-Gui, Add, Text, x20 y+10, Extra Command:
-Gui, Add, Edit, y+5 w100 h20 vCommand, !load twre
-Gui, Add, Checkbox, x+10 w13 h13
+Gui, Add, ComboBox, y+5 w100 h150 vBotChoice gOnSelectBot
+Gui, Add, Text, x20 y+10, Map Load Command:
+Gui, Add, Edit, y+5 w100 h20 vBotCommand
+Gui, Add, Checkbox, x+10 vBotCommandToggle, Enable/Disable
+Gui, Add, Text, x20 y+10, Game Name:
+Gui, Add, Edit , y+5 w100 h20 vGN
+Gui, Add, Checkbox, x+10 vGameNamePlusToggle, Game Name + 1 Enable/Disable
 Gui, Add, Button , x20 y+20 w100 h30 gPriv , Private
 Gui, Add, Button , x+20 w100 h30 gPub , Public
-Gui, Add, Text, x20 y+10, Bots:
-Gui, Add, Button, y+10 w100 h30, Add
-Gui, Add, Button, x+20 w100 h30, Delete
+Gui, Add, Button, x+20 w100 h30 gDeleteBot, Delete Bot Hostory
 ;-----------------------------------------Hero Editor---------------------------------------------------------
 Gui, 2: Color, DCDCDC
 Gui, 2: Add, Text, x10 y10, Hero:
@@ -60,17 +59,18 @@ Gui, 2: Add, Button, x+20 w100 h30 gEditHeroSubmit, Update
 Gui, 2: Add, Button, x+20 w100 h30 gDeleteHeroSubmit, Delete
 
 ;Main
-;Get all Heros for TWrpg
+;GetSetAll
 GetSetAllHeros()
+GetSetAllBots()
 
 ;temp debug
-Gui, Show, w380 h300, Pick Your Load Code
+Gui, Show, w380 h220, Pick Your Load Code
 
 ;----------------------------------------------------------------------------------
 ;----------------------------------- Load Code ------------------------------------
 ;----------------------------------------------------------------------------------
 $F8::
-    Gui, Show, w380 h300, Pick Your Load Code
+    Gui, Show, w380 h220, Pick Your Load Code
 Return
 ;----------------------------------------------------------------------------------
 twrpg:
@@ -109,9 +109,8 @@ twrpg:
         WC3Chat(IniRead("LoadingString", GetGuiValue(A_Gui,"HeroChoice")))
         OutputDebug, % code
         OutputDebug, % charName
-        if(charName != "")
+        if(charName != "" && GetGuiValue(A_Gui, "Convert"))
             WC3Chat("-convert "charName)
-        WC3Chat("-refresh")
         sleep, 100
 
         i := 1
@@ -124,6 +123,7 @@ twrpg:
 
             i := i + 1
         }
+        WC3Chat("-refresh")
         code =
         sleep 3000
         tw_skills()
@@ -132,27 +132,24 @@ twrpg:
     {
         MsgBox, "File Does Not Exist"
     }
+
+    ;update ini file
+    IniWrite, %ConvertToggle%, %iniFile%, Settings, ConvertToggle
 Return
 ;----------------------------------------------------------------------------------
-tw_skills()
-{
-    SendInput, {o}
+tw_skills(){
+    SendInput, {F1 2}
+    Sleep, 100
+    SendInput, {Ctrl down}{1}{Ctrl up}
+    Sleep, 100
+    SendInput, {Esc}{o}
     sleep, 25
     SendInput, {t}{q}{w}{e}{r}
 }
 ;----------------------------------------------------------------------------------
-Cancel:
-    Gui, Cancel
-Return
-;----------------------------------------------------------------------------------
-Host:
-    Gui, Cancel
-    Gui, 2:Show, autosize, Choose a Hostbot
-Return
-;----------------------------------------------------------------------------------
 Plus:
     Gui, Submit, NoHide
-    result := RegExMatch(GN, "([a-zA-Z]+)(\d+)", Match)
+    result := RegExMatch(GN, "([a-zA-Z]+)(\d*)", Match)
     name := Match1
     number := Match2
 
@@ -171,36 +168,77 @@ Return
 Pub:
     Gui, Cancel
     Gui, Submit
-    SendInput, {Enter}
-    SendRaw, /w %Bot% !pub %GN%
-    SendInput, {Enter 2}
-    SendRaw Game Name: %GN%
-    SendInput {Enter}
+    ;Find Warcraft III and focus on it
+    if WinExist("Warcraft III") 
+    {
+        WinActivate
+    }
+    else
+    {
+        MsgBox, Couldn't find Warcraft III
+        return
+    }
+    ;output to wc3 chat
+    if(GameNamePlusToggle)
+        Gosub, Plus
+    if(BotCommandToggle)
+    {
+        WC3Chat("/w " . BotChoice . " " . BotCommand)
+        Sleep, 2000
+    }
+    WC3Chat("/w " . BotChoice . " !pub " . GN)
+    WC3Chat("Game Name: "GN)
+    ; update inifile
+    IniWrite, %GN%, %iniFile%, LastLoaded, GameName
+    IniWrite, %BotChoice%, %iniFile%, LastLoaded, Bot
+    IniWrite, %BotCommand%, %iniFile%, TWrpgBots, %BotChoice%
+    IniWrite, %BotCommandToggle%, %iniFile%, Settings, BotCommandToggle
+    IniWrite, %GameNamePlusToggle%, %iniFile%, Settings, GameNamePlusToggle
 Return
 ;----------------------------------------------------------------------------------
 Priv:
     Gui, Cancel
     Gui, Submit
-    SendInput, {Enter}
-    SendRaw, /w %Bot% !priv %GN%
-    SendInput, {Enter 2}
-    SendRaw Game Name: %GN%
-    SendInput {Enter}
+    ;Find Warcraft III and focus on it
+    if WinExist("Warcraft III") 
+    {
+        WinActivate
+    }
+    else
+    {
+        MsgBox, Couldn't find Warcraft III
+        return
+    }
+    ;output to wc3 chat
+    if(GameNamePlusToggle)
+        Gosub, Plus
+    if(BotCommandToggle)
+    {
+        WC3Chat("/w " . BotChoice . " " . BotCommand)
+        Sleep, 2000
+    }
+    WC3Chat("/w " . BotChoice . " !priv " . GN)
+    WC3Chat("Game Name: "GN)
+    ; update inifile
+    IniWrite, %GN%, %iniFile%, LastLoaded, GameName
+    IniWrite, %BotChoice%, %iniFile%, LastLoaded, Bot
+    IniWrite, %BotCommand%, %iniFile%, TWrpgBots, %BotChoice%
+    IniWrite, %BotCommandToggle%, %iniFile%, Settings, BotCommandToggle
+    IniWrite, %GameNamePlusToggle%, %iniFile%, Settings, GameNamePlusToggle
 Return
-;----------------------------------------------------------------------------------
 ;----------------------------------------------------------------------------------
 ;----------------------------------- Load Code ------------------------------------
 ;----------------------------------------------------------------------------------
-RemoveToolTip:
-    SetTimer, RemoveToolTip, Off
-    ToolTip
-return
 ;------------------------------------Labels----------------------------------------
-;Main Gui
 OnSelectHero:
     GuiControl, %A_Gui%:, URL, % IniRead("TWrpgHeros", GetGuiValue(A_Gui, A_GuiControl))
     GuiControl, %A_Gui%:, LoadingString, % IniRead("LoadingString", GetGuiValue(A_Gui, A_GuiControl))
 return
+
+OnSelectBot:
+    GuiControl, %A_Gui%:, BotCommand, % IniRead("TWrpgBots", GetGuiValue(A_Gui, A_GuiControl))
+return
+
 TabSwitched:
     Gui, Submit, Nohide
     if(MainTab = "Loader")
@@ -243,12 +281,12 @@ AddHeroSubmit:
             IniWrite, % GetGuiValue(A_Gui,"HeroChoice"), %iniFile%, LastLoaded, Hero
             IniWrite, % GetGuiValue(A_Gui,"URL"), %iniFile%, % OutputVar "Heros", % GetGuiValue(A_Gui,"HeroChoice")
             IniWrite, % GetGuiValue(A_Gui,"LoadingString"), %iniFile%, LoadingString, % GetGuiValue(A_Gui,"HeroChoice")
-            ToolTip, % GetGuiValue(A_Gui, "HeroChoice") . " Updated"
+            ToolTip(GetGuiValue(A_Gui, "HeroChoice") . " Updated")
             GetSetAllHeros()
         }
         else IfMsgBox, Cancel
         {
-            ToolTip, Canceled
+            ToolTip("Canceled")
         }
     }
     else
@@ -271,24 +309,29 @@ DeleteHeroSubmit:
     ;update inifile
     IniDelete, %iniFile%, % OutputVar "Heros", % GetGuiValue(A_Gui,"HeroChoice")
     IniDelete, %iniFile%, LoadingString, % GetGuiValue(A_Gui,"HeroChoice")
-    ToolTip, % GetGuiValue(A_Gui, "HeroChoice") . " Deleted"
+    ToolTip(GetGuiValue(A_Gui, "HeroChoice") . " Deleted")
     GetSetAllHeros()
     ;close gui
     Gui, Hide
 return
 
+RemoveToolTip:
+    ToolTip
+return
+
+DeleteBot:
+    ; update inifile
+    IniDelete, %iniFile%, LastLoaded, Bot
+    IniDelete, %iniFile%, TWrpgBots, % GetGuiValue("1", "BotChoice")
+    GetSetAllBots()
+return
+
 ;------------------------------------Functions-------------------------------------
-IniRead(Section, Key)
+IniRead(Section, Key := "")
 {
     IniRead, OutputVar, %iniFile%, %Section%, %Key%
     if(OutputVar = "ERROR")
         OutputVar := ""
-    return OutputVar
-}
-
-IniReadSection(Section)
-{
-    IniRead, OutputVar, %iniFile%, %Section%
     return OutputVar
 }
 
@@ -325,7 +368,7 @@ WC3Chat(String)
 GetSetAllHeros()
 {
     TwrpgHeros := "|"
-    OutputVar := IniReadSection("TWrpgHeros") ;get all lines in section
+    OutputVar := IniRead("TWrpgHeros") ;get all lines in section
     lines := StrSplit(OutputVar, "`n") ;split by newline
     Loop % lines.MaxIndex()
     {
@@ -334,14 +377,39 @@ GetSetAllHeros()
             TwrpgHeros .= "|"
     }
     GuiControl, 1:, HeroChoice, %TwrpgHeros%
+    GuiControl, 1:, ConvertToggle, % IniRead("Settings", "ConvertToggle")
     GuiControl, 2:, HeroChoice, %TwrpgHeros%
-    GuiControl, 2:, URL, % IniRead("TWrpgHeros", GetGuiValue("2", "HeroChoice"))
-    GuiControl, 2:, LoadingString, % IniRead("LoadingString", GetGuiValue("2", "HeroChoice"))
+    if(GetGuiValue("2", "HeroChoice") != "")
+    {
+        GuiControl, 2:, URL, % IniRead("TWrpgHeros", GetGuiValue("2", "HeroChoice"))
+        GuiControl, 2:, LoadingString, % IniRead("LoadingString", GetGuiValue("2", "HeroChoice"))
+    }
+}
+
+GetSetAllBots()
+{
+    TwrpgBots := "|"
+    OutputVar := IniRead("TWrpgBots") ;get all lines in section
+    lines := StrSplit(OutputVar, "`n") ;split by newline
+    Loop % lines.MaxIndex()
+    {
+        TwrpgBots .= StrSplit(lines[A_Index], "=")[1]"|" ;get key
+        if(StrSplit(lines[A_Index], "=")[1] = IniRead("LastLoaded", "Bot")) ; set default hero by last loaded hero
+            TwrpgBots .= "|"
+    }
+    GuiControl, 1:, BotChoice, %TwrpgBots%
+    if(GetGuiValue("1", "BotChoice") != "")
+        GuiControl, 1:, BotCommand, % IniRead("TwrpgBots", GetGuiValue("1", "BotChoice"))
+    else
+        GuiControl, 1:, BotCommand, 
+    GuiControl, 1:, BotCommandToggle, % IniRead("Settings", "BotCommandToggle")
+    GuiControl, 1:, GN, % IniRead("LastLoaded", "GameName")
+    GuiControl, 1:, GameNamePlusToggle, % IniRead("Settings", "GameNamePlusToggle")
 }
 
 FileExistCheck()
 {
-    ToolTip, Checking File Existent...
+    ToolTip("Checking File Existent...")
     ;Read save file
     if(IniRead("TWrpgHeros", GetGuiValue(A_Gui,"HeroChoice")) = "") ;if URL is empty, load from PC
         FileRead, code, % IniRead("Address", "TWrpgFolder")"\"GetGuiValue(A_Gui,"HeroChoice")".txt"
@@ -355,6 +423,12 @@ FileExistCheck()
     {
         return ErrorLevel ; 1(Error)
     }
+}
+
+ToolTip(String, Timer = -3000)
+{
+    ToolTip, %String%
+    SetTimer, RemoveToolTip, %Timer%
 }
 
 ;Hotkeys
