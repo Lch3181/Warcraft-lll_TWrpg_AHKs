@@ -17,7 +17,7 @@ Q: Why I cant assgin my hotkey.
 
 A: Properly that key is assgined to something already.
 
-## Independent scripts
+## Independent scripts(Users need to edit them manually)
 ![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/GUI.png)
 
 ## Quick Calls
@@ -162,15 +162,3 @@ For laptop users
 f4:On/Off
 
 Space bar = right click
-
-## PB
-
-f5:On/Off
-
-hold A = spam A
-
-hold A during T duration = spam Q W A
-
-D = quickcast
-
-T = auto cast refresh ring, inventory 1
