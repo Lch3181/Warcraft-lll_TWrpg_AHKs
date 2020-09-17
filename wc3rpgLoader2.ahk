@@ -45,7 +45,7 @@ Gui, Add, Edit , y+5 w100 h20 vGN
 Gui, Add, Checkbox, x+10 vGameNamePlusToggle, Game Name + 1 Enable/Disable
 Gui, Add, Button , x20 y+20 w100 h30 gPriv , Private
 Gui, Add, Button , x+20 w100 h30 gPub , Public
-Gui, Add, Button, x+20 w100 h30 gDeleteBot, Delete Bot Hostory
+Gui, Add, Button, x+20 w100 h30 gDeleteBot, Delete Bot History
 ;-----------------------------------------Hero Editor---------------------------------------------------------
 Gui, 2: Color, DCDCDC
 Gui, 2: Add, Text, x10 y10, Hero:
