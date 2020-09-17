@@ -1,6 +1,8 @@
 # Twrpg AHK
 Make life easier
 
+## TWRPG Loader v2 (Based on Lee's loader but more user friendly)
+
 ## User Friendly All in One Tool
 ![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/ToggleGUI.png)
 ![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/InventoryGUI.png)
