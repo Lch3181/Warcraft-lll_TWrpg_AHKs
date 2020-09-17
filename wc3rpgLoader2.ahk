@@ -273,9 +273,10 @@ AddHeroSubmit:
     WinGetActiveTitle, OutputVar
     OutputVar := RegExReplace(OutputVar, "^(.*?)\s.*", "$1")
     ;check if inputs are correct
-    if(FileExistCheck() != 1)
+    result := FileExistCheck()
+    if(result != 1 && result != "")
     {
-        MsgBox, 1, % GetGuiValue(A_Gui,"HeroChoice")".txt", % FileExistCheck()
+        MsgBox, 1, % GetGuiValue(A_Gui,"HeroChoice")".txt", % result
         IfMsgBox, OK
         {
             ; update ini file
@@ -289,14 +290,14 @@ AddHeroSubmit:
         {
             ToolTip("Canceled")
         }
+        ;close gui
+        Gui, Hide
     }
     else
     {
         MsgBox, File Does Not Exist`, Please Double Check.
         ToolTip
     }
-    ;close gui
-    Gui, Hide
 return
 
 EditHeroSubmit:
@@ -415,22 +416,26 @@ FileExistCheck()
 {
     ToolTip("Checking File Existent...")
     ;Read save file
-    if(IniRead("TWrpgHeros", GetGuiValue(A_Gui,"HeroChoice")) = "") ;if URL is empty, load from PC
+    if(GetGuiValue(A_Gui,"URL") = "") ;if URL is empty, load from PC
         FileRead, code, % IniRead("Address", "TWrpgFolder")"\"GetGuiValue(A_Gui,"HeroChoice")".txt"
     else ;if URL exist
-        code := DownloadFileFromUrl(IniRead("TWrpgHeros", GetGuiValue(A_Gui,"HeroChoice")))
+        code := DownloadFileFromUrl(GetGuiValue(A_Gui,"URL"))
+
+    codeChecker := ""
 
     temp := StrReplace(code, "-load", "-load", count) ;count load codes
 
     res := RegExMatch(code, "(User Name|아이디:\s(?:[^""]|\\"")*)", Match) ;find character name
-    codeChecker := Match1 . "`n"
+    if (Match1 != "")
+        codeChecker := Match1 . "`n"
 
     ;find all load codes
     i := 1
     while(i <= count){
         pos := InStr(code, "-load",, 1, i)
         result := RegExMatch(code, "-load [a-zA-Z\d\?@#$%&-]*", Match, pos)
-        codeChecker .= Match . "`n"
+        if (Match != "")
+            codeChecker .= Match . "`n"
 
         i := i + 1
     }
