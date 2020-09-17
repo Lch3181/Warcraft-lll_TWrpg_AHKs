@@ -1,7 +1,17 @@
 # Twrpg AHK
-Make life easier
+Make life ~~lazier~~ easier
 
 ## TWRPG Loader v2 (Based on Lee's loader but more user friendly)
+Lee's twrpg loader: [Script to load characters](https://www.twrpg.com/viewtopic.php?f=2&t=4845)
+
+![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/wc3rpgLoaderGUI.png)
+![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/wc3rpgHerosEditorGUI.png)
+![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/wc3rpgHostGUI.png)
+
+## How to use:
+Loading hero on first time, select the twrpg save folder on the bottom; next, click the add button to add heros, download URL if any, and the loading String if you want; then, click add/update; finally, select the hero you would like to load and click the load button.
+
+Hosting on the first time, type the bot's name, map load command if any, and game name; then click private/public to host. Everything will be saved for the next time when you want to host. Click Delete Bot History to delete the selected bot info.
 
 ## User Friendly All in One Tool
 ![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/ToggleGUI.png)
