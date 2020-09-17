@@ -32,7 +32,7 @@ Press the button to edit the Hotkey by pressing the key you want on keyboard or 
 ## FQA: 
 Q: Why I cant assgin my hotkey.
 
-A: Properly that key is assgined to something already.
+A: Probably that key is assgined to something already.
 
 ## Independent scripts(Users need to edit them manually)
 ![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/GUI.png)
