@@ -18,7 +18,7 @@ Hosting on the first time, type the bot's name, map load command if any, and gam
 
 Download from release or the link above. Unzip it and run the .exe file in anywhere else. Note: there will be extra files generated after running the .exe file
 
-## User Friendly All in One Tool
+## User Friendly All in One Tool Beta
 ![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/ToggleGUI.png)
 ![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/InventoryGUI.png)
 ![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/QuickCastGUI.png)
@@ -38,6 +38,8 @@ A: Properly that key is assgined to something already.
 ![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/GUI.png)
 
 ## Quick Calls
+[Download](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/tree/master/Independent/QuickCalls.ahk)
+
 f6: On/Off
 
 Shift+J: DeathFiend
@@ -148,6 +150,8 @@ V:
 B: >> HH READY <<
 
 ## Inventory
+[Download](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/tree/master/Independent/inventory.ahk)
+
 f2:On/Off
 
 1 = NUMPAD 7
@@ -163,6 +167,8 @@ f2:On/Off
 6 = NUMPAD 2
 
 ## Quick Cast
+[Download](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/tree/master/Independent/QuickCast.ahk)
+
 Automatically left click after clicking spells' hotkeys
 
 f3: On/Off
@@ -174,6 +180,8 @@ Q W E R T F
 2 = NUMPAD 8
 
 ## No Mouse
+[Download](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/tree/master/Independent/NoMouse.ahk)
+
 For laptop users
 
 f4:On/Off
