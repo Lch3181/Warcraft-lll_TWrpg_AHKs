@@ -1,7 +1,7 @@
 # Twrpg AHK
 Make life ~~lazier~~ easier
 
-## TWRPG Loader v2 (Based on Lee's loader but more user friendly)
+## TWRPG Loader 2 (Based on Lee's loader but more user friendly)
 Lee's twrpg loader: [Script to load characters](https://www.twrpg.com/viewtopic.php?f=2&t=4845)
 
 ![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/wc3rpgLoaderGUI.png)
