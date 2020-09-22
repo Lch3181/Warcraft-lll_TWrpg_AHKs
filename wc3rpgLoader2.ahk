@@ -425,7 +425,7 @@ FileExistCheck()
 
     temp := StrReplace(code, "-load", "-load", count) ;count load codes
 
-    res := RegExMatch(code, "(User Name|아이디:\s(?:[^""]|\\"")*)", Match) ;find character name
+    res := RegExMatch(code, "((?|User Name|아이디):\s(?:[^""]|\\"")*)", Match) ;find character name
     if (Match1 != "")
         codeChecker := Match1 . "`n"
 
