@@ -12,14 +12,22 @@ SetWinDelay, -1
 SetBatchLines, -1
 SetControlDelay -1
 Thread, interrupt, 0
+global version := 2.0
 global iniFile := "wc3rpgLoaderData.ini"
+global KeyWaiting := False
+global GUIShow := False
+global inventory := False
 ;Includes the specified file inside the compiled version of the script.
-FileInstall, SearchIcon.png, SearchIcon.png
+FileInstall, Images\SearchIcon.png, Images\SearchIcon.png
+FileInstall, Images\Inventory.jpg, Images\Inventory.jpg
+
+;fill up missing data if first run
+initial()
 
 ;GUI
 ;-------------------------------------------Loader Tab---------------------------------------------------
 Gui, Color, DCDCDC
-Gui, Add, Tab3, x0 y20 w380 h200 vSubLoader, TWrpg
+Gui, Add, Tab3, x0 y20 w380 h240 vSubLoader, TWrpg
 ;--------------- For TWRPG ---------------
 Gui, Tab, TWRPG
 Gui, Add, Text, x20 y50, Hero:
@@ -29,24 +37,64 @@ Gui, Add, Button, x20 y+10 w150 h30 gtwrpg , Load
 Gui, Add, Button, x+20 w170 h30 gHerosEditorButton, Add/Edit/Delete
 Gui, Add, Text, x20 y+10 , TWRPG Folder:
 Gui, Add, Edit, x20 y+10 w310 h30 R1 vTWrpgFolderAddress ReadOnly, % IniRead("Address", "TWrpgFolder")
-Gui, Add, Picture, x+10 w20 h20 vTWrpgFolder gGetSetFolder, SearchIcon.png
-;Gui, Add, Button,  x+10 w40 h22 vTWrpgFolder gGetSetFolder, Open
+Gui, Add, Picture, x+10 w20 h20 vTWrpgFolder gGetSetFolder, Images\SearchIcon.png
+Gui, Add, Button, x20 y+10 w150 h30 gScanSaveFiles, Scan Save Files
 ;-------------------------------------------Main Tab-------------------------------------------------------
-Gui, Add, Tab2, x0 y0 w380 h220 gTabSwitched vMainTab, Loader|Host
+Gui, Add, Tab2, x0 y0 w380 h260 gTabSwitched vMainTab, Loader|Host|Inventory|Settings
 ;---- For Hosting
 Gui, Tab, Host
-Gui, Add, Text, x20 y30, Pick:
+Gui, Add, Text, x20 y30 , Pick:
 Gui, Add, ComboBox, y+5 w100 R10 vBotChoice gOnSelectBot
-Gui, Add, Text, x20 y+10, Map Load Command:
+Gui, Add, Text, x20 y+10 , Map Load Command:
 Gui, Add, Edit, y+5 w100 h20 vBotCommand
 Gui, Add, Checkbox, x+10 vBotCommandToggle, Enable/Disable
-Gui, Add, Text, x20 y+10, Game Name:
-Gui, Add, Edit , y+5 w100 h20 vGN
+Gui, Add, Text, x20 y+10 , Game Name:
+Gui, Add, Edit, y+5 w100 h20 vGN
 Gui, Add, Checkbox, x+10 vGameNamePlusToggle, Game Name + 1 Enable/Disable
-Gui, Add, Button , x20 y+20 w100 h30 gPriv , Private
-Gui, Add, Button , x+20 w100 h30 gPub , Public
+Gui, Add, Button, x20 y+20 w100 h30 gPriv, Private
+Gui, Add, Button, x+20 w100 h30 gPub, Public
 Gui, Add, Button, x+20 w100 h30 gDeleteBot, Delete Bot History
-;-----------------------------------------Hero Editor---------------------------------------------------------
+;-----------------------------------------Inventory---------------------------------------------------------
+Gui, Tab, Inventory
+Gui, Add, Picture, x20 y40 Icon , Images\Inventory.jpg
+Gui, Font, s12
+Gui, Add, Text, x+10 y40 , Enable/Disable
+Gui, Add, Text, y+0 , CheckBox for Auto Cast
+Gui, Font, s8
+Gui, Add, Button, x285 y40 w50 h20 gGetSetKey vInventoryToggle
+Gui, Add, Button, x29 y80 w50 h20 gGetSetKey vNumpad7
+Gui, Add, Button, x+21 w50 h20 gGetSetKey vNumpad8
+Gui, Add, Button, x29 y+50 w50 h20 gGetSetKey vNumpad4
+Gui, Add, Button, x+21 w50 h20 gGetSetKey vNumpad5
+Gui, Add, Button, x29 y+50 w50 h20 gGetSetKey vNumpad1
+Gui, Add, Button, x+21 w50 h20 gGetSetKey vNumpad2
+Gui, Add, CheckBox, x47 y60 w13 h13 gGetSetCheckBoxValue vNumpad7AutoCast
+Gui, Add, CheckBox, x+58 w13 h13 gGetSetCheckBoxValue vNumpad8AutoCast
+Gui, Add, CheckBox, x47 y+56 w13 h13 gGetSetCheckBoxValue vNumpad4AutoCast
+Gui, Add, CheckBox, x+58 w13 h13 gGetSetCheckBoxValue vNumpad5AutoCast
+Gui, Add, CheckBox, x47 y+56 w13 h13 gGetSetCheckBoxValue vNumpad1AutoCast
+Gui, Add, CheckBox, x+58 w13 h13 gGetSetCheckBoxValue vNumpad2AutoCast
+;-----------------------------------------Settings----------------------------------------------------------
+Gui, Tab, Settings
+Gui, Font, s12
+Gui, Add, Text, x10 y30, Show/Hide
+Gui, Add, Text, y+0, Unsign Hotkey
+Gui, Add, Text, y+0, Suspend
+Gui, Add, Text, y+0, Reload
+Gui, Add, Text, y+0, Exit
+Gui, Add, Text, y+0, Disable All on Enter
+Gui, Add, Text, y+0, Disable All Hotkeys'
+Gui, Add, Text, y+0, Native Functions
+Gui, Add, Text, y+0, Ex: Alt+q if assigned
+Gui, Font, s8
+Gui, Add, Button, x200 y30 w50 h20 gGetSetKey vShowHideMain
+Gui, Add, Button, y+0 w50 h20 disabled, ESC
+Gui, Add, Button, y+0 w50 h20 disabled, Alt+S
+Gui, Add, Button, y+0 w50 h20 disabled, Alt+R
+Gui, Add, Button, y+0 w50 h20 disabled, Alt+ESC
+Gui, Add, Checkbox, y+5 gGetSetCheckBoxValue vDisableAll 
+Gui, Add, Checkbox, y+5 gGetSetCheckBoxValue vDisableAllNativeFunctions 
+;-----------------------------------------Hero Editor-------------------------------------------------------
 Gui, 2: Color, DCDCDC
 Gui, 2: Add, Text, x10 y10, Hero:
 Gui, 2: Add, ComboBox, y+5 w340 R10 vHeroChoice gOnSelectHero
@@ -57,18 +105,32 @@ Gui, 2: Add, Edit, y+5 w340 h20 vLoadingString, Loading Hero1
 Gui, 2: Add, Button, y+10 w100 h30 gAddHeroSubmit, Add
 Gui, 2: Add, Button, x+20 w100 h30 gEditHeroSubmit, Update
 Gui, 2: Add, Button, x+20 w100 h30 gDeleteHeroSubmit, Delete
+;-----------------------------------------Toggle Gui--------------------------------------------------------
+;Toggles Gui
+Gui, 3: +LastFound +AlwaysOnTop -Caption
+Gui, 3: Font, s10
+Gui, 3: Font, cRed
+Gui, 3: Add, Text, vActiveInventory x0 y0 , % "Inventory: " ((inventory) ? ("Enabled") : ("Disabled"))
+;Gui, 3: Add, Text, vActiveQuickCast x0 y+0, % "Auto Cast: " ((QuickCast) ? ("Enabled") : ("Disabled"))
+;Gui, 3: Add, Text, vActiveQuickCall x0 y+0, % "Quick Call: " ((QuickCall) ? ("Enabled") : ("Disabled"))
+;Gui, 3: Add, Text, vTarget x+5 w100, No Target
+;Gui, 3: Add, Text, vActiveNoMouse   x0 y+0, % "No Mouse: " ((NoMouse) ? ("Enabled") : ("Disabled"))
+Gui, 3: Color, EEAA99
+WinSet, TransColor, EEAA99
+Gui, 3: Show, x0 y10
 
-;Main
 ;GetSetAll
-GetSetAllHeros()
-GetSetAllBots()
+GetSetHeros()
+GetSetBots()
+GetSetInventories()
+GetSetSettings()
+
+;Show Gui on Start
+Gui, Show, w380 h260, WC3 RPG Tool
+return
 
 ;----------------------------------------------------------------------------------
 ;----------------------------------- Load Code ------------------------------------
-;----------------------------------------------------------------------------------
-$F8::
-    Gui, Show, w380 h220, WC3 RPG Loader
-Return
 ;----------------------------------------------------------------------------------
 twrpg:
 
@@ -104,8 +166,6 @@ twrpg:
 
         ;output to wc3 chat
         WC3Chat(IniRead("LoadingString", GetGuiValue(A_Gui,"HeroChoice")))
-        OutputDebug, % code
-        OutputDebug, % charName
         if(charName != "" && GetGuiValue(A_Gui, "Convert"))
             WC3Chat("-convert "charName)
         sleep, 100
@@ -192,7 +252,7 @@ Pub:
     IniWrite, %BotCommandToggle%, %iniFile%, Settings, BotCommandToggle
     IniWrite, %GameNamePlusToggle%, %iniFile%, Settings, GameNamePlusToggle
     ;refresh gui
-    GetSetAllBots()
+    GetSetBots()
 Return
 ;----------------------------------------------------------------------------------
 Priv:
@@ -225,7 +285,7 @@ Priv:
     IniWrite, %BotCommandToggle%, %iniFile%, Settings, BotCommandToggle
     IniWrite, %GameNamePlusToggle%, %iniFile%, Settings, GameNamePlusToggle
     ;refresh gui
-    GetSetAllBots()
+    GetSetBots()
 Return
 ;----------------------------------------------------------------------------------
 ;----------------------------------- Load Code ------------------------------------
@@ -264,6 +324,19 @@ GetSetFolder:
 
 return
 
+ScanSaveFiles:
+    Gui, Submit, NoHide
+    ToolTip("Scanning all files. . .")
+    Loop % IniRead("Address", SubLoader . "Folder")"\*.*" ; in each file in folder
+    {
+        FileRead, OutputVar, % IniRead("Address", SubLoader . "Folder") . "\" . A_LoopFileName
+        if(RegExMatch(OutputVar, "((?|User Name|아이디):\s(?:[^""]|\\"")*)") > 0) ; if it is a save folder
+            IniWrite, % "", %iniFile%, % SubLoader . "Heros", % StrReplace(A_LoopFileName, ".txt")
+    }
+    GetSetHeros()
+    ToolTip("Finished Scanning all files")
+return
+
 HerosEditorButton:
     Gui, 2:Show, AutoSize, TWrpg Heros Editor
 return
@@ -284,7 +357,7 @@ AddHeroSubmit:
             IniWrite, % GetGuiValue(A_Gui,"URL"), %iniFile%, % OutputVar "Heros", % GetGuiValue(A_Gui,"HeroChoice")
             IniWrite, % GetGuiValue(A_Gui,"LoadingString"), %iniFile%, LoadingString, % GetGuiValue(A_Gui,"HeroChoice")
             ToolTip(GetGuiValue(A_Gui, "HeroChoice") . " Updated")
-            GetSetAllHeros()
+            GetSetHeros()
         }
         else IfMsgBox, Cancel
         {
@@ -312,7 +385,7 @@ DeleteHeroSubmit:
     IniDelete, %iniFile%, % OutputVar "Heros", % GetGuiValue(A_Gui,"HeroChoice")
     IniDelete, %iniFile%, LoadingString, % GetGuiValue(A_Gui,"HeroChoice")
     ToolTip(GetGuiValue(A_Gui, "HeroChoice") . " Deleted")
-    GetSetAllHeros()
+    GetSetHeros()
     ;close gui
     Gui, Hide
 return
@@ -325,7 +398,39 @@ DeleteBot:
     ; update inifile
     IniDelete, %iniFile%, LastLoaded, Bot
     IniDelete, %iniFile%, TWrpgBots, % GetGuiValue("1", "BotChoice")
-    GetSetAllBots()
+    GetSetBots()
+return
+
+GetSetKey:
+    Gui, Submit, Nohide
+    ; disable hotkey
+    Hotkey, % IniRead(MainTab, A_GuiControl), %A_GuiControl%, Off
+    ToolTip("Please assign a key to "A_GuiControl, -999999)
+    ; Wait a key press
+    input := % KeyWaitAny("V E C M")
+    if(input = -1) ;still waiting key to assign for previous button
+    {
+        GuiControl,, %A_GuiControl%, % GetHotkeyName(IniRead(MainTab, A_GuiControl)) ;update gui
+        ToolTip("Please finish assigning previous button or click ESC to unsign that button")
+        return
+    }
+    if(InStr(GetHotkeys(), input) && input != "")
+    {
+        ToolTip(GetHotkeyName(input) . " is used ")
+        ; re-enable hotkey
+        Hotkey, % IniRead(MainTab, A_GuiControl), %A_GuiControl%, On
+    }
+    else
+    {
+        IniWrite, %input%, %IniFile%, %MainTab%, %A_GuiControl% ;update ini file
+        GetSetInventories() ; refresh inventory tab
+        ToolTip(GetHotkeyName(IniRead(MainTab, A_GuiControl)) . " Assigned to " . A_GuiControl)
+    }
+return
+
+GetSetCheckBoxValue:
+    Gui, Submit, Nohide
+    IniWrite, % GetGuiValue("1", A_GuiControl), %iniFile%, %MainTab%, %A_GuiControl%
 return
 
 ;------------------------------------Functions-------------------------------------
@@ -367,7 +472,62 @@ WC3Chat(String)
     SendInput, {Enter}
 }
 
-GetSetAllHeros()
+initial()
+{
+    clientVersion := IniRead("Settings", "Version")
+    if(clientVersion < version) ; 2.0 initial and inventory added
+    {
+        ;Address
+        IniWrite, % A_MyDocuments . "\Warcraft III\CustomMapData\TWRPG", %iniFile%, Address, TWrpgFolder
+        ;LastLoaded
+        IniWrite, Hero1, %iniFile%, LastLoaded, Hero
+        IniWrite, leebot, %iniFile%, LastLoaded, Bot
+        IniWrite, game name, %iniFile%, LastLoaded, GameName
+        ;TWrpgHeros
+        IniWrite, % "", %iniFile%, TWrpgHeros, Hero1
+        ;LoadingString
+        IniWrite, Loading Hero1, %iniFile%, LoadingString, Hero1
+        ;TWrpgBots
+        IniWrite, !load twre, %iniFile%, TWrpgBots, leebot
+        ;Inventory
+        IniWrite, $F2, %iniFile%, Inventory, InventoryToggle
+        IniWrite, $~1, %iniFile%, Inventory, Numpad7
+        IniWrite, $~2, %iniFile%, Inventory, Numpad8
+        IniWrite, $~3, %iniFile%, Inventory, Numpad4
+        IniWrite, $~4, %iniFile%, Inventory, Numpad5
+        IniWrite, $~5, %iniFile%, Inventory, Numpad1
+        ;Settings
+        IniWrite, %version%, %iniFile%, Settings, Version ; update client version the first time
+        IniWrite, 1, %iniFile%, Settings, ConvertToggle
+        IniWrite, 1, %iniFile%, Settings, BotCommandToggle
+        IniWrite, 1, %iniFile%, Settings, GameNamePlusToggle
+        IniWrite, 1, %iniFile%, Settings, DisableAll
+        IniWrite, 1, %iniFile%, Settings, DisableAllNativeFunctions
+        IniWrite, $F8, %iniFile%, Settings, ShowHideMain
+        ;2.0 relocated files
+        if FileExist("SearchIcon.png")
+            FileDelete, SearchIcon.png
+    }
+    IniWrite, %version%, %iniFile%, Settings, Version ; update client version
+}
+
+GetSetSettings()
+{
+    OutputVar := IniRead("Settings") ;get all lines in section
+    lines := StrSplit(OutputVar, "`n") ;split by newline
+    Loop % lines.MaxIndex()
+    {
+        keyValue := StrSplit(lines[A_Index], "=") ; split line to key and value
+        GuiControl, 1:, % keyValue[1] , % GetHotkeyName(keyValue[2]) ; update gui
+        ; assign hotkeys to labels
+        if(keyValue[2] != "" && InStr(keyValue[1], "ShowHideMain"))
+        {
+            Hotkey, % keyValue[2], % keyValue[1], On
+        }
+    }
+}
+
+GetSetHeros()
 {
     TwrpgHeros := "|"
     OutputVar := IniRead("TWrpgHeros") ;get all lines in section
@@ -389,7 +549,7 @@ GetSetAllHeros()
     }
 }
 
-GetSetAllBots()
+GetSetBots()
 {
     TwrpgBots := "|"
     OutputVar := IniRead("TWrpgBots") ;get all lines in section
@@ -412,6 +572,22 @@ GetSetAllBots()
         GuiControl, 1:, GameNamePlusToggle, % IniRead("Settings", "GameNamePlusToggle")
 }
 
+GetSetInventories()
+{
+    OutputVar := IniRead("Inventory") ;get all lines in section
+    lines := StrSplit(OutputVar, "`n") ;split by newline
+    Loop % lines.MaxIndex()
+    {
+        keyValue := StrSplit(lines[A_Index], "=") ; split line to key and value
+        GuiControl, 1:, % keyValue[1] , % GetHotkeyName(keyValue[2]) ; update gui
+        ; assign hotkeys to labels
+        if(keyValue[2] != "" && !InStr(keyValue[1], "AutoCast"))
+        {
+            Hotkey, % keyValue[2], % keyValue[1], On
+        }
+    }
+}
+
 FileExistCheck()
 {
     ToolTip("Checking File Existent...")
@@ -421,13 +597,15 @@ FileExistCheck()
     else ;if URL exist
         code := DownloadFileFromUrl(GetGuiValue(A_Gui,"URL"))
 
-    codeChecker := ""
-
     temp := StrReplace(code, "-load", "-load", count) ;count load codes
 
     res := RegExMatch(code, "((?|User Name|아이디):\s(?:[^""]|\\"")*)", Match) ;find character name
     if (Match1 != "")
-        codeChecker := Match1 . "`n"
+        codeChecker .= Match1 . "`n"
+
+    res := RegExMatch(code, "((?|Class|직업):\s(?:[^""]|\\"")*)", Match) ;find class
+    if (Match1 != "")
+        codeChecker .= Match1 . "`n"
 
     ;find all load codes
     i := 1
@@ -456,7 +634,116 @@ ToolTip(String, Timer = -3000)
     SetTimer, RemoveToolTip, %Timer%
 }
 
+KeyWaitAny(Options:="")
+{
+    if(!KeyWaiting)
+    {
+        KeyWaiting := True
+        ih := InputHook(Options)
+        ih.KeyOpt("{All}", "ES") ; End and Suppress
+        ih.KeyOpt("{LCtrl}{RCtrl}{LAlt}{RAlt}{LShift}{RShift}{LWin}{RWin}", "-ES") ; Exclude the modifiers
+        ih.Start()
+        ErrorLevel := ih.Wait() ; Store EndReason in ErrorLevel
+        KeyWaiting := False
+        OutputDebug, % "Mod: " . ih.EndMods . " Key: " . ih.EndKey
+        switch ih.EndKey
+        {
+        case "Escape":
+        return ""
+    default:
+        if(ih.EndMods != "" || RegExMatch(ih.EndKey, "\w{2}") > 0) ; disable key function for combined hotkeys
+        {
+            return "$" . ih.EndMods . ih.EndKey
+        }
+        else ; send key include the hotkey
+            return "$~" . ih.EndMods . ih.EndKey
+    }
+}
+else
+{
+    return -1
+}
+}
+
+GetHotkeys()
+{
+    FileRead, Script, %iniFile%
+    lines := StrSplit(Script, "`n") ;split by newline
+    Loop % lines.MaxIndex()
+    {
+        value := StrSplit(lines[A_Index], "=")[2]
+        if(InStr(value, "$"))
+            Hotkeys .= value . ", " ;get all hotkeys from value
+    }
+    return Hotkeys
+}
+
+GetHotkeyName(Hotkey)
+{
+    HotkeyNames := [["+","Shift+"], ["<^>!","AltGr+"], ["<","L"], [">","R"], ["!","Alt+"], ["^","Ctrl+"], ["#","Win+"], ["$",""], ["~",""]]
+    for key, value in HotkeyNames
+    {
+        Hotkey := StrReplace(Hotkey, value[1], value[2])
+    }
+    return Hotkey
+}
+
 ;Hotkeys
+;Inventory
+InventoryToggle:
+    inventory := !inventory ; toggle inventory
+    GuiControl, 3: Text, ActiveInventory, % "Inventory: " ((inventory) ? ("Enabled") : ("Disabled")) ;update GUI
+    if (!GetGuiValue("1", "DisableAllNativeFunctions")) ; send hotkey when native function is blocked
+    {
+        if(RegExMatch(A_ThisHotKey, "\w{2}") != 0) ; Function keys F1~F12
+        SendInput, % "{" . RegExReplace(A_ThisHotKey, "[$<>]", "") . "}"
+    else ; Combined keys ex: ALT+T
+        Send, % RegExReplace(A_ThisHotKey, "[$<>]", "")
+}
+return
+Numpad7:
+Numpad2:
+Numpad1:
+Numpad5:
+Numpad4:
+Numpad8:
+    if(inventory)
+        SendInput, {%A_ThisLabel%}
+    if(inventory && GetGuiValue("1", A_ThisLabel . "AutoCast") = 1)
+        MouseClick, Left
+    else if (!GetGuiValue("1", "DisableAllNativeFunctions") && !inventory && !InStr(A_ThisHotKey, "~")) ; send hotkey when native function is blocked and inventory is disabled
+    {
+        if(RegExMatch(A_ThisHotKey, "\w{2}") != 0) ; Function keys F1~F12
+        SendInput, % "{" . RegExReplace(A_ThisHotKey, "[$<>]", "") . "}"
+    else ; Combined keys ex: ALT+T
+        Send, % RegExReplace(A_ThisHotKey, "[$<>]", "")
+}
+return
+
+;Setting
+ShowHideMain:
+    GUIShow := !GUIShow
+    if (GUIShow)
+    	Gui, Show, w380 h260
+    else
+    	Gui, Hide
+return
+
+;Common
+$~Enter::
+    if(GetGuiValue("1", "DisableAll"))
+    {
+        inventory := False
+        QuickCast := False
+        QuickCall := False
+        NoMouse := False
+        ;GuiControl, 3: Text, ActiveNoMouse  , % "No Mouse: " ((NoMouse) ? ("Enabled") : ("Disabled"))
+        ;GuiControl, 3: Text, ActiveQuickCast, % "Auto Cast: " ((QuickCast) ? ("Enabled") : ("Disabled"))
+        ;GuiControl, 3: Text, ActiveQuickCall, % "Quick Call: " ((QuickCall) ? ("Enabled") : ("Disabled"))
+        GuiControl, 3: Text, ActiveInventory, % "Inventory: " ((inventory) ? ("Enabled") : ("Disabled"))
+    }
+return
+
 GuiClose:
 2GuiClose:
 GuiEscape:
@@ -465,8 +752,8 @@ GuiEscape:
     ToolTip
 return
 
-!r::reload
+$~!r::reload
 
-^esc::ExitApp
+$~!s::suspend
 
-!s::suspend
+$~!esc::ExitApp
