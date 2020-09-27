@@ -37,6 +37,8 @@ Auto cast/quick cast meaning: its basically cast that spell on mouse hover witho
 
 Default hotkeys:
 
+Enter: disable all inventory and autocast functions. Can be turnned off in settings
+
 F8: show/hide wc3 rpg tool
 
 F7: show/hide overlay
