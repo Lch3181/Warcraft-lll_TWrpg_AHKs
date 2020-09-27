@@ -18,6 +18,7 @@ global KeyWaiting := False
 global GUIShow := False
 global inventory := False
 ;Includes the specified file inside the compiled version of the script.
+FileCreateDir, Images
 FileInstall, Images\SearchIcon.png, Images\SearchIcon.png
 FileInstall, Images\Inventory.jpg, Images\Inventory.jpg
 
@@ -79,21 +80,16 @@ Gui, Tab, Settings
 Gui, Font, s12
 Gui, Add, Text, x10 y30, Show/Hide
 Gui, Add, Text, y+0, Unsign Hotkey
-Gui, Add, Text, y+0, Suspend
-Gui, Add, Text, y+0, Reload
 Gui, Add, Text, y+0, Exit
 Gui, Add, Text, y+0, Disable All on Enter
-Gui, Add, Text, y+0, Disable All Hotkeys'
-Gui, Add, Text, y+0, Native Functions
+Gui, Add, Text, y+0, Disable Hotkeys' Native Functions
 Gui, Add, Text, y+0, Ex: Alt+q if assigned
 Gui, Font, s8
-Gui, Add, Button, x200 y30 w50 h20 gGetSetKey vShowHideMain
+Gui, Add, Button, x300 y30 w50 h20 gGetSetKey vShowHideMain
 Gui, Add, Button, y+0 w50 h20 disabled, ESC
-Gui, Add, Button, y+0 w50 h20 disabled, Alt+S
-Gui, Add, Button, y+0 w50 h20 disabled, Alt+R
 Gui, Add, Button, y+0 w50 h20 disabled, Alt+ESC
 Gui, Add, Checkbox, y+5 gGetSetCheckBoxValue vDisableAll 
-Gui, Add, Checkbox, y+5 gGetSetCheckBoxValue vDisableAllNativeFunctions 
+Gui, Add, Checkbox, y+20 gGetSetCheckBoxValue vDisableAllNativeFunctions 
 ;-----------------------------------------Hero Editor-------------------------------------------------------
 Gui, 2: Color, DCDCDC
 Gui, 2: Add, Text, x10 y10, Hero:
@@ -108,7 +104,7 @@ Gui, 2: Add, Button, x+20 w100 h30 gDeleteHeroSubmit, Delete
 ;-----------------------------------------Toggle Gui--------------------------------------------------------
 ;Toggles Gui
 Gui, 3: +LastFound +AlwaysOnTop -Caption
-Gui, 3: Font, s10
+Gui, 3: Font, s12
 Gui, 3: Font, cRed
 Gui, 3: Add, Text, vActiveInventory x0 y0 , % "Inventory: " ((inventory) ? ("Enabled") : ("Disabled"))
 ;Gui, 3: Add, Text, vActiveQuickCast x0 y+0, % "Auto Cast: " ((QuickCast) ? ("Enabled") : ("Disabled"))
@@ -327,14 +323,28 @@ return
 ScanSaveFiles:
     Gui, Submit, NoHide
     ToolTip("Scanning all files. . .")
+    files = 
     Loop % IniRead("Address", SubLoader . "Folder")"\*.*" ; in each file in folder
     {
         FileRead, OutputVar, % IniRead("Address", SubLoader . "Folder") . "\" . A_LoopFileName
-        if(RegExMatch(OutputVar, "((?|User Name|아이디):\s(?:[^""]|\\"")*)") > 0) ; if it is a save folder
-            IniWrite, % "", %iniFile%, % SubLoader . "Heros", % StrReplace(A_LoopFileName, ".txt")
+        if(RegExMatch(OutputVar, "((?|User Name|아이디):\s(?:[^""]|\\"")*)") > 0) ; if it is a save file
+            files .= StrReplace(A_LoopFileName, ".txt") . "`n"
     }
-    GetSetHeros()
     ToolTip("Finished Scanning all files")
+    ;promote user to add all the heros
+    MsgBox, 4, Would you like to add all those heros?, %files%
+    IfMsgBox Yes
+    {
+        Loop % IniRead("Address", SubLoader . "Folder")"\*.*" ; in each file in folder
+        {
+            FileRead, OutputVar, % IniRead("Address", SubLoader . "Folder") . "\" . A_LoopFileName
+            if(RegExMatch(OutputVar, "((?|User Name|아이디):\s(?:[^""]|\\"")*)") > 0) ; if it is a save file
+                IniWrite, % "", %iniFile%, % SubLoader . "Heros", % StrReplace(A_LoopFileName, ".txt")
+        }
+        GetSetHeros()
+    }
+    else
+        ToolTip("Canceled")
 return
 
 HerosEditorButton:
@@ -724,9 +734,9 @@ return
 ShowHideMain:
     GUIShow := !GUIShow
     if (GUIShow)
-    	Gui, Show, w380 h260
+        Gui, Show, w380 h260
     else
-    	Gui, Hide
+        Gui, Hide
 return
 
 ;Common
@@ -754,6 +764,4 @@ return
 
 $~!r::reload
 
-$~!s::suspend
-
-$~!esc::ExitApp
+$!esc::ExitApp
