@@ -12,10 +12,10 @@ SetWinDelay, -1
 SetBatchLines, -1
 SetControlDelay -1
 Thread, interrupt, 0
-global version := 2.0
 global iniFile := "wc3rpgLoaderData.ini"
 global KeyWaiting := False
-global GUIShow := False
+global GUIShow := True
+global OverlayShow := True
 global inventory := False
 ;Includes the specified file inside the compiled version of the script.
 FileCreateDir, Images
@@ -79,6 +79,7 @@ Gui, Add, CheckBox, x+58 w13 h13 gGetSetCheckBoxValue vNumpad2AutoCast
 Gui, Tab, Settings
 Gui, Font, s12
 Gui, Add, Text, x10 y30, Show/Hide
+Gui, Add, Text, y+0, Overlay Show/Hide
 Gui, Add, Text, y+0, Unsign Hotkey
 Gui, Add, Text, y+0, Exit
 Gui, Add, Text, y+0, Disable All on Enter
@@ -86,6 +87,7 @@ Gui, Add, Text, y+0, Disable Hotkeys' Native Functions
 Gui, Add, Text, y+0, Ex: Alt+q if assigned
 Gui, Font, s8
 Gui, Add, Button, x300 y30 w50 h20 gGetSetKey vShowHideMain
+Gui, Add, Button, y+0 w50 h20 gGetSetKey vShowHideOverlay
 Gui, Add, Button, y+0 w50 h20 disabled, ESC
 Gui, Add, Button, y+0 w50 h20 disabled, Alt+ESC
 Gui, Add, Checkbox, y+5 gGetSetCheckBoxValue vDisableAll 
@@ -113,7 +115,7 @@ Gui, 3: Add, Text, vActiveInventory x0 y0 , % "Inventory: " ((inventory) ? ("Ena
 ;Gui, 3: Add, Text, vActiveNoMouse   x0 y+0, % "No Mouse: " ((NoMouse) ? ("Enabled") : ("Disabled"))
 Gui, 3: Color, EEAA99
 WinSet, TransColor, EEAA99
-Gui, 3: Show, x0 y10
+Gui, 3: Show, x0 y0
 
 ;GetSetAll
 GetSetHeros()
@@ -424,7 +426,7 @@ GetSetKey:
         ToolTip("Please finish assigning previous button or click ESC to unsign that button")
         return
     }
-    if(InStr(GetHotkeys(), input) && input != "")
+    if(InStr(GetHotkeys(), input) && input != "") ;check duplication
     {
         ToolTip(GetHotkeyName(input) . " is used ")
         ; re-enable hotkey
@@ -485,7 +487,7 @@ WC3Chat(String)
 initial()
 {
     clientVersion := IniRead("Settings", "Version")
-    if(clientVersion < version) ; 2.0 initial and inventory added
+    if(clientVersion < 2.0) ; 2.0 initial and inventory added
     {
         ;Address
         IniWrite, % A_MyDocuments . "\Warcraft III\CustomMapData\TWRPG", %iniFile%, Address, TWrpgFolder
@@ -507,7 +509,7 @@ initial()
         IniWrite, $~4, %iniFile%, Inventory, Numpad5
         IniWrite, $~5, %iniFile%, Inventory, Numpad1
         ;Settings
-        IniWrite, %version%, %iniFile%, Settings, Version ; update client version the first time
+        IniWrite, 2.0, %iniFile%, Settings, Version ; update client version the first time
         IniWrite, 1, %iniFile%, Settings, ConvertToggle
         IniWrite, 1, %iniFile%, Settings, BotCommandToggle
         IniWrite, 1, %iniFile%, Settings, GameNamePlusToggle
@@ -518,7 +520,11 @@ initial()
         if FileExist("SearchIcon.png")
             FileDelete, SearchIcon.png
     }
-    IniWrite, %version%, %iniFile%, Settings, Version ; update client version
+    if(clientVersion < 2.1) ; 2.1 show hide overlay added
+    {
+        IniWrite, $F7, %iniFile%, Settings, ShowHideOverlay
+    }
+    IniWrite, 2.1, %iniFile%, Settings, Version ; update client version
 }
 
 GetSetSettings()
@@ -530,7 +536,7 @@ GetSetSettings()
         keyValue := StrSplit(lines[A_Index], "=") ; split line to key and value
         GuiControl, 1:, % keyValue[1] , % GetHotkeyName(keyValue[2]) ; update gui
         ; assign hotkeys to labels
-        if(keyValue[2] != "" && InStr(keyValue[1], "ShowHideMain"))
+        if(keyValue[2] != "" && InStr(keyValue[1], "ShowHide"))
         {
             Hotkey, % keyValue[2], % keyValue[1], On
         }
@@ -739,6 +745,14 @@ ShowHideMain:
         Gui, Hide
 return
 
+ShowHideOverlay:
+    OverlayShow := !OverlayShow
+    if (OverlayShow)
+        Gui, 3: Show, x0 y0
+    else
+        Gui, 3: Hide
+return
+
 ;Common
 $~Enter::
     if(GetGuiValue("1", "DisableAll"))
@@ -762,6 +776,6 @@ GuiEscape:
     ToolTip
 return
 
-$~!r::reload
+;$~!r::reload
 
 $!esc::ExitApp
