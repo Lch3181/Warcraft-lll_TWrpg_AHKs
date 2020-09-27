@@ -21,22 +21,6 @@ Download URL has to be a direct download link instead of a share link(google if 
 
 Download from release or the link above. Unzip it and run the .exe file in anywhere else. Note: there will be extra files generated after running the .exe file
 
-## User Friendly All in One Tool Beta
-![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/ToggleGUI.png)
-![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/InventoryGUI.png)
-![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/QuickCastGUI.png)
-![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/QuickCallGUI.png)
-![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/NoMouseGUI.png)
-![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/SettingGUI.png)
-
-## How to use:
-Press the button to edit the Hotkey by pressing the key you want on keyboard or press Escape to unsign.
-
-## FQA: 
-Q: Why I cant assgin my hotkey.
-
-A: Probably that key is assgined to something already.
-
 ## Independent scripts(Users need to edit them manually)
 ![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/GUI.png)
 
