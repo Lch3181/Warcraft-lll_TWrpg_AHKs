@@ -16,6 +16,8 @@ global iniFile := "wc3rpgLoaderData.ini"
 global KeyWaiting := False
 global GUIShow := True
 global OverlayShow := True
+global WC3Chating := False
+global SettingsHistory := []
 global inventory := False
 ;Includes the specified file inside the compiled version of the script.
 FileCreateDir, Images
@@ -61,6 +63,7 @@ Gui, Add, Picture, x20 y40 Icon , Images\Inventory.jpg
 Gui, Font, s12
 Gui, Add, Text, x+10 y40 , Enable/Disable
 Gui, Add, Text, y+0 , CheckBox for Auto Cast
+Gui, Add, Text, y+10, Click a button to assign a key,`nEsc to unsign a key 
 Gui, Font, s8
 Gui, Add, Button, x285 y40 w50 h20 gGetSetKey vInventoryToggle
 Gui, Add, Button, x29 y80 w50 h20 gGetSetKey vNumpad7
@@ -80,18 +83,20 @@ Gui, Tab, Settings
 Gui, Font, s12
 Gui, Add, Text, x10 y30, Show/Hide
 Gui, Add, Text, y+0, Overlay Show/Hide
+Gui, Add, Text, y+0, Pause Game
 Gui, Add, Text, y+0, Unsign Hotkey
 Gui, Add, Text, y+0, Exit
-Gui, Add, Text, y+0, Disable All on Enter
+Gui, Add, Text, y+0, Disable All on during chat (wc3 only)
 Gui, Add, Text, y+0, Disable Hotkeys' Native Functions
-Gui, Add, Text, y+0, Ex: Alt+q if assigned
+Gui, Add, Text, y+0, Ex: Alt+q or space if assigned
 Gui, Font, s8
-Gui, Add, Button, x300 y30 w50 h20 gGetSetKey vShowHideMain
-Gui, Add, Button, y+0 w50 h20 gGetSetKey vShowHideOverlay
-Gui, Add, Button, y+0 w50 h20 disabled, ESC
-Gui, Add, Button, y+0 w50 h20 disabled, Alt+ESC
+Gui, Add, Button, x300 y30 w70 h20 gGetSetKey vShowHideMain
+Gui, Add, Button, y+0 w70 h20 gGetSetKey vShowHideOverlay
+Gui, Add, Button, y+0 w70 h20 gGetSetKey vPauseGame
+Gui, Add, Button, y+0 w70 h20 disabled, ESC
+Gui, Add, Button, y+0 w70 h20 disabled, Alt+ESC
 Gui, Add, Checkbox, y+5 gGetSetCheckBoxValue vDisableAll 
-Gui, Add, Checkbox, y+20 gGetSetCheckBoxValue vDisableAllNativeFunctions 
+Gui, Add, Checkbox, y+25 gGetSetCheckBoxValue vDisableAllNativeFunctions 
 ;-----------------------------------------Hero Editor-------------------------------------------------------
 Gui, 2: Color, DCDCDC
 Gui, 2: Add, Text, x10 y10, Hero:
@@ -156,6 +161,7 @@ twrpg:
         ;Close Gui
         Gui, Cancel
         Gui, Submit
+        GUIShow := False
 
         temp := StrReplace(code, "-load", "-load", count) ;find all load codes
 
@@ -223,6 +229,7 @@ Return
 Pub:
     Gui, Cancel
     Gui, Submit
+        GUIShow := False
     ;Find Warcraft III and focus on it
     if WinExist("Warcraft III") 
     {
@@ -256,6 +263,7 @@ Return
 Priv:
     Gui, Cancel
     Gui, Submit
+        GUIShow := False
     ;Find Warcraft III and focus on it
     if WinExist("Warcraft III") 
     {
@@ -416,7 +424,9 @@ return
 GetSetKey:
     Gui, Submit, Nohide
     ; disable hotkey
-    Hotkey, % IniRead(MainTab, A_GuiControl), %A_GuiControl%, Off
+    OrginalKey := % IniRead(MainTab, A_GuiControl)
+    if(OrginalKey != "")
+        Hotkey, % OrginalKey, %A_GuiControl%, Off
     ToolTip("Please assign a key to "A_GuiControl, -999999)
     ; Wait a key press
     input := % KeyWaitAny("V E C M")
@@ -426,16 +436,17 @@ GetSetKey:
         ToolTip("Please finish assigning previous button or click ESC to unsign that button")
         return
     }
-    if(InStr(GetHotkeys(), input) && input != "") ;check duplication
+    if(InStr(GetHotkeys(), input) && input != "" && OrginalKey != "") ;check duplication
     {
         ToolTip(GetHotkeyName(input) . " is used ")
         ; re-enable hotkey
-        Hotkey, % IniRead(MainTab, A_GuiControl), %A_GuiControl%, On
+        Hotkey, % OrginalKey, %A_GuiControl%, On
     }
     else
     {
         IniWrite, %input%, %IniFile%, %MainTab%, %A_GuiControl% ;update ini file
         GetSetInventories() ; refresh inventory tab
+        GetSetSettings() ;refresh setting tab
         ToolTip(GetHotkeyName(IniRead(MainTab, A_GuiControl)) . " Assigned to " . A_GuiControl)
     }
 return
@@ -524,7 +535,12 @@ initial()
     {
         IniWrite, $F7, %iniFile%, Settings, ShowHideOverlay
     }
-    IniWrite, 2.1, %iniFile%, Settings, Version ; update client version
+    if(clientVersion < 2.2) ; 2.11 bug fix, add pause
+    {
+        IniWrite, % "", %iniFile%, Inventory, Numpad2
+        IniWrite, $Pause, %iniFile%, Settings, PauseGame
+    }
+    IniWrite, 2.2, %iniFile%, Settings, Version ; update client version
 }
 
 GetSetSettings()
@@ -536,7 +552,7 @@ GetSetSettings()
         keyValue := StrSplit(lines[A_Index], "=") ; split line to key and value
         GuiControl, 1:, % keyValue[1] , % GetHotkeyName(keyValue[2]) ; update gui
         ; assign hotkeys to labels
-        if(keyValue[2] != "" && InStr(keyValue[1], "ShowHide"))
+        if(keyValue[2] != "") && (InStr(keyValue[1], "ShowHide") || InStr(keyValue[1], "PauseGame"))
         {
             Hotkey, % keyValue[2], % keyValue[1], On
         }
@@ -696,7 +712,7 @@ GetHotkeys()
 
 GetHotkeyName(Hotkey)
 {
-    HotkeyNames := [["+","Shift+"], ["<^>!","AltGr+"], ["<","L"], [">","R"], ["!","Alt+"], ["^","Ctrl+"], ["#","Win+"], ["$",""], ["~",""]]
+    HotkeyNames := [["+","Shift+"], ["<^>!","AltGr+"], ["<","L"], [">","R"], ["!","Alt+"], ["^","Ctrl+"], ["#","Win+"], ["$",""], ["~",""], ["Pause", "Pause/Break"]]
     for key, value in HotkeyNames
     {
         Hotkey := StrReplace(Hotkey, value[1], value[2])
@@ -753,14 +769,33 @@ ShowHideOverlay:
         Gui, 3: Hide
 return
 
+PauseGame:
+    SendInput, {F10}{M}{F10}
+return
+
 ;Common
 $~Enter::
-    if(GetGuiValue("1", "DisableAll"))
+    if(WinActive("Warcraft III") && GetGuiValue("1", "DisableAll") && WC3Chating = False)
     {
+        WC3Chating := True
+        SettingsHistory := [inventory, QuickCast, QuickCall, NoMouse]
+        OutputDebug, % SettingsHistory[1]
         inventory := False
         QuickCast := False
         QuickCall := False
         NoMouse := False
+        ;GuiControl, 3: Text, ActiveNoMouse  , % "No Mouse: " ((NoMouse) ? ("Enabled") : ("Disabled"))
+        ;GuiControl, 3: Text, ActiveQuickCast, % "Auto Cast: " ((QuickCast) ? ("Enabled") : ("Disabled"))
+        ;GuiControl, 3: Text, ActiveQuickCall, % "Quick Call: " ((QuickCall) ? ("Enabled") : ("Disabled"))
+        GuiControl, 3: Text, ActiveInventory, % "Inventory: " ((inventory) ? ("Enabled") : ("Disabled"))
+    }
+    else if(WinActive("Warcraft III") && GetGuiValue("1", "DisableAll") && WC3Chating = True)
+    {
+        WC3Chating := False
+        inventory := SettingsHistory[1]
+        QuickCast := SettingsHistory[2]
+        QuickCall := SettingsHistory[3]
+        NoMouse := SettingsHistory[4]
         ;GuiControl, 3: Text, ActiveNoMouse  , % "No Mouse: " ((NoMouse) ? ("Enabled") : ("Disabled"))
         ;GuiControl, 3: Text, ActiveQuickCast, % "Auto Cast: " ((QuickCast) ? ("Enabled") : ("Disabled"))
         ;GuiControl, 3: Text, ActiveQuickCall, % "Quick Call: " ((QuickCall) ? ("Enabled") : ("Disabled"))
