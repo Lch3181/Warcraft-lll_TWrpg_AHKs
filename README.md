@@ -37,13 +37,26 @@ Numpad1=$~5
 
 Auto cast/quick cast meaning: its basically cast that spell on mouse hover without needing to left click.
 
-Default hotkeys:
+## Default hotkeys:
+Enter: temporary disable all inventory and autocast functions for wc3 ingame chat. Can be turnned off in settings
 
-Enter: disable all inventory and autocast functions. Can be turnned off in settings
+Pause/Break: pause wc3 game (using F10 pause game)
 
 F8: show/hide wc3 rpg tool
 
 F7: show/hide overlay
+
+F2: Toggle Inventory function
+
+1: numpad7
+
+2: numpad8
+
+3: numpad5
+
+4: numpad4
+
+5: numpad1
 
 Alt+Esc: exit wc3 rpg tool
 ## Important:
@@ -56,6 +69,15 @@ Download from release or the link above. Unzip it and run the .exe file in anywh
 
 ## Planned next:
 Auto cast/quick cast, summon auto cast/quick cast, quick call, No mouse(laptop users like me)
+
+## FQA:
+Q: My anti-virus/windows defender said it contains virus when I download it.
+
+A: They do that on 95% of the times when you download any .EXE file on the internet. The raw code is on the bottom if u question if it is safe of not.
+
+Q: My spacebar is not working after I assigned it into a hotkey even if the functions are disabled.
+
+A: Uncheck the Disable hotkeys' Native Function in Settings.
 
 ## Independent scripts(Users need to edit them manually)
 ![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/GUI.png)
