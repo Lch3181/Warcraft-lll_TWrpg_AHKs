@@ -63,7 +63,7 @@ Alt+Esc: exit wc3 rpg tool
 Download URL has to be a direct download link instead of a share link(google if you do not know how to get it from a share link)
 
 ## Installation:
-[Download](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/releases/tag/v1.0)
+[Download](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/releases)
 
 Download from release or the link above. Unzip it and run the .exe file in anywhere else. Note: there will be extra files generated after running the .exe file
 
