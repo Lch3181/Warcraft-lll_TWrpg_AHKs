@@ -62,7 +62,7 @@ Gui, Tab, Inventory
 Gui, Add, Picture, x20 y40 Icon , Images\Inventory.jpg
 Gui, Font, s12
 Gui, Add, Text, x+10 y40 , Enable/Disable
-Gui, Add, Text, y+0 , CheckBox for Auto Cast
+Gui, Add, Text, y+0 , CheckBox for Quick Cast
 Gui, Add, Text, y+10, Click a button to assign a key,`nEsc to unsign a key 
 Gui, Font, s8
 Gui, Add, Button, x285 y40 w50 h20 gGetSetKey vInventoryToggle
@@ -72,12 +72,12 @@ Gui, Add, Button, x29 y+50 w50 h20 gGetSetKey vNumpad4
 Gui, Add, Button, x+21 w50 h20 gGetSetKey vNumpad5
 Gui, Add, Button, x29 y+50 w50 h20 gGetSetKey vNumpad1
 Gui, Add, Button, x+21 w50 h20 gGetSetKey vNumpad2
-Gui, Add, CheckBox, x47 y60 w13 h13 gGetSetCheckBoxValue vNumpad7AutoCast
-Gui, Add, CheckBox, x+58 w13 h13 gGetSetCheckBoxValue vNumpad8AutoCast
-Gui, Add, CheckBox, x47 y+56 w13 h13 gGetSetCheckBoxValue vNumpad4AutoCast
-Gui, Add, CheckBox, x+58 w13 h13 gGetSetCheckBoxValue vNumpad5AutoCast
-Gui, Add, CheckBox, x47 y+56 w13 h13 gGetSetCheckBoxValue vNumpad1AutoCast
-Gui, Add, CheckBox, x+58 w13 h13 gGetSetCheckBoxValue vNumpad2AutoCast
+Gui, Add, CheckBox, x47 y60 w13 h13 gGetSetCheckBoxValue  vNumpad7QuickCast
+Gui, Add, CheckBox, x+58 w13 h13 gGetSetCheckBoxValue     vNumpad8QuickCast
+Gui, Add, CheckBox, x47 y+56 w13 h13 gGetSetCheckBoxValue vNumpad4QuickCast
+Gui, Add, CheckBox, x+58 w13 h13 gGetSetCheckBoxValue     vNumpad5QuickCast
+Gui, Add, CheckBox, x47 y+56 w13 h13 gGetSetCheckBoxValue vNumpad1QuickCast
+Gui, Add, CheckBox, x+58 w13 h13 gGetSetCheckBoxValue     vNumpad2QuickCast
 ;-----------------------------------------Settings----------------------------------------------------------
 Gui, Tab, Settings
 Gui, Font, s12
@@ -114,7 +114,7 @@ Gui, 3: +LastFound +AlwaysOnTop -Caption
 Gui, 3: Font, s12
 Gui, 3: Font, cRed
 Gui, 3: Add, Text, vActiveInventory x0 y0 , % "Inventory: " ((inventory) ? ("Enabled") : ("Disabled"))
-;Gui, 3: Add, Text, vActiveQuickCast x0 y+0, % "Auto Cast: " ((QuickCast) ? ("Enabled") : ("Disabled"))
+;Gui, 3: Add, Text, vActiveQuickCast x0 y+0, % "Quick Cast: " ((QuickCast) ? ("Enabled") : ("Disabled"))
 ;Gui, 3: Add, Text, vActiveQuickCall x0 y+0, % "Quick Call: " ((QuickCall) ? ("Enabled") : ("Disabled"))
 ;Gui, 3: Add, Text, vTarget x+5 w100, No Target
 ;Gui, 3: Add, Text, vActiveNoMouse   x0 y+0, % "No Mouse: " ((NoMouse) ? ("Enabled") : ("Disabled"))
@@ -535,12 +535,21 @@ initial()
     {
         IniWrite, $F7, %iniFile%, Settings, ShowHideOverlay
     }
-    if(clientVersion < 2.2) ; 2.11 bug fix, add pause
+    if(clientVersion < 2.2) ; 2.2 bug fix, add pause
     {
         IniWrite, % "", %iniFile%, Inventory, Numpad2
         IniWrite, $Pause, %iniFile%, Settings, PauseGame
     }
-    IniWrite, 2.2, %iniFile%, Settings, Version ; update client version
+    if(clientVersion < 2.3) ; 2.3 changed autocast to quickcast
+    {
+        IniDelete, %iniFile%, Inventory, Numpad1AutoCast
+        IniDelete, %iniFile%, Inventory, Numpad2AutoCast
+        IniDelete, %iniFile%, Inventory, Numpad4AutoCast
+        IniDelete, %iniFile%, Inventory, Numpad5AutoCast
+        IniDelete, %iniFile%, Inventory, Numpad7AutoCast
+        IniDelete, %iniFile%, Inventory, Numpad8AutoCast
+    }
+    IniWrite, 2.3, %iniFile%, Settings, Version ; update client version
 }
 
 GetSetSettings()
@@ -613,7 +622,7 @@ GetSetInventories()
         keyValue := StrSplit(lines[A_Index], "=") ; split line to key and value
         GuiControl, 1:, % keyValue[1] , % GetHotkeyName(keyValue[2]) ; update gui
         ; assign hotkeys to labels
-        if(keyValue[2] != "" && !InStr(keyValue[1], "AutoCast"))
+        if(keyValue[2] != "" && !InStr(keyValue[1], "QuickCast"))
         {
             Hotkey, % keyValue[2], % keyValue[1], On
         }
@@ -741,7 +750,7 @@ Numpad4:
 Numpad8:
     if(inventory)
         SendInput, {%A_ThisLabel%}
-    if(inventory && GetGuiValue("1", A_ThisLabel . "AutoCast") = 1)
+    if(inventory && GetGuiValue("1", A_ThisLabel . "QuickCast") = 1)
         MouseClick, Left
     else if (!GetGuiValue("1", "DisableAllNativeFunctions") && !inventory && !InStr(A_ThisHotKey, "~")) ; send hotkey when native function is blocked and inventory is disabled
     {
@@ -785,7 +794,7 @@ $~Enter::
         QuickCall := False
         NoMouse := False
         ;GuiControl, 3: Text, ActiveNoMouse  , % "No Mouse: " ((NoMouse) ? ("Enabled") : ("Disabled"))
-        ;GuiControl, 3: Text, ActiveQuickCast, % "Auto Cast: " ((QuickCast) ? ("Enabled") : ("Disabled"))
+        ;GuiControl, 3: Text, ActiveQuickCast, % "Quick Cast: " ((QuickCast) ? ("Enabled") : ("Disabled"))
         ;GuiControl, 3: Text, ActiveQuickCall, % "Quick Call: " ((QuickCall) ? ("Enabled") : ("Disabled"))
         GuiControl, 3: Text, ActiveInventory, % "Inventory: " ((inventory) ? ("Enabled") : ("Disabled"))
     }
@@ -797,7 +806,7 @@ $~Enter::
         QuickCall := SettingsHistory[3]
         NoMouse := SettingsHistory[4]
         ;GuiControl, 3: Text, ActiveNoMouse  , % "No Mouse: " ((NoMouse) ? ("Enabled") : ("Disabled"))
-        ;GuiControl, 3: Text, ActiveQuickCast, % "Auto Cast: " ((QuickCast) ? ("Enabled") : ("Disabled"))
+        ;GuiControl, 3: Text, ActiveQuickCast, % "Quick Cast: " ((QuickCast) ? ("Enabled") : ("Disabled"))
         ;GuiControl, 3: Text, ActiveQuickCall, % "Quick Call: " ((QuickCall) ? ("Enabled") : ("Disabled"))
         GuiControl, 3: Text, ActiveInventory, % "Inventory: " ((inventory) ? ("Enabled") : ("Disabled"))
     }
