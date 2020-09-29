@@ -9,7 +9,8 @@ Lee's old twrpg loader: [Script to load characters](https://www.twrpg.com/viewto
 ![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/wc3rpgLoaderGUI.png)
 ![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/wc3rpgHerosEditorGUI.png)
 ![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/wc3rpgHostGUI.png)
-![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/wc3rpgInventoryGUI.png)
+![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/wc3rpgInventoryGUI.png))
+![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/wc3rpgQuickCastGUI.png)
 ![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/wc3rpgSettingsGUI.png)
 
 ## How to use:
@@ -80,7 +81,7 @@ Download URL has to be a direct download link instead of a share link(google if 
 Download from release or the link above. Unzip it and run the .exe file in anywhere else. Note: there will be extra files generated after running the .exe file
 
 ## Planned next:
-Quick cast, summon quick cast, quick call, No mouse(laptop users like me)
+summon quick cast, quick call, No mouse(laptop users like me)
 
 ## FQA:
 Q: My anti-virus/windows defender said it contains virus when I download it.
