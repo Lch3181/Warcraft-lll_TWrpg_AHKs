@@ -631,6 +631,7 @@ GetSetInventories()
         ; assign hotkeys to labels
         if(keyValue[2] != "" && !InStr(keyValue[1], "QuickCast"))
         {
+            Hotkey, IfWinActive, Warcraft III
             Hotkey, % keyValue[2], % keyValue[1], On
         }
     }
@@ -647,6 +648,7 @@ GetSetQuickCast()
         ; assign hotkeys to labels
         if(keyValue[2] != "")
         {
+            Hotkey, IfWinActive, Warcraft III
             Hotkey, % keyValue[2], % keyValue[1], On
         }
     }
