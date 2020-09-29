@@ -12,6 +12,7 @@ SetWinDelay, -1
 SetBatchLines, -1
 SetControlDelay -1
 Thread, interrupt, 0
+global version := 3.3
 global iniFile := "wc3rpgLoaderData.ini"
 global KeyWaiting := False
 global GUIShow := True
@@ -556,7 +557,7 @@ initial()
         IniWrite, $~e, %iniFile%, QuickCast, QuickCast8
         IniWrite, $~r, %iniFile%, QuickCast, QuickCast9
     }
-    IniWrite, 3.0, %iniFile%, Settings, Version ; update client version
+    IniWrite, %version%, %iniFile%, Settings, Version ; update client version
 }
 
 GetSetSettings()
