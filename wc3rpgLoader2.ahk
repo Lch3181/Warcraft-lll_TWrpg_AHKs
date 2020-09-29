@@ -19,10 +19,12 @@ global OverlayShow := True
 global WC3Chating := False
 global SettingsHistory := []
 global inventory := False
+global QuickCast := False
 ;Includes the specified file inside the compiled version of the script.
 FileCreateDir, Images
 FileInstall, Images\SearchIcon.png, Images\SearchIcon.png
 FileInstall, Images\Inventory.jpg, Images\Inventory.jpg
+FileInstall, Images\Spells.jpg, Images\Spells.jpg
 
 ;fill up missing data if first run
 initial()
@@ -43,7 +45,7 @@ Gui, Add, Edit, x20 y+10 w310 h30 R1 vTWrpgFolderAddress ReadOnly, % IniRead("Ad
 Gui, Add, Picture, x+10 w20 h20 vTWrpgFolder gGetSetFolder, Images\SearchIcon.png
 Gui, Add, Button, x20 y+10 w150 h30 gScanSaveFiles, Scan Save Files
 ;-------------------------------------------Main Tab-------------------------------------------------------
-Gui, Add, Tab2, x0 y0 w380 h260 gTabSwitched vMainTab, Loader|Host|Inventory|Settings
+Gui, Add, Tab2, x0 y0 w380 h260 gTabSwitched vMainTab, Loader|Host|Inventory|QuickCast|Settings
 ;---- For Hosting
 Gui, Tab, Host
 Gui, Add, Text, x20 y30 , Pick:
@@ -72,12 +74,31 @@ Gui, Add, Button, x29 y+50 w50 h20 gGetSetKey vNumpad4
 Gui, Add, Button, x+21 w50 h20 gGetSetKey vNumpad5
 Gui, Add, Button, x29 y+50 w50 h20 gGetSetKey vNumpad1
 Gui, Add, Button, x+21 w50 h20 gGetSetKey vNumpad2
-Gui, Add, CheckBox, x47 y60 w13 h13 gGetSetCheckBoxValue  vNumpad7QuickCast
-Gui, Add, CheckBox, x+58 w13 h13 gGetSetCheckBoxValue     vNumpad8QuickCast
+Gui, Add, CheckBox, x47 y60 w13 h13 gGetSetCheckBoxValue vNumpad7QuickCast
+Gui, Add, CheckBox, x+58 w13 h13 gGetSetCheckBoxValue vNumpad8QuickCast
 Gui, Add, CheckBox, x47 y+56 w13 h13 gGetSetCheckBoxValue vNumpad4QuickCast
-Gui, Add, CheckBox, x+58 w13 h13 gGetSetCheckBoxValue     vNumpad5QuickCast
+Gui, Add, CheckBox, x+58 w13 h13 gGetSetCheckBoxValue vNumpad5QuickCast
 Gui, Add, CheckBox, x47 y+56 w13 h13 gGetSetCheckBoxValue vNumpad1QuickCast
-Gui, Add, CheckBox, x+58 w13 h13 gGetSetCheckBoxValue     vNumpad2QuickCast
+Gui, Add, CheckBox, x+58 w13 h13 gGetSetCheckBoxValue vNumpad2QuickCast
+;-----------------------------------------Quick Cast--------------------------------------------------------
+Gui, Tab, QuickCast
+Gui, Add, Picture, x20 y40 Icon , Images\Spells.jpg
+Gui, Font, s12
+Gui, Add, Text, x+10 y40 , Enable/`nDisable
+Gui, Font, s8
+Gui, Add, Button, x295 y85 w50 h20 gGetSetKey vQuickCastToggle
+Gui, Add, Button, x32 y82 w50 h20   gGetSetKey vProbeQuickCast1
+Gui, Add, Button, x+14 w50 h20      gGetSetKey vProbeQuickCast2
+Gui, Add, Button, x+13 w50 h20      gGetSetKey vProbeQuickCast3
+Gui, Add, Button, x+14 w50 h20      gGetSetKey vQuickCast1
+Gui, Add, Button, x32 y+43 w50 h20  gGetSetKey vQuickCast2
+Gui, Add, Button, x+14 w50 h20      gGetSetKey vQuickCast3
+Gui, Add, Button, x+13 w50 h20      gGetSetKey vQuickCast4
+Gui, Add, Button, x+14 w50 h20      gGetSetKey vQuickCast5
+Gui, Add, Button, x32 y+43 w50 h20  gGetSetKey vQuickCast6 
+Gui, Add, Button, x+14 w50 h20      gGetSetKey vQuickCast7 
+Gui, Add, Button, x+13 w50 h20      gGetSetKey vQuickCast8
+Gui, Add, Button, x+14 w50 h20      gGetSetKey vQuickCast9
 ;-----------------------------------------Settings----------------------------------------------------------
 Gui, Tab, Settings
 Gui, Font, s12
@@ -114,7 +135,7 @@ Gui, 3: +LastFound +AlwaysOnTop -Caption
 Gui, 3: Font, s12
 Gui, 3: Font, cRed
 Gui, 3: Add, Text, vActiveInventory x0 y0 , % "Inventory: " ((inventory) ? ("Enabled") : ("Disabled"))
-;Gui, 3: Add, Text, vActiveQuickCast x0 y+0, % "Quick Cast: " ((QuickCast) ? ("Enabled") : ("Disabled"))
+Gui, 3: Add, Text, vActiveQuickCast x0 y+0, % "Quick Cast: " ((QuickCast) ? ("Enabled") : ("Disabled"))
 ;Gui, 3: Add, Text, vActiveQuickCall x0 y+0, % "Quick Call: " ((QuickCall) ? ("Enabled") : ("Disabled"))
 ;Gui, 3: Add, Text, vTarget x+5 w100, No Target
 ;Gui, 3: Add, Text, vActiveNoMouse   x0 y+0, % "No Mouse: " ((NoMouse) ? ("Enabled") : ("Disabled"))
@@ -127,6 +148,7 @@ GetSetHeros()
 GetSetBots()
 GetSetInventories()
 GetSetSettings()
+GetSetQuickCast()
 
 ;Show Gui on Start
 Gui, Show, w380 h260, WC3 RPG Tool
@@ -229,7 +251,7 @@ Return
 Pub:
     Gui, Cancel
     Gui, Submit
-        GUIShow := False
+    GUIShow := False
     ;Find Warcraft III and focus on it
     if WinExist("Warcraft III") 
     {
@@ -263,7 +285,7 @@ Return
 Priv:
     Gui, Cancel
     Gui, Submit
-        GUIShow := False
+    GUIShow := False
     ;Find Warcraft III and focus on it
     if WinExist("Warcraft III") 
     {
@@ -436,6 +458,12 @@ GetSetKey:
         ToolTip("Please finish assigning previous button or click ESC to unsign that button")
         return
     }
+    if(InStr(A_GuiControl, "Probe") && RegExMatch(input, "\W+[1-8]") = 0) ; probes only can assign with numbers
+    {
+        GuiControl,, %A_GuiControl%, % GetHotkeyName(IniRead(MainTab, A_GuiControl)) ;update gui
+        ToolTip("Probes only can assign with numbers 1-8")
+        return
+    }
     if(InStr(GetHotkeys(), input) && input != "" && OrginalKey != "") ;check duplication
     {
         ToolTip(GetHotkeyName(input) . " is used ")
@@ -447,6 +475,7 @@ GetSetKey:
         IniWrite, %input%, %IniFile%, %MainTab%, %A_GuiControl% ;update ini file
         GetSetInventories() ; refresh inventory tab
         GetSetSettings() ;refresh setting tab
+        GetSetQuickCast() ;refresh quick cast tab
         ToolTip(GetHotkeyName(IniRead(MainTab, A_GuiControl)) . " Assigned to " . A_GuiControl)
     }
 return
@@ -457,44 +486,6 @@ GetSetCheckBoxValue:
 return
 
 ;------------------------------------Functions-------------------------------------
-IniRead(Section, Key := "")
-{
-    IniRead, OutputVar, %iniFile%, %Section%, %Key%
-    if(OutputVar = "ERROR")
-        OutputVar := ""
-    return OutputVar
-}
-
-GetGuiValue(GuiID, GuiVar)
-{
-    GuiControlGet, Value, %GuiID%:, %GuiVar%
-    return %Value%
-}
-
-DownloadFileFromUrl(URL)
-{
-    WC3Chat("Downloading Save File From Cloud Service")
-    whr := ComObjCreate("WinHttp.WinHttpRequest.5.1")
-    whr.Open("GET", URL, false)
-    whr.Send()
-
-    arr := whr.ResponseBody
-    pData := NumGet(ComObjValue(arr) + 8 + A_PtrSize)
-    length := arr.MaxIndex() + 1
-    result := StrGet(pData, length, "utf-8")
-    ;Error Page
-    if(InStr(result, "<html>"))
-        Run, %URL%
-    return result
-}
-
-WC3Chat(String)
-{
-    SendInput, {Enter}
-    SendInput, {Text}%String%
-    SendInput, {Enter}
-}
-
 initial()
 {
     clientVersion := IniRead("Settings", "Version")
@@ -549,7 +540,23 @@ initial()
         IniDelete, %iniFile%, Inventory, Numpad7AutoCast
         IniDelete, %iniFile%, Inventory, Numpad8AutoCast
     }
-    IniWrite, 2.3, %iniFile%, Settings, Version ; update client version
+    if(clientVersion < 3.0) ; 3.0 add quick cast
+    {
+        IniWrite, $F3, %iniFile%, QuickCast, QuickCastToggle
+        IniWrite, $~6, %iniFile%, QuickCast, ProbeQuickCast1
+        IniWrite, $~7, %iniFile%, QuickCast, ProbeQuickCast2
+        IniWrite, $~8, %iniFile%, QuickCast, ProbeQuickCast3
+        IniWrite, $~a, %iniFile%, QuickCast, QuickCast1
+        IniWrite, $~p, %iniFile%, QuickCast, QuickCast2
+        IniWrite, $~d, %iniFile%, QuickCast, QuickCast3
+        IniWrite, $~t, %iniFile%, QuickCast, QuickCast4
+        IniWrite, $~f, %iniFile%, QuickCast, QuickCast5
+        IniWrite, $~q, %iniFile%, QuickCast, QuickCast6
+        IniWrite, $~w, %iniFile%, QuickCast, QuickCast7
+        IniWrite, $~e, %iniFile%, QuickCast, QuickCast8
+        IniWrite, $~r, %iniFile%, QuickCast, QuickCast9
+    }
+    IniWrite, 3.0, %iniFile%, Settings, Version ; update client version
 }
 
 GetSetSettings()
@@ -629,6 +636,60 @@ GetSetInventories()
     }
 }
 
+GetSetQuickCast()
+{
+    OutputVar := IniRead("QuickCast") ;get all lines in section
+    lines := StrSplit(OutputVar, "`n") ;split by newline
+    Loop % lines.MaxIndex()
+    {
+        keyValue := StrSplit(lines[A_Index], "=") ; split line to key and value
+        GuiControl, 1:, % keyValue[1] , % GetHotkeyName(keyValue[2]) ; update gui
+        ; assign hotkeys to labels
+        if(keyValue[2] != "")
+        {
+            Hotkey, % keyValue[2], % keyValue[1], On
+        }
+    }
+}
+
+IniRead(Section, Key := "")
+{
+    IniRead, OutputVar, %iniFile%, %Section%, %Key%
+    if(OutputVar = "ERROR")
+        OutputVar := ""
+return OutputVar
+}
+
+GetGuiValue(GuiID, GuiVar)
+{
+    GuiControlGet, Value, %GuiID%:, %GuiVar%
+return %Value%
+}
+
+DownloadFileFromUrl(URL)
+{
+    WC3Chat("Downloading Save File From Cloud Service")
+    whr := ComObjCreate("WinHttp.WinHttpRequest.5.1")
+    whr.Open("GET", URL, false)
+    whr.Send()
+
+    arr := whr.ResponseBody
+    pData := NumGet(ComObjValue(arr) + 8 + A_PtrSize)
+    length := arr.MaxIndex() + 1
+    result := StrGet(pData, length, "utf-8")
+    ;Error Page
+    if(InStr(result, "<html>"))
+        Run, %URL%
+return result
+}
+
+WC3Chat(String)
+{
+    SendInput, {Enter}
+    SendInput, {Text}%String%
+    SendInput, {Enter}
+}
+
 FileExistCheck()
 {
     ToolTip("Checking File Existent...")
@@ -691,19 +752,19 @@ KeyWaitAny(Options:="")
         {
         case "Escape":
         return ""
-    default:
-        if(ih.EndMods != "" || RegExMatch(ih.EndKey, "\w{2}") > 0) ; disable key function for combined hotkeys
-        {
-            return "$" . ih.EndMods . ih.EndKey
+        default:
+            if(ih.EndMods != "" || RegExMatch(ih.EndKey, "\w{2}") > 0) ; disable key function for combined hotkeys
+            {
+                return "$" . ih.EndMods . ih.EndKey
+            }
+            else ; send key include the hotkey
+                return "$~" . ih.EndMods . ih.EndKey
         }
-        else ; send key include the hotkey
-            return "$~" . ih.EndMods . ih.EndKey
     }
-}
-else
-{
-    return -1
-}
+    else
+    {
+        return -1
+    }
 }
 
 GetHotkeys()
@@ -734,14 +795,8 @@ GetHotkeyName(Hotkey)
 InventoryToggle:
     inventory := !inventory ; toggle inventory
     GuiControl, 3: Text, ActiveInventory, % "Inventory: " ((inventory) ? ("Enabled") : ("Disabled")) ;update GUI
-    if (!GetGuiValue("1", "DisableAllNativeFunctions")) ; send hotkey when native function is blocked
-    {
-        if(RegExMatch(A_ThisHotKey, "\w{2}") != 0) ; Function keys F1~F12
-        SendInput, % "{" . RegExReplace(A_ThisHotKey, "[$<>]", "") . "}"
-    else ; Combined keys ex: ALT+T
-        Send, % RegExReplace(A_ThisHotKey, "[$<>]", "")
-}
 return
+
 Numpad7:
 Numpad2:
 Numpad1:
@@ -751,7 +806,11 @@ Numpad8:
     if(inventory)
         SendInput, {%A_ThisLabel%}
     if(inventory && GetGuiValue("1", A_ThisLabel . "QuickCast") = 1)
+    {
+        SendInput, {CtrlDown}{9}{0}{CtrlUp}
         MouseClick, Left
+        SendInput, {9}{0}
+    }
     else if (!GetGuiValue("1", "DisableAllNativeFunctions") && !inventory && !InStr(A_ThisHotKey, "~")) ; send hotkey when native function is blocked and inventory is disabled
     {
         if(RegExMatch(A_ThisHotKey, "\w{2}") != 0) ; Function keys F1~F12
@@ -760,6 +819,39 @@ Numpad8:
         Send, % RegExReplace(A_ThisHotKey, "[$<>]", "")
 }
 return
+
+;QuickCast
+QuickCastToggle:
+    QuickCast := !QuickCast ; toggle QuickCast
+    GuiControl, 3: Text, ActiveQuickCast, % "Quick Cast: " ((QuickCast) ? ("Enabled") : ("Disabled")) ;update GUI
+Return
+
+ProbeQuickCast1:
+ProbeQuickCast2:
+ProbeQuickCast3:
+    if(QuickCast)
+    {
+        MouseClick, Right
+        SendInput, {9}{0}
+    }
+Return
+
+QuickCast1:
+QuickCast2:
+QuickCast3:
+QuickCast4:
+QuickCast5:
+QuickCast6:
+QuickCast7:
+QuickCast8:
+QuickCast9:
+    if(QuickCast)
+    {
+        SendInput, {CtrlDown}{9}{0}{CtrlUp}
+        MouseClick, Left
+        SendInput, {9}{0}
+    }
+Return
 
 ;Setting
 ShowHideMain:
@@ -779,7 +871,8 @@ ShowHideOverlay:
 return
 
 PauseGame:
-    SendInput, {F10}{M}{F10}
+    if(WinActive("Warcraft III"))
+        SendInput, {F10}{M}{F10}
 return
 
 ;Common
@@ -793,10 +886,10 @@ $~Enter::
         QuickCast := False
         QuickCall := False
         NoMouse := False
-        ;GuiControl, 3: Text, ActiveNoMouse  , % "No Mouse: " ((NoMouse) ? ("Enabled") : ("Disabled"))
-        ;GuiControl, 3: Text, ActiveQuickCast, % "Quick Cast: " ((QuickCast) ? ("Enabled") : ("Disabled"))
-        ;GuiControl, 3: Text, ActiveQuickCall, % "Quick Call: " ((QuickCall) ? ("Enabled") : ("Disabled"))
         GuiControl, 3: Text, ActiveInventory, % "Inventory: " ((inventory) ? ("Enabled") : ("Disabled"))
+        GuiControl, 3: Text, ActiveQuickCast, % "Quick Cast: " ((QuickCast) ? ("Enabled") : ("Disabled"))
+        ;GuiControl, 3: Text, ActiveQuickCall, % "Quick Call: " ((QuickCall) ? ("Enabled") : ("Disabled"))
+        ;GuiControl, 3: Text, ActiveNoMouse  , % "No Mouse: " ((NoMouse) ? ("Enabled") : ("Disabled"))
     }
     else if(WinActive("Warcraft III") && GetGuiValue("1", "DisableAll") && WC3Chating = True)
     {
@@ -805,10 +898,10 @@ $~Enter::
         QuickCast := SettingsHistory[2]
         QuickCall := SettingsHistory[3]
         NoMouse := SettingsHistory[4]
-        ;GuiControl, 3: Text, ActiveNoMouse  , % "No Mouse: " ((NoMouse) ? ("Enabled") : ("Disabled"))
-        ;GuiControl, 3: Text, ActiveQuickCast, % "Quick Cast: " ((QuickCast) ? ("Enabled") : ("Disabled"))
-        ;GuiControl, 3: Text, ActiveQuickCall, % "Quick Call: " ((QuickCall) ? ("Enabled") : ("Disabled"))
         GuiControl, 3: Text, ActiveInventory, % "Inventory: " ((inventory) ? ("Enabled") : ("Disabled"))
+        GuiControl, 3: Text, ActiveQuickCast, % "Quick Cast: " ((QuickCast) ? ("Enabled") : ("Disabled"))
+        ;GuiControl, 3: Text, ActiveQuickCall, % "Quick Call: " ((QuickCall) ? ("Enabled") : ("Disabled"))
+        ;GuiControl, 3: Text, ActiveNoMouse  , % "No Mouse: " ((NoMouse) ? ("Enabled") : ("Disabled"))
     }
 return
 
