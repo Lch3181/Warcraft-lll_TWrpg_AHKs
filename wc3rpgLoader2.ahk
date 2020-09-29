@@ -12,7 +12,7 @@ SetWinDelay, -1
 SetBatchLines, -1
 SetControlDelay -1
 Thread, interrupt, 0
-global version := 3.3
+global version := 3.31
 global iniFile := "wc3rpgLoaderData.ini"
 global KeyWaiting := False
 global GUIShow := True
@@ -919,6 +919,7 @@ GuiClose:
 GuiEscape:
 2GuiEscape:
     Gui, %A_Gui%:Hide
+    GUIShow := False
     ToolTip
 return
 
