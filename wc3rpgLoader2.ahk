@@ -631,8 +631,11 @@ GetSetInventories()
         ; assign hotkeys to labels
         if(keyValue[2] != "" && !InStr(keyValue[1], "QuickCast"))
         {
+            if(!InStr(keyValue[1], "Toggle")) ; let non-toggle hotkeys only work in wc3
+                Hotkey, IfWinActive, Warcraft III
             Hotkey, % keyValue[2], % keyValue[1], On
         }
+        Hotkey, IfWinActive ; end if wc3 for hotkeys
     }
 }
 
@@ -647,8 +650,11 @@ GetSetQuickCast()
         ; assign hotkeys to labels
         if(keyValue[2] != "")
         {
+            if(!InStr(keyValue[1], "Toggle")) ; let non-toggle hotkeys only work in wc3
+                Hotkey, IfWinActive, Warcraft III
             Hotkey, % keyValue[2], % keyValue[1], On
         }
+        Hotkey, IfWinActive ; end if wc3 for hotkeys
     }
 }
 
@@ -876,8 +882,9 @@ PauseGame:
 return
 
 ;Common
+#IfWinActive, Warcraft III ; set hotkey only work for wc3
 $~Enter::
-    if(WinActive("Warcraft III") && GetGuiValue("1", "DisableAll") && WC3Chating = False)
+    if(GetGuiValue("1", "DisableAll") && WC3Chating = False)
     {
         WC3Chating := True
         SettingsHistory := [inventory, QuickCast, QuickCall, NoMouse]
@@ -904,6 +911,7 @@ $~Enter::
         ;GuiControl, 3: Text, ActiveNoMouse  , % "No Mouse: " ((NoMouse) ? ("Enabled") : ("Disabled"))
     }
 return
+#IfWinActive
 
 GuiClose:
 2GuiClose:
