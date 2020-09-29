@@ -223,7 +223,7 @@ Return
 tw_skills(){
     SendInput, {F1 2}
     Sleep, 100
-    SendInput, {Ctrl down}{1}{Ctrl up}
+    SendInput, {Ctrl down}{1}{9}{0}{Ctrl up}
     Sleep, 100
     SendInput, {Esc}{o}
     sleep, 25
