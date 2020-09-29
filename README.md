@@ -35,6 +35,10 @@ Numpad5=$~4
 Numpad1=$~5
 ```
 
+Quick cast: The assigned key is also the spell for quick cast, unsign spells that do not need quick cast.
+
+Probes quick cast, only can be assign to number 1-8
+
 Quick cast meaning: its basically cast that spell on mouse hover without needing to left click.
 
 ## Default hotkeys:
@@ -57,6 +61,14 @@ F2: Toggle Inventory function
 4: numpad4
 
 5: numpad1
+
+6: probe1
+
+7: probe2
+
+8: probe3
+
+qweradfp: quickcast
 
 Alt+Esc: exit wc3 rpg tool
 ## Important:
