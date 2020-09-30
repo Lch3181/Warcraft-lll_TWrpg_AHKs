@@ -12,11 +12,11 @@ SetWinDelay, -1
 SetBatchLines, -1
 SetControlDelay -1
 Thread, interrupt, 0
-global version := 3.31
+global version := 3.4
 global iniFile := "wc3rpgLoaderData.ini"
 global KeyWaiting := False
-global GUIShow := True
-global OverlayShow := True
+global GUIShow := False
+global OverlayShow := False
 global WC3Chating := False
 global SettingsHistory := []
 global inventory := False
@@ -88,18 +88,18 @@ Gui, Font, s12
 Gui, Add, Text, x+10 y40 , Enable/`nDisable
 Gui, Font, s8
 Gui, Add, Button, x295 y85 w50 h20 gGetSetKey vQuickCastToggle
-Gui, Add, Button, x32 y82 w50 h20   gGetSetKey vProbeQuickCast1
-Gui, Add, Button, x+14 w50 h20      gGetSetKey vProbeQuickCast2
-Gui, Add, Button, x+13 w50 h20      gGetSetKey vProbeQuickCast3
-Gui, Add, Button, x+14 w50 h20      gGetSetKey vQuickCast1
-Gui, Add, Button, x32 y+43 w50 h20  gGetSetKey vQuickCast2
-Gui, Add, Button, x+14 w50 h20      gGetSetKey vQuickCast3
-Gui, Add, Button, x+13 w50 h20      gGetSetKey vQuickCast4
-Gui, Add, Button, x+14 w50 h20      gGetSetKey vQuickCast5
-Gui, Add, Button, x32 y+43 w50 h20  gGetSetKey vQuickCast6 
-Gui, Add, Button, x+14 w50 h20      gGetSetKey vQuickCast7 
-Gui, Add, Button, x+13 w50 h20      gGetSetKey vQuickCast8
-Gui, Add, Button, x+14 w50 h20      gGetSetKey vQuickCast9
+Gui, Add, Button, x32 y82 w50 h20 gGetSetKey vProbeQuickCast1
+Gui, Add, Button, x+14 w50 h20 gGetSetKey vProbeQuickCast2
+Gui, Add, Button, x+13 w50 h20 gGetSetKey vProbeQuickCast3
+Gui, Add, Button, x+14 w50 h20 gGetSetKey vQuickCast1
+Gui, Add, Button, x32 y+43 w50 h20 gGetSetKey vQuickCast2
+Gui, Add, Button, x+14 w50 h20 gGetSetKey vQuickCast3
+Gui, Add, Button, x+13 w50 h20 gGetSetKey vQuickCast4
+Gui, Add, Button, x+14 w50 h20 gGetSetKey vQuickCast5
+Gui, Add, Button, x32 y+43 w50 h20 gGetSetKey vQuickCast6 
+Gui, Add, Button, x+14 w50 h20 gGetSetKey vQuickCast7 
+Gui, Add, Button, x+13 w50 h20 gGetSetKey vQuickCast8
+Gui, Add, Button, x+14 w50 h20 gGetSetKey vQuickCast9
 ;-----------------------------------------Settings----------------------------------------------------------
 Gui, Tab, Settings
 Gui, Font, s12
@@ -111,6 +111,7 @@ Gui, Add, Text, y+0, Exit
 Gui, Add, Text, y+0, Disable All on during chat (wc3 only)
 Gui, Add, Text, y+0, Disable Hotkeys' Native Functions
 Gui, Add, Text, y+0, Ex: Alt+q or space if assigned
+Gui, Add, Text, y+0, % "Newest version:`t`t`t`t " . GetNewVersion()
 Gui, Font, s8
 Gui, Add, Button, x300 y30 w70 h20 gGetSetKey vShowHideMain
 Gui, Add, Button, y+0 w70 h20 gGetSetKey vShowHideOverlay
@@ -142,7 +143,6 @@ Gui, 3: Add, Text, vActiveQuickCast x0 y+0, % "Quick Cast: " ((QuickCast) ? ("En
 ;Gui, 3: Add, Text, vActiveNoMouse   x0 y+0, % "No Mouse: " ((NoMouse) ? ("Enabled") : ("Disabled"))
 Gui, 3: Color, EEAA99
 WinSet, TransColor, EEAA99
-Gui, 3: Show, x0 y0
 
 ;GetSetAll
 GetSetHeros()
@@ -152,7 +152,8 @@ GetSetSettings()
 GetSetQuickCast()
 
 ;Show Gui on Start
-Gui, Show, w380 h260, WC3 RPG Tool
+Gosub, ShowHideMain
+Gosub, ShowHideOverlay
 return
 
 ;----------------------------------------------------------------------------------
@@ -178,7 +179,10 @@ twrpg:
     if(IniRead("TWrpgHeros", GetGuiValue(A_Gui,"HeroChoice")) = "") ;if URL is empty, load from PC
         FileRead, code, % IniRead("Address", "TWrpgFolder")"\"GetGuiValue(A_Gui,"HeroChoice")".txt"
     else ;if URL exist
+    {
+        ToolTip("Downloading Save File From Cloud Service")
         code := DownloadFileFromUrl(IniRead("TWrpgHeros", GetGuiValue(A_Gui,"HeroChoice")))
+    }
 
     if not ErrorLevel{
         ;Close Gui
@@ -214,6 +218,9 @@ twrpg:
     }
     else
     {
+        ;Error Page
+        if(InStr(result, "<html>"))
+            Run, %URL%
         MsgBox, "File Does Not Exist"
     }
 
@@ -634,10 +641,10 @@ GetSetInventories()
         {
             if(!InStr(keyValue[1], "Toggle")) ; let non-toggle hotkeys only work in wc3
                 Hotkey, IfWinActive, Warcraft III
-            Hotkey, % keyValue[2], % keyValue[1], On
+                Hotkey, % keyValue[2], % keyValue[1], On
         }
         Hotkey, IfWinActive ; end if wc3 for hotkeys
-    }
+        }
 }
 
 GetSetQuickCast()
@@ -653,10 +660,10 @@ GetSetQuickCast()
         {
             if(!InStr(keyValue[1], "Toggle")) ; let non-toggle hotkeys only work in wc3
                 Hotkey, IfWinActive, Warcraft III
-            Hotkey, % keyValue[2], % keyValue[1], On
+                Hotkey, % keyValue[2], % keyValue[1], On
         }
         Hotkey, IfWinActive ; end if wc3 for hotkeys
-    }
+        }
 }
 
 IniRead(Section, Key := "")
@@ -675,7 +682,6 @@ return %Value%
 
 DownloadFileFromUrl(URL)
 {
-    WC3Chat("Downloading Save File From Cloud Service")
     whr := ComObjCreate("WinHttp.WinHttpRequest.5.1")
     whr.Open("GET", URL, false)
     whr.Send()
@@ -684,9 +690,6 @@ DownloadFileFromUrl(URL)
     pData := NumGet(ComObjValue(arr) + 8 + A_PtrSize)
     length := arr.MaxIndex() + 1
     result := StrGet(pData, length, "utf-8")
-    ;Error Page
-    if(InStr(result, "<html>"))
-        Run, %URL%
 return result
 }
 
@@ -797,6 +800,13 @@ GetHotkeyName(Hotkey)
     return Hotkey
 }
 
+GetNewVersion()
+{
+    result := DownloadFileFromUrl("https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/tags")
+    RegExMatch(result, "tag\/([\W\d]+)"">", match)
+    return match1
+}
+
 ;Hotkeys
 ;Inventory
 InventoryToggle:
@@ -864,7 +874,7 @@ Return
 ShowHideMain:
     GUIShow := !GUIShow
     if (GUIShow)
-        Gui, Show, w380 h260
+        Gui, Show, w380 h260, wc3 rpg Tool v%version%
     else
         Gui, Hide
 return
