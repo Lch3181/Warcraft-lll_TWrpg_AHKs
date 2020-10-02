@@ -1,6 +1,6 @@
 ﻿#SingleInstance, Force
 #MaxThreadsPerHotKey 2
-FileEncoding UTF-8-RAW
+FileEncoding UTF-8
 SendMode Input
 SetWorkingDir, %A_ScriptDir%
 SetTitleMatchMode 2
@@ -12,7 +12,7 @@ SetWinDelay, -1
 SetBatchLines, -1
 SetControlDelay -1
 Thread, interrupt, 0
-global version := 3.4
+global version := 3.5
 global iniFile := "wc3rpgLoaderData.ini"
 global KeyWaiting := False
 global GUIShow := False
@@ -29,7 +29,6 @@ FileInstall, Images\Spells.jpg, Images\Spells.jpg
 
 ;fill up missing data if first run
 initial()
-
 ;GUI
 ;-------------------------------------------Loader Tab---------------------------------------------------
 Gui, Color, DCDCDC
@@ -38,7 +37,7 @@ Gui, Add, Tab3, x0 y20 w380 h240 vSubLoader, TWrpg
 Gui, Tab, TWRPG
 Gui, Add, Text, x20 y50, Hero:
 Gui, Add, DropDownList, y+5 w340 R10 vHeroChoice
-Gui, Add, Checkbox, y+10 vConvertToggle, -Convert for Warcraft III Reforged
+Gui, Add, Checkbox, y+10 vConvertToggle gGetSetCheckBoxValue, -Convert for Warcraft III Reforged
 Gui, Add, Button, x20 y+10 w150 h30 gtwrpg , Load
 Gui, Add, Button, x+20 w170 h30 gHerosEditorButton, Add/Edit/Delete
 Gui, Add, Text, x20 y+10 , TWRPG Folder:
@@ -53,10 +52,10 @@ Gui, Add, Text, x20 y30 , Pick:
 Gui, Add, ComboBox, y+5 w100 R10 vBotChoice gOnSelectBot
 Gui, Add, Text, x20 y+10 , Map Load Command:
 Gui, Add, Edit, y+5 w100 h20 vBotCommand
-Gui, Add, Checkbox, x+10 vBotCommandToggle, Enable/Disable
+Gui, Add, Checkbox, x+10 vBotCommandToggle gGetSetCheckBoxValue, Enable/Disable
 Gui, Add, Text, x20 y+10 , Game Name:
 Gui, Add, Edit, y+5 w100 h20 vGN
-Gui, Add, Checkbox, x+10 vGameNamePlusToggle, Game Name + 1 Enable/Disable
+Gui, Add, Checkbox, x+10 vGameNamePlusToggle gGetSetCheckBoxValue, Game Name + 1 Enable/Disable
 Gui, Add, Button, x20 y+20 w100 h30 gPriv, Private
 Gui, Add, Button, x+20 w100 h30 gPub, Public
 Gui, Add, Button, x+20 w100 h30 gDeleteBot, Delete Bot History
@@ -66,7 +65,7 @@ Gui, Add, Picture, x20 y40 Icon , Images\Inventory.jpg
 Gui, Font, s12
 Gui, Add, Text, x+10 y40 , Enable/Disable
 Gui, Add, Text, y+0 , CheckBox for Quick Cast
-Gui, Add, Text, y+10, Click a button to assign a key,`nEsc to unsign a key 
+Gui, Add, Text, y+10, Click a button to assign a key,`nRight Click to unsign a key 
 Gui, Font, s8
 Gui, Add, Button, x285 y40 w50 h20 gGetSetKey vInventoryToggle
 Gui, Add, Button, x29 y80 w50 h20 gGetSetKey vNumpad7
@@ -111,7 +110,7 @@ Gui, Add, Text, y+0, Exit
 Gui, Add, Text, y+0, Disable All on during chat (wc3 only)
 Gui, Add, Text, y+0, Disable Hotkeys' Native Functions
 Gui, Add, Text, y+0, Ex: Alt+q or space if assigned
-Gui, Add, Text, y+0, % "Newest version:`t`t`t`t " . GetNewVersion()
+Gui, Add, Text, y+0, % "Newest version:`t`t`t`t  " . GetNewVersionTag()
 Gui, Font, s8
 Gui, Add, Button, x300 y30 w70 h20 gGetSetKey vShowHideMain
 Gui, Add, Button, y+0 w70 h20 gGetSetKey vShowHideOverlay
@@ -145,6 +144,8 @@ Gui, 3: Color, EEAA99
 WinSet, TransColor, EEAA99
 
 ;GetSetAll
+GetSetLoader()
+GetSetHost()
 GetSetHeros()
 GetSetBots()
 GetSetInventories()
@@ -197,6 +198,7 @@ twrpg:
 
         ;output to wc3 chat
         WC3Chat(IniRead("LoadingString", GetGuiValue(A_Gui,"HeroChoice")))
+        OutputDebug, % IniRead("LoadingString", GetGuiValue(A_Gui,"HeroChoice"))
         if(charName != "" && GetGuiValue(A_Gui, "Convert"))
             WC3Chat("-convert "charName)
         sleep, 100
@@ -453,7 +455,7 @@ return
 
 GetSetKey:
     Gui, Submit, Nohide
-    ; disable hotkey
+    ; temporary disable hotkey
     OrginalKey := % IniRead(MainTab, A_GuiControl)
     if(OrginalKey != "")
         Hotkey, % OrginalKey, %A_GuiControl%, Off
@@ -466,7 +468,13 @@ GetSetKey:
         ToolTip("Please finish assigning previous button or click ESC to unsign that button")
         return
     }
-    if(InStr(A_GuiControl, "Probe") && RegExMatch(input, "\W+[1-8]") = 0) ; probes only can assign with numbers
+    if(input = "$Escape") ; escape key to cancel
+    {
+        GuiControl,, %A_GuiControl%, % GetHotkeyName(IniRead(MainTab, A_GuiControl)) ;update gui
+        ToolTip("Canceled")
+        return
+    }
+    if(InStr(A_GuiControl, "Probe")) && (RegExMatch(input, "\W+[1-8]") = 0 && input != "") ; probes only can assign with numbers
     {
         GuiControl,, %A_GuiControl%, % GetHotkeyName(IniRead(MainTab, A_GuiControl)) ;update gui
         ToolTip("Probes only can assign with numbers 1-8")
@@ -490,8 +498,28 @@ return
 
 GetSetCheckBoxValue:
     Gui, Submit, Nohide
-    IniWrite, % GetGuiValue("1", A_GuiControl), %iniFile%, %MainTab%, %A_GuiControl%
+    IniWrite, % GetGuiValue(A_Gui, A_GuiControl), %iniFile%, %MainTab%, %A_GuiControl%
 return
+
+; right click any gui
+GuiContextMenu:
+    Gui, Submit, Nohide
+    ; unsign hotkey
+    if(InStr(IniRead("Inventory"), A_GuiControl) || InStr(IniRead("QuickCast"), A_GuiControl) || InStr(IniRead("Settings"), A_GuiControl)) && (A_GuiControl != "") ; filter gui with ini data only
+    {
+        ; if gui contains a hotkey
+        if(InStr(IniRead(MainTab, A_GuiControl), "$"))
+        {
+            GuiControl,, A_GuiControl, % ""
+            Hotkey, % IniRead(MainTab, A_GuiControl), %A_GuiControl%, Off ; disable hotkey
+            IniWrite, % "", %IniFile%, %MainTab%, %A_GuiControl% ;update ini file
+            GetSetInventories() ; refresh inventory tab
+            GetSetSettings() ;refresh setting tab
+            GetSetQuickCast() ;refresh quick cast tab
+            ToolTip(A_GuiControl . " unsigned")
+        }
+    }
+Return
 
 ;------------------------------------Functions-------------------------------------
 initial()
@@ -520,9 +548,6 @@ initial()
         IniWrite, $~5, %iniFile%, Inventory, Numpad1
         ;Settings
         IniWrite, 2.0, %iniFile%, Settings, Version ; update client version the first time
-        IniWrite, 1, %iniFile%, Settings, ConvertToggle
-        IniWrite, 1, %iniFile%, Settings, BotCommandToggle
-        IniWrite, 1, %iniFile%, Settings, GameNamePlusToggle
         IniWrite, 1, %iniFile%, Settings, DisableAll
         IniWrite, 1, %iniFile%, Settings, DisableAllNativeFunctions
         IniWrite, $F8, %iniFile%, Settings, ShowHideMain
@@ -564,7 +589,35 @@ initial()
         IniWrite, $~e, %iniFile%, QuickCast, QuickCast8
         IniWrite, $~r, %iniFile%, QuickCast, QuickCast9
     }
+    if(clientVersion < 3.5) ; 3.5 I missed a few data to save
+    {
+        IniWrite, 1, %iniFile%, Loader, ConvertToggle
+        IniWrite, 1, %iniFile%, Host, BotCommandToggle
+        IniWrite, 1, %iniFile%, Host, GameNamePlusToggle
+    }
     IniWrite, %version%, %iniFile%, Settings, Version ; update client version
+}
+
+GetSetLoader()
+{
+    OutputVar := IniRead("Loader") ;get all lines in section
+    lines := StrSplit(OutputVar, "`n") ;split by newline
+    Loop % lines.MaxIndex()
+    {
+        keyValue := StrSplit(lines[A_Index], "=") ; split line to key and value
+        GuiControl, 1:, % keyValue[1] , % GetHotkeyName(keyValue[2]) ; update gui
+    }
+}
+
+GetSetHost()
+{
+    OutputVar := IniRead("Host") ;get all lines in section
+    lines := StrSplit(OutputVar, "`n") ;split by newline
+    Loop % lines.MaxIndex()
+    {
+        keyValue := StrSplit(lines[A_Index], "=") ; split line to key and value
+        GuiControl, 1:, % keyValue[1] , % GetHotkeyName(keyValue[2]) ; update gui
+    }
 }
 
 GetSetSettings()
@@ -757,19 +810,12 @@ KeyWaitAny(Options:="")
         ih.Start()
         ErrorLevel := ih.Wait() ; Store EndReason in ErrorLevel
         KeyWaiting := False
-        OutputDebug, % "Mod: " . ih.EndMods . " Key: " . ih.EndKey
-        switch ih.EndKey
+        if(ih.EndMods != "" || RegExMatch(ih.EndKey, "\w{2}") > 0) ; disable key native function for combined hotkeys and function keys
         {
-        case "Escape":
-        return ""
-        default:
-            if(ih.EndMods != "" || RegExMatch(ih.EndKey, "\w{2}") > 0) ; disable key function for combined hotkeys
-            {
-                return "$" . ih.EndMods . ih.EndKey
-            }
-            else ; send key include the hotkey
-                return "$~" . ih.EndMods . ih.EndKey
+            return "$" . ih.EndMods . ih.EndKey
         }
+        else ; send key include the hotkey
+            return "$~" . ih.EndMods . ih.EndKey
     }
     else
     {
@@ -787,7 +833,7 @@ GetHotkeys()
         if(InStr(value, "$"))
             Hotkeys .= value . ", " ;get all hotkeys from value
     }
-    return Hotkeys
+return Hotkeys
 }
 
 GetHotkeyName(Hotkey)
@@ -797,14 +843,14 @@ GetHotkeyName(Hotkey)
     {
         Hotkey := StrReplace(Hotkey, value[1], value[2])
     }
-    return Hotkey
+return Hotkey
 }
 
-GetNewVersion()
+GetNewVersionTag()
 {
     result := DownloadFileFromUrl("https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/tags")
     RegExMatch(result, "tag\/([\W\d]+)"">", match)
-    return match1
+return match1
 }
 
 ;Hotkeys
