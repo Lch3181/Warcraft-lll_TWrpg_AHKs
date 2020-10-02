@@ -22,6 +22,8 @@ Hosting on the first time, type the bot's name, map load command if any, and gam
 
 Inventory, default F2 to enable/disable it. Click the button then click a key on your keyboard to remap that key for inventory. Check box for quick cast.
 
+Right Click the button to unsign the hotkey
+
 Note: Mouse buttons cannot be detected when assigning a key for inventory/quick cast, but user can edit the data.ini file to make mouse button works. I cannot find a way to detect mouse buttons on ahk, let me know if any knows how to do it.
 
 Examples: Common mouse buttons Mbutton = Middle button, XButton1 = Mouse button 3, XButton2 = Mouse button 4. 
