@@ -21,6 +21,11 @@ global WC3Chating := False
 global SettingsHistory := []
 global inventory := False
 global QuickCast := False
+;force run as admin
+if not A_IsAdmin
+{
+   Run *RunAs "%A_ScriptFullPath%"
+}
 ;Includes the specified file inside the compiled version of the script.
 FileCreateDir, Images
 FileInstall, Images\SearchIcon.png, Images\SearchIcon.png
@@ -107,7 +112,7 @@ Gui, Add, Text, y+0, Overlay Show/Hide
 Gui, Add, Text, y+0, Pause Game
 Gui, Add, Text, y+0, Unsign Hotkey
 Gui, Add, Text, y+0, Exit
-Gui, Add, Text, y+0, Disable All on during chat (wc3 only)
+Gui, Add, Text, y+0, Disable All during chat (wc3 only)
 Gui, Add, Text, y+0, Disable Hotkeys' Native Functions
 Gui, Add, Text, y+0, Ex: Alt+q or space if assigned
 Gui, Add, Text, y+0, % "Newest version:`t`t`t`t  " . GetNewVersionTag()
@@ -968,6 +973,13 @@ $~Enter::
         ;GuiControl, 3: Text, ActiveNoMouse  , % "No Mouse: " ((NoMouse) ? ("Enabled") : ("Disabled"))
     }
 return
+
+:*B0:!cam ::
+    Input, OutputVar, V, {Enter}
+    SendInput, {Enter}
+    Sleep, 50
+    WC3Chat("!cam " . OutputVar . " Setting camera distance Soon™")
+Return
 #IfWinActive
 
 GuiClose:
