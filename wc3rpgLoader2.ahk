@@ -12,7 +12,7 @@ SetWinDelay, -1
 SetBatchLines, -1
 SetControlDelay -1
 Thread, interrupt, 0
-global version := 3.5
+global version := 3.51
 global iniFile := "wc3rpgLoaderData.ini"
 global KeyWaiting := False
 global GUIShow := False
