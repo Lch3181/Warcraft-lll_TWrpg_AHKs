@@ -94,6 +94,11 @@ Q: My spacebar is not working after I assigned it into a hotkey even if the func
 
 A: Uncheck the Disable hotkeys' Native Function in Settings.
 
+## Thanks
+Weirman, boomer QA Tester
+
+RockLee, existing
+
 ## Independent scripts(Users need to edit them manually)
 ![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/GUI.png)
 

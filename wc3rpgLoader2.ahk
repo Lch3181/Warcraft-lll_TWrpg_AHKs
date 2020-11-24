@@ -12,8 +12,9 @@ SetWinDelay, -1
 SetBatchLines, -1
 SetControlDelay -1
 Thread, interrupt, 0
-global version := 3.51
+global version := 4.0
 global iniFile := "wc3rpgLoaderData.ini"
+global CameraExe := "Camera\publish\Camera.exe"
 global KeyWaiting := False
 global GUIShow := False
 global OverlayShow := False
@@ -31,6 +32,10 @@ FileCreateDir, Images
 FileInstall, Images\SearchIcon.png, Images\SearchIcon.png
 FileInstall, Images\Inventory.jpg, Images\Inventory.jpg
 FileInstall, Images\Spells.jpg, Images\Spells.jpg
+FileCreateDir, Camera\publish
+FileInstall, Camera\publish\Camera.exe.config, Camera\publish\Camera.exe.config, 1
+FileInstall, Camera\publish\Camera.exe, Camera\publish\Camera.exe, 1
+FileInstall, Camera\publish\Camera.pdb, Camera\publish\Camera.pdb, 1
 
 ;fill up missing data if first run
 initial()
@@ -203,7 +208,6 @@ twrpg:
 
         ;output to wc3 chat
         WC3Chat(IniRead("LoadingString", GetGuiValue(A_Gui,"HeroChoice")))
-        OutputDebug, % IniRead("LoadingString", GetGuiValue(A_Gui,"HeroChoice"))
         if(charName != "" && GetGuiValue(A_Gui, "Convert"))
             WC3Chat("-convert "charName)
         sleep, 100
@@ -950,7 +954,6 @@ $~Enter::
     {
         WC3Chating := True
         SettingsHistory := [inventory, QuickCast, QuickCall, NoMouse]
-        OutputDebug, % SettingsHistory[1]
         inventory := False
         QuickCast := False
         QuickCall := False
@@ -978,7 +981,29 @@ return
     Input, OutputVar, V, {Enter}
     SendInput, {Enter}
     Sleep, 50
-    WC3Chat("!cam " . OutputVar . " Setting camera distance Soon™")
+    RunWait, % CameraExe . " " . OutputVar . " " . 90 . " " . 304
+    Sleep, 150
+    switch ErrorLevel
+    {
+        case 0:
+            WC3Chat("Setting Camera Distance to " . OutputVar)
+            Return
+        case 1:
+            WC3Chat("Not enough arguenments")
+            Return
+        case 2:
+            WC3Chat("Invaild type, has to be number")
+            Return
+        case 3:
+            WC3Chat("Invaild value range (1-6000)")
+            Return
+        case 4:
+            WC3Chat("Game.dll not found")
+            Return
+        Default:
+            WC3Chat("This shouldn't happen")
+            Return
+    }
 Return
 #IfWinActive
 

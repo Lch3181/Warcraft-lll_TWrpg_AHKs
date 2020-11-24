@@ -12,11 +12,20 @@ namespace Camera
         static int Main(string[] args)
         {
 #if DEBUG
-            args = new[] { "1650.0", "90.0", "304.0" };
+            args = new[] { "4000.0", "90.0", "304.0" };
 #endif
             //camera.exe distance X Y
-            if (args.Length < 3)
-                return -1; // not enough args
+            if (args.Length != 3)
+                return 1; // not enough args
+            foreach (var arg in args)
+            {
+                float number;
+                bool success = float.TryParse(arg, out number);
+                if (!success)
+                    return 2; // invaild type, has to be number
+            }
+            if (float.Parse(args[0]) < 1 || float.Parse(args[0]) > 6000)
+                return 3; // invaild value range
 
             //get wc3 process handle and game.dll offset
             Process[] processlist = Process.GetProcesses();
@@ -36,6 +45,8 @@ namespace Camera
                     }
                 }
             }
+            if (GameDllOffSet == null)
+                return 4; //game.dll not found
             Console.WriteLine("Handle: " + MainWindowHandle);
             Console.WriteLine("GameDll: " + GameDllOffSet);
             //apply camera settings
