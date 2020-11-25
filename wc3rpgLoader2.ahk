@@ -992,7 +992,7 @@ return
 :*B0:!cam ::
     Input, OutputVar, V, {Enter}
     SendInput, {Enter}
-    Sleep, 50
+    Sleep, 150
     RunWait, % CameraExe . " " . OutputVar . " " . 90 . " " . 304
     Sleep, 150
     switch ErrorLevel
@@ -1010,10 +1010,11 @@ return
             WC3Chat("Invaild value range (1-6000)")
             Return
         case 4:
-            WC3Chat("Game.dll not found")
+            WC3Chat("Game.dll not found(This function doesn't work on 1.28.5+)")
             Return
         Default:
             WC3Chat("This shouldn't happen")
+            Run, %CameraExe%
             Return
     }
 Return

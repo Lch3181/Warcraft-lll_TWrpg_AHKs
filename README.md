@@ -44,6 +44,9 @@ Probes quick cast, only can be assign to number 1-8
 
 Quick cast meaning: its basically cast that spell on mouse hover without needing to left click.
 
+## Ingame Commands
+!cam 1-6000: adjust the camera distance. (1.28.5 only)
+
 ## Default hotkeys:
 Enter: temporary disable all inventory and quick cast functions for wc3 ingame chat. Can be turnned off in settings
 
@@ -88,7 +91,7 @@ summon quick cast, quick call, No mouse(laptop users like me)
 ## FQA:
 Q: My anti-virus/windows defender said it contains virus when I download it.
 
-A: They do that on 95% of the times when you download any .EXE file on the internet. The raw code is on the bottom if u question if it is safe of not.
+A: They do that on 95% of the times when you download any .EXE file on the internet. The raw code is here if u question if it is safe of not.
 
 Q: My spacebar is not working after I assigned it into a hotkey even if the functions are disabled.
 
@@ -97,7 +100,7 @@ A: Uncheck the Disable hotkeys' Native Function in Settings.
 ## Thanks
 Weirman, boomer QA Tester
 
-RockLee, existing
+RockLee, contributor
 
 ## Independent scripts(Users need to edit them manually)
 ![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/GUI.png)
