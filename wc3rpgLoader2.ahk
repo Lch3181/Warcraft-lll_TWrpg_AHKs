@@ -12,7 +12,7 @@ SetWinDelay, -1
 SetBatchLines, -1
 SetControlDelay -1
 Thread, interrupt, 0
-global version := 4.0
+global version := 4.1
 global iniFile := "wc3rpgLoaderData.ini"
 global CameraExe := "Camera\publish\Camera.exe"
 global KeyWaiting := False
@@ -120,6 +120,8 @@ Gui, Add, Text, y+0, Exit
 Gui, Add, Text, y+0, Disable All during chat (wc3 only)
 Gui, Add, Text, y+0, Disable Hotkeys' Native Functions
 Gui, Add, Text, y+0, Ex: Alt+q or space if assigned
+Gui, Add, Text, y+0, Hide GUI on start
+Gui, Add, Text, y+0, Hide Overlay on start
 Gui, Add, Text, y+0, % "Newest version:`t`t`t`t  " . GetNewVersionTag()
 Gui, Font, s8
 Gui, Add, Button, x300 y30 w70 h20 gGetSetKey vShowHideMain
@@ -128,7 +130,9 @@ Gui, Add, Button, y+0 w70 h20 gGetSetKey vPauseGame
 Gui, Add, Button, y+0 w70 h20 disabled, ESC
 Gui, Add, Button, y+0 w70 h20 disabled, Alt+ESC
 Gui, Add, Checkbox, y+5 gGetSetCheckBoxValue vDisableAll 
-Gui, Add, Checkbox, y+25 gGetSetCheckBoxValue vDisableAllNativeFunctions 
+Gui, Add, Checkbox, y+25 gGetSetCheckBoxValue vDisableAllNativeFunctions
+Gui, Add, Checkbox, y+5 gGetSetCheckBoxValue vHideGuiOnStart
+Gui, Add, Checkbox, y+5 gGetSetCheckBoxValue vHideOverlayOnStart
 ;-----------------------------------------Hero Editor-------------------------------------------------------
 Gui, 2: Color, DCDCDC
 Gui, 2: Add, Text, x10 y10, Hero:
@@ -163,6 +167,9 @@ GetSetSettings()
 GetSetQuickCast()
 
 ;Show Gui on Start
+GUIShow := GetGuiValue("1", "HideGuiOnStart")
+OverlayShow := GetGuiValue("1", "HideOverlayOnStart")
+
 Gosub, ShowHideMain
 Gosub, ShowHideOverlay
 return
@@ -603,6 +610,11 @@ initial()
         IniWrite, 1, %iniFile%, Loader, ConvertToggle
         IniWrite, 1, %iniFile%, Host, BotCommandToggle
         IniWrite, 1, %iniFile%, Host, GameNamePlusToggle
+    }
+    if(clientVersion < 4.1) ; 4.1 Add hide gui and overlay settings on start
+    {
+        IniWrite, 0, %iniFile%, Settings, HideGuiOnStart
+        IniWrite, 0, %iniFile%, Settings, HideOverlayOnStart
     }
     IniWrite, %version%, %iniFile%, Settings, Version ; update client version
 }
