@@ -12,7 +12,7 @@ SetWinDelay, -1
 SetBatchLines, -1
 SetControlDelay -1
 Thread, interrupt, 0
-global version := 4.0
+global version := 4.1
 global iniFile := "wc3rpgLoaderData.ini"
 global CameraExe := "Camera\publish\Camera.exe"
 global KeyWaiting := False
@@ -611,7 +611,7 @@ initial()
         IniWrite, 1, %iniFile%, Host, BotCommandToggle
         IniWrite, 1, %iniFile%, Host, GameNamePlusToggle
     }
-    if(clientVersion < 4.0) ; 4.0 Add hide gui and overlay settings on start
+    if(clientVersion < 4.1) ; 4.1 Add hide gui and overlay settings on start
     {
         IniWrite, 0, %iniFile%, Settings, HideGuiOnStart
         IniWrite, 0, %iniFile%, Settings, HideOverlayOnStart
