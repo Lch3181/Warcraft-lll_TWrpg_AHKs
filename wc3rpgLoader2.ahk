@@ -12,9 +12,8 @@ SetWinDelay, -1
 SetBatchLines, -1
 SetControlDelay -1
 Thread, interrupt, 0
-global version := 4.11
+global version := 4.13
 global iniFile := "wc3rpgLoaderData.ini"
-global CameraExe := "Camera\publish\Camera.exe"
 global KeyWaiting := False
 global GUIShow := False
 global OverlayShow := False
@@ -25,17 +24,13 @@ global QuickCast := False
 ;force run as admin
 if not A_IsAdmin
 {
-   Run *RunAs "%A_ScriptFullPath%"
+    Run *RunAs "%A_ScriptFullPath%"
 }
 ;Includes the specified file inside the compiled version of the script.
 FileCreateDir, Images
 FileInstall, Images\SearchIcon.png, Images\SearchIcon.png
 FileInstall, Images\Inventory.jpg, Images\Inventory.jpg
 FileInstall, Images\Spells.jpg, Images\Spells.jpg
-FileCreateDir, Camera\publish
-FileInstall, Camera\publish\Camera.exe.config, Camera\publish\Camera.exe.config, 1
-FileInstall, Camera\publish\Camera.exe, Camera\publish\Camera.exe, 1
-FileInstall, Camera\publish\Camera.pdb, Camera\publish\Camera.pdb, 1
 
 ;fill up missing data if first run
 initial()
@@ -46,7 +41,7 @@ Gui, Add, Tab3, x0 y20 w380 h240 vSubLoader, TWrpg
 ;--------------- For TWRPG ---------------
 Gui, Tab, TWRPG
 Gui, Add, Text, x20 y50, Hero:
-Gui, Add, DropDownList, y+5 w340 R10 vHeroChoice
+Gui, Add, DropDownList, y+5 w340 R20 vHeroChoice
 Gui, Add, Checkbox, y+10 vConvertToggle gGetSetCheckBoxValue, -Convert for Warcraft III Reforged
 Gui, Add, Button, x20 y+10 w150 h30 gtwrpg , Load
 Gui, Add, Button, x+20 w170 h30 gHerosEditorButton, Add/Edit/Delete
@@ -60,6 +55,7 @@ Gui, Add, Tab2, x0 y0 w380 h260 gTabSwitched vMainTab, Loader|Host|Inventory|Qui
 Gui, Tab, Host
 Gui, Add, Text, x20 y30 , Pick:
 Gui, Add, ComboBox, y+5 w100 R10 vBotChoice gOnSelectBot
+Gui, Add, Checkbox, x+10 vGameAnnounceToggle gGetSetCheckBoxValue, Announce Game Lobby Enable/Disable
 Gui, Add, Text, x20 y+10 , Map Load Command:
 Gui, Add, Edit, y+5 w100 h20 vBotCommand
 Gui, Add, Checkbox, x+10 vBotCommandToggle gGetSetCheckBoxValue, Enable/Disable
@@ -297,7 +293,9 @@ Pub:
         Sleep, 2000
     }
     WC3Chat("/w " . BotChoice . " !pub " . GN)
-    WC3Chat("Game Name: "GN)
+    if(GameAnnounceToggle){
+        WC3Chat("Game Name: "GN)
+    }
     ; update inifile
     IniWrite, %GN%, %iniFile%, LastLoaded, GameName
     IniWrite, %BotChoice%, %iniFile%, LastLoaded, Bot
@@ -331,7 +329,9 @@ Priv:
         Sleep, 2000
     }
     WC3Chat("/w " . BotChoice . " !priv " . GN)
-    WC3Chat("Game Name: "GN)
+    if(GameAnnounceToggle){
+        WC3Chat("Game Name: "GN)
+    }
     ; update inifile
     IniWrite, %GN%, %iniFile%, LastLoaded, GameName
     IniWrite, %BotChoice%, %iniFile%, LastLoaded, Bot
@@ -616,6 +616,10 @@ initial()
         IniWrite, 0, %iniFile%, Settings, HideGuiOnStart
         IniWrite, 0, %iniFile%, Settings, HideOverlayOnStart
     }
+    if(clientVersion < 4.13) ; 4.13 add announce game lobby in chat option
+    {
+        IniWrite, 1, %iniFile%, Host, GameAnnounceToggle
+    }
     IniWrite, %version%, %iniFile%, Settings, Version ; update client version
 }
 
@@ -898,10 +902,10 @@ Numpad8:
     else if (!GetGuiValue("1", "DisableAllNativeFunctions") && !inventory && !InStr(A_ThisHotKey, "~")) ; send hotkey when native function is blocked and inventory is disabled
     {
         if(RegExMatch(A_ThisHotKey, "\w{2}") != 0) ; Function keys F1~F12
-        SendInput, % "{" . RegExReplace(A_ThisHotKey, "[$<>]", "") . "}"
-    else ; Combined keys ex: ALT+T
-        Send, % RegExReplace(A_ThisHotKey, "[$<>]", "")
-}
+            SendInput, % "{" . RegExReplace(A_ThisHotKey, "[$<>]", "") . "}"
+        else ; Combined keys ex: ALT+T
+            Send, % RegExReplace(A_ThisHotKey, "[$<>]", "")
+    }
 return
 
 ;QuickCast
@@ -986,9 +990,9 @@ enableCastsAfterChatting(){
 
 ;Common
 #IfWinActive, Warcraft III ; set hotkey only work for wc3
-$~+Enter::      ; Shift Enter
+$~+Enter:: ; Shift Enter
 $~NumpadEnter:: ; numpad Enter
-$~Enter::       ; Regular Enter
+$~Enter:: ; Regular Enter
     if(GetGuiValue("1", "DisableAll") && WC3Chating = False)
     {
         disableCastsOnChatting()
@@ -1001,42 +1005,12 @@ return
 
 ; If chatting was canceled
 $~LButton:: ; Left Click - Might be problematic if user clicks in UI area instead of play area
-$~Esc::     ; Escape
+$~Esc:: ; Escape
     if(GetGuiValue("1", "DisableAll") && WC3Chating = True)
     {
         enableCastsAfterChatting()
     }
 return
-
-:*B0:!cam ::
-    Input, OutputVar, V, {Enter}
-    SendInput, {Enter}
-    Sleep, 150
-    RunWait, % CameraExe . " " . OutputVar . " " . 90 . " " . 304
-    Sleep, 150
-    switch ErrorLevel
-    {
-        case 0:
-            WC3Chat("Setting Camera Distance to " . OutputVar)
-            Return
-        case 1:
-            WC3Chat("Not enough arguenments")
-            Return
-        case 2:
-            WC3Chat("Invaild type, has to be number")
-            Return
-        case 3:
-            WC3Chat("Invaild value range (1-6000)")
-            Return
-        case 4:
-            WC3Chat("Game.dll not found(This function doesn't work on 1.28.5+)")
-            Return
-        Default:
-            WC3Chat("This shouldn't happen")
-            Run, %CameraExe%
-            Return
-    }
-Return
 #IfWinActive
 
 GuiClose:
