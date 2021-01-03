@@ -44,9 +44,6 @@ Probes quick cast, only can be assign to number 1-8
 
 Quick cast meaning: its basically cast that spell on mouse hover without needing to left click.
 
-## Ingame Commands
-!cam 1-6000: adjust the camera distance. (1.28.5 only)
-
 ## Default hotkeys:
 Enter: temporary disable all inventory and quick cast functions for wc3 ingame chat. Can be turnned off in settings
 
