@@ -959,9 +959,13 @@ PauseGame:
         SendInput, {F10}{M}{F10}
 return
 
+
+
 ;Common
 #IfWinActive, Warcraft III ; set hotkey only work for wc3
-$~Enter::
+$~+Enter::      ; Shift Enter
+$~NumpadEnter:: ; numpad Enter
+$~Enter::       ; Regular Enter
     if(GetGuiValue("1", "DisableAll") && WC3Chating = False)
     {
         WC3Chating := True
@@ -975,7 +979,24 @@ $~Enter::
         ;GuiControl, 3: Text, ActiveQuickCall, % "Quick Call: " ((QuickCall) ? ("Enabled") : ("Disabled"))
         ;GuiControl, 3: Text, ActiveNoMouse  , % "No Mouse: " ((NoMouse) ? ("Enabled") : ("Disabled"))
     }
-    else if(WinActive("Warcraft III") && GetGuiValue("1", "DisableAll") && WC3Chating = True)
+    else if(GetGuiValue("1", "DisableAll") && WC3Chating = True)
+    {
+        WC3Chating := False
+        inventory := SettingsHistory[1]
+        QuickCast := SettingsHistory[2]
+        QuickCall := SettingsHistory[3]
+        NoMouse := SettingsHistory[4]
+        GuiControl, 3: Text, ActiveInventory, % "Inventory: " ((inventory) ? ("Enabled") : ("Disabled"))
+        GuiControl, 3: Text, ActiveQuickCast, % "Quick Cast: " ((QuickCast) ? ("Enabled") : ("Disabled"))
+        ;GuiControl, 3: Text, ActiveQuickCall, % "Quick Call: " ((QuickCall) ? ("Enabled") : ("Disabled"))
+        ;GuiControl, 3: Text, ActiveNoMouse  , % "No Mouse: " ((NoMouse) ? ("Enabled") : ("Disabled"))
+    }
+return
+
+; If chatting was canceled
+$~LButton:: ; Left Click - Might be problematic if user clicks in UI area instead of play area
+$~Esc::     ; Escape
+    if(GetGuiValue("1", "DisableAll") && WC3Chating = True)
     {
         WC3Chating := False
         inventory := SettingsHistory[1]
