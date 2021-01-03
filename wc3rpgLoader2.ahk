@@ -12,7 +12,7 @@ SetWinDelay, -1
 SetBatchLines, -1
 SetControlDelay -1
 Thread, interrupt, 0
-global version := 4.1
+global version := 4.11
 global iniFile := "wc3rpgLoaderData.ini"
 global CameraExe := "Camera\publish\Camera.exe"
 global KeyWaiting := False
