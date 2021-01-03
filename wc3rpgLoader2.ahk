@@ -12,7 +12,7 @@ SetWinDelay, -1
 SetBatchLines, -1
 SetControlDelay -1
 Thread, interrupt, 0
-global version := 4.1
+global version := 4.11
 global iniFile := "wc3rpgLoaderData.ini"
 global CameraExe := "Camera\publish\Camera.exe"
 global KeyWaiting := False
@@ -959,33 +959,52 @@ PauseGame:
         SendInput, {F10}{M}{F10}
 return
 
+disableCastsOnChatting(){
+    WC3Chating := True
+    SettingsHistory := [inventory, QuickCast, QuickCall, NoMouse]
+    inventory := False
+    QuickCast := False
+    QuickCall := False
+    NoMouse := False
+    GuiControl, 3: Text, ActiveInventory, % "Inventory: " ((inventory) ? ("Enabled") : ("Disabled"))
+    GuiControl, 3: Text, ActiveQuickCast, % "Quick Cast: " ((QuickCast) ? ("Enabled") : ("Disabled"))
+    ;GuiControl, 3: Text, ActiveQuickCall, % "Quick Call: " ((QuickCall) ? ("Enabled") : ("Disabled"))
+    ;GuiControl, 3: Text, ActiveNoMouse  , % "No Mouse: " ((NoMouse) ? ("Enabled") : ("Disabled"))
+}
+
+enableCastsAfterChatting(){
+    WC3Chating := False
+    inventory := SettingsHistory[1]
+    QuickCast := SettingsHistory[2]
+    QuickCall := SettingsHistory[3]
+    NoMouse := SettingsHistory[4]
+    GuiControl, 3: Text, ActiveInventory, % "Inventory: " ((inventory) ? ("Enabled") : ("Disabled"))
+    GuiControl, 3: Text, ActiveQuickCast, % "Quick Cast: " ((QuickCast) ? ("Enabled") : ("Disabled"))
+    ;GuiControl, 3: Text, ActiveQuickCall, % "Quick Call: " ((QuickCall) ? ("Enabled") : ("Disabled"))
+    ;GuiControl, 3: Text, ActiveNoMouse  , % "No Mouse: " ((NoMouse) ? ("Enabled") : ("Disabled"))
+}
+
 ;Common
 #IfWinActive, Warcraft III ; set hotkey only work for wc3
-$~Enter::
+$~+Enter::      ; Shift Enter
+$~NumpadEnter:: ; numpad Enter
+$~Enter::       ; Regular Enter
     if(GetGuiValue("1", "DisableAll") && WC3Chating = False)
     {
-        WC3Chating := True
-        SettingsHistory := [inventory, QuickCast, QuickCall, NoMouse]
-        inventory := False
-        QuickCast := False
-        QuickCall := False
-        NoMouse := False
-        GuiControl, 3: Text, ActiveInventory, % "Inventory: " ((inventory) ? ("Enabled") : ("Disabled"))
-        GuiControl, 3: Text, ActiveQuickCast, % "Quick Cast: " ((QuickCast) ? ("Enabled") : ("Disabled"))
-        ;GuiControl, 3: Text, ActiveQuickCall, % "Quick Call: " ((QuickCall) ? ("Enabled") : ("Disabled"))
-        ;GuiControl, 3: Text, ActiveNoMouse  , % "No Mouse: " ((NoMouse) ? ("Enabled") : ("Disabled"))
+        disableCastsOnChatting()
     }
-    else if(WinActive("Warcraft III") && GetGuiValue("1", "DisableAll") && WC3Chating = True)
+    else if(GetGuiValue("1", "DisableAll") && WC3Chating = True)
     {
-        WC3Chating := False
-        inventory := SettingsHistory[1]
-        QuickCast := SettingsHistory[2]
-        QuickCall := SettingsHistory[3]
-        NoMouse := SettingsHistory[4]
-        GuiControl, 3: Text, ActiveInventory, % "Inventory: " ((inventory) ? ("Enabled") : ("Disabled"))
-        GuiControl, 3: Text, ActiveQuickCast, % "Quick Cast: " ((QuickCast) ? ("Enabled") : ("Disabled"))
-        ;GuiControl, 3: Text, ActiveQuickCall, % "Quick Call: " ((QuickCall) ? ("Enabled") : ("Disabled"))
-        ;GuiControl, 3: Text, ActiveNoMouse  , % "No Mouse: " ((NoMouse) ? ("Enabled") : ("Disabled"))
+        enableCastsAfterChatting()
+    }
+return
+
+; If chatting was canceled
+$~LButton:: ; Left Click - Might be problematic if user clicks in UI area instead of play area
+$~Esc::     ; Escape
+    if(GetGuiValue("1", "DisableAll") && WC3Chating = True)
+    {
+        enableCastsAfterChatting()
     }
 return
 
