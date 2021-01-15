@@ -372,432 +372,428 @@ TabSwitched:
     GuiControl, Hide, SubTool
     GuiControl, Hide, SubSetting
 
-    switch MainTab
-    {
-    case "Loader":
+    if(MainTab = "Loader")
         GuiControl, Show, SubLoader
-    case "Tool":
+    else if(MainTab = "Tool")
         GuiControl, Show, SubTool
-    case "Settings":
+    else if(MainTab = "Settings")
         GuiControl, Show, SubSetting
-    Default:
-    }
 
     Gui, +LastFound
     Winset, Redraw
-    return
+return
 
-    GetSetFolder:
-        FileSelectFolder, SelectedFolder,, 0
-        if (SelectedFolder != "")
-        {
-            GuiControl, Text, % A_GuiControl . "Address", % SelectedFolder
-            IniWrite, %SelectedFolder%, %iniFile%, Address, %A_GuiControl%
-        }
+GetSetFolder:
+    FileSelectFolder, SelectedFolder,, 0
+    if (SelectedFolder != "")
+    {
+        GuiControl, Text, % A_GuiControl . "Address", % SelectedFolder
+        IniWrite, %SelectedFolder%, %iniFile%, Address, %A_GuiControl%
+    }
 
-    return
+return
 
-    ScanSaveFiles:
-        Gui, Submit, NoHide
-        ToolTip("Scanning all files. . .")
-        files = 
+ScanSaveFiles:
+    Gui, Submit, NoHide
+    ToolTip("Scanning all files. . .")
+    files = 
+    Loop % IniRead("Address", SubLoader . "Folder")"\*.*" ; in each file in folder
+    {
+        FileRead, OutputVar, % IniRead("Address", SubLoader . "Folder") . "\" . A_LoopFileName
+        if(RegExMatch(OutputVar, "((?|User Name|아이디):\s(?:[^""]|\\"")*)") > 0) ; if it is a save file
+            files .= StrReplace(A_LoopFileName, ".txt") . "`n"
+    }
+    ToolTip("Finished Scanning all files")
+    ;promote user to add all the heros
+    MsgBox, 4, Would you like to add all those heros?, %files%
+    IfMsgBox Yes
+    {
         Loop % IniRead("Address", SubLoader . "Folder")"\*.*" ; in each file in folder
         {
             FileRead, OutputVar, % IniRead("Address", SubLoader . "Folder") . "\" . A_LoopFileName
             if(RegExMatch(OutputVar, "((?|User Name|아이디):\s(?:[^""]|\\"")*)") > 0) ; if it is a save file
-                files .= StrReplace(A_LoopFileName, ".txt") . "`n"
+                IniWrite, % "", %iniFile%, % SubLoader . "Heros", % StrReplace(A_LoopFileName, ".txt")
         }
-        ToolTip("Finished Scanning all files")
-        ;promote user to add all the heros
-        MsgBox, 4, Would you like to add all those heros?, %files%
-        IfMsgBox Yes
+        GetSetHeros()
+    }
+    else
+        ToolTip("Canceled")
+return
+
+HerosEditorButton:
+    Gui, 2:Show, AutoSize, TWrpg Heros Editor
+return
+
+AddHeroSubmit:
+    ;get rpg name for loader
+    WinGetActiveTitle, OutputVar
+    OutputVar := RegExReplace(OutputVar, "^(.*?)\s.*", "$1")
+    ;check if inputs are correct
+    result := FileExistCheck()
+    if(result != 1 && result != "")
+    {
+        MsgBox, 1, % GetGuiValue(A_Gui,"HeroChoice")".txt", % result
+        IfMsgBox, OK
         {
-            Loop % IniRead("Address", SubLoader . "Folder")"\*.*" ; in each file in folder
-            {
-                FileRead, OutputVar, % IniRead("Address", SubLoader . "Folder") . "\" . A_LoopFileName
-                if(RegExMatch(OutputVar, "((?|User Name|아이디):\s(?:[^""]|\\"")*)") > 0) ; if it is a save file
-                    IniWrite, % "", %iniFile%, % SubLoader . "Heros", % StrReplace(A_LoopFileName, ".txt")
-            }
+            ; update ini file
+            IniWrite, % GetGuiValue(A_Gui,"HeroChoice"), %iniFile%, LastLoaded, Hero
+            IniWrite, % GetGuiValue(A_Gui,"URL"), %iniFile%, % OutputVar "Heros", % GetGuiValue(A_Gui,"HeroChoice")
+            IniWrite, % GetGuiValue(A_Gui,"LoadingString"), %iniFile%, LoadingString, % GetGuiValue(A_Gui,"HeroChoice")
+            ToolTip(GetGuiValue(A_Gui, "HeroChoice") . " Updated")
             GetSetHeros()
         }
-        else
+        else IfMsgBox, Cancel
+        {
             ToolTip("Canceled")
-    return
-
-    HerosEditorButton:
-        Gui, 2:Show, AutoSize, TWrpg Heros Editor
-    return
-
-    AddHeroSubmit:
-        ;get rpg name for loader
-        WinGetActiveTitle, OutputVar
-        OutputVar := RegExReplace(OutputVar, "^(.*?)\s.*", "$1")
-        ;check if inputs are correct
-        result := FileExistCheck()
-        if(result != 1 && result != "")
-        {
-            MsgBox, 1, % GetGuiValue(A_Gui,"HeroChoice")".txt", % result
-            IfMsgBox, OK
-            {
-                ; update ini file
-                IniWrite, % GetGuiValue(A_Gui,"HeroChoice"), %iniFile%, LastLoaded, Hero
-                IniWrite, % GetGuiValue(A_Gui,"URL"), %iniFile%, % OutputVar "Heros", % GetGuiValue(A_Gui,"HeroChoice")
-                IniWrite, % GetGuiValue(A_Gui,"LoadingString"), %iniFile%, LoadingString, % GetGuiValue(A_Gui,"HeroChoice")
-                ToolTip(GetGuiValue(A_Gui, "HeroChoice") . " Updated")
-                GetSetHeros()
-            }
-            else IfMsgBox, Cancel
-            {
-                ToolTip("Canceled")
-            }
-            ;close gui
-            Gui, Hide
         }
-        else
-        {
-            MsgBox, File Does Not Exist`, Please Double Check.
-            ToolTip
-        }
-    return
-
-    EditHeroSubmit:
-        Gosub, AddHeroSubmit
-    return
-
-    DeleteHeroSubmit:
-        ;get rpg name from win title
-        WinGetActiveTitle, OutputVar
-        OutputVar := RegExReplace(OutputVar, "^(.*?)\s.*", "$1")
-        ;update inifile
-        IniDelete, %iniFile%, % OutputVar "Heros", % GetGuiValue(A_Gui,"HeroChoice")
-        IniDelete, %iniFile%, LoadingString, % GetGuiValue(A_Gui,"HeroChoice")
-        ToolTip(GetGuiValue(A_Gui, "HeroChoice") . " Deleted")
-        GetSetHeros()
         ;close gui
         Gui, Hide
-    return
-
-    RemoveToolTip:
+    }
+    else
+    {
+        MsgBox, File Does Not Exist`, Please Double Check.
         ToolTip
-    return
+    }
+return
 
-    DeleteBot:
-        ; update inifile
-        IniDelete, %iniFile%, LastLoaded, Bot
-        IniDelete, %iniFile%, TWrpgBots, % GetGuiValue("1", "BotChoice")
-        GetSetBots()
-    return
+EditHeroSubmit:
+    Gosub, AddHeroSubmit
+return
 
-    GetSetKey:
-        Gui, Submit, Nohide
-        ; temporary disable hotkey
-        OrginalKey := % IniRead(MainTab, A_GuiControl)
-        if(OrginalKey != "")
-            Hotkey, % OrginalKey, %A_GuiControl%, Off
-        ToolTip("Please assign a key to "A_GuiControl, -999999)
-        ; Wait a key press
-        input := % KeyWaitAny("V E C M")
-        if(input = -1) ;still waiting key to assign for previous button
+DeleteHeroSubmit:
+    ;get rpg name from win title
+    WinGetActiveTitle, OutputVar
+    OutputVar := RegExReplace(OutputVar, "^(.*?)\s.*", "$1")
+    ;update inifile
+    IniDelete, %iniFile%, % OutputVar "Heros", % GetGuiValue(A_Gui,"HeroChoice")
+    IniDelete, %iniFile%, LoadingString, % GetGuiValue(A_Gui,"HeroChoice")
+    ToolTip(GetGuiValue(A_Gui, "HeroChoice") . " Deleted")
+    GetSetHeros()
+    ;close gui
+    Gui, Hide
+return
+
+RemoveToolTip:
+    ToolTip
+return
+
+DeleteBot:
+    ; update inifile
+    IniDelete, %iniFile%, LastLoaded, Bot
+    IniDelete, %iniFile%, TWrpgBots, % GetGuiValue("1", "BotChoice")
+    GetSetBots()
+return
+
+GetSetKey:
+    Gui, Submit, Nohide
+    ; temporary disable hotkey
+    OrginalKey := % IniRead(MainTab, A_GuiControl)
+    if(OrginalKey != "")
+        Hotkey, % OrginalKey, %A_GuiControl%, Off
+    ToolTip("Please assign a key to "A_GuiControl, -999999)
+    ; Wait a key press
+    input := % KeyWaitAny("V E C M")
+    if(input = -1) ;still waiting key to assign for previous button
+    {
+        GuiControl,, %A_GuiControl%, % GetHotkeyName(IniRead(MainTab, A_GuiControl)) ;update gui
+        ToolTip("Please finish assigning previous button or click ESC to unsign that button")
+        return
+    }
+    if(input = "$Escape") ; escape key to cancel
+    {
+        GuiControl,, %A_GuiControl%, % GetHotkeyName(IniRead(MainTab, A_GuiControl)) ;update gui
+        ToolTip("Canceled")
+        return
+    }
+    if(InStr(A_GuiControl, "Probe")) && (RegExMatch(input, "\W+[1-8]") = 0 && input != "") ; probes only can assign with numbers
+    {
+        GuiControl,, %A_GuiControl%, % GetHotkeyName(IniRead(MainTab, A_GuiControl)) ;update gui
+        ToolTip("Probes only can assign with numbers 1-8")
+        return
+    }
+    if(InStr(GetHotkeys(), input) && input != "" && OrginalKey != "") ;check duplication
+    {
+        ToolTip(GetHotkeyName(input) . " is used ")
+        ; re-enable hotkey
+        Hotkey, % OrginalKey, %A_GuiControl%, On
+    }
+    else
+    {
+        if(MainTab = "Tool")
+            IniWrite, %input%, %IniFile%, %SubTool%, %A_GuiControl% ;update ini file
+        Else
+            IniWrite, %input%, %IniFile%, %MainT%, %A_GuiControl% ;update ini file
+        GetSetInventories() ; refresh inventory tab
+        GetSetSettings() ;refresh setting tab
+        GetSetQuickCast() ;refresh quick cast tab
+        ToolTip(GetHotkeyName(IniRead(MainTab, A_GuiControl)) . " Assigned to " . A_GuiControl)
+    }
+return
+
+GetSetCheckBoxValue:
+    Gui, Submit, Nohide
+    if(MainTab = "Tool")
+        IniWrite, % GetGuiValue(A_Gui, A_GuiControl), %iniFile%, %SubTool%, %A_GuiControl%
+    Else
+        IniWrite, % GetGuiValue(A_Gui, A_GuiControl), %iniFile%, %MainTab%, %A_GuiControl%
+return
+
+; right click any gui
+GuiContextMenu:
+    Gui, Submit, Nohide
+    ; unsign hotkey
+    if(InStr(IniRead("Inventory"), A_GuiControl) || InStr(IniRead("QuickCast"), A_GuiControl) || InStr(IniRead("Settings"), A_GuiControl)) && (A_GuiControl != "") ; filter gui with ini data only
+    {
+        ; if gui contains a hotkey
+        if(MainTab = "Tool" && InStr(IniRead(SubTool, A_GuiControl), "$"))
         {
-            GuiControl,, %A_GuiControl%, % GetHotkeyName(IniRead(MainTab, A_GuiControl)) ;update gui
-            ToolTip("Please finish assigning previous button or click ESC to unsign that button")
-            return
-        }
-        if(input = "$Escape") ; escape key to cancel
-        {
-            GuiControl,, %A_GuiControl%, % GetHotkeyName(IniRead(MainTab, A_GuiControl)) ;update gui
-            ToolTip("Canceled")
-            return
-        }
-        if(InStr(A_GuiControl, "Probe")) && (RegExMatch(input, "\W+[1-8]") = 0 && input != "") ; probes only can assign with numbers
-        {
-            GuiControl,, %A_GuiControl%, % GetHotkeyName(IniRead(MainTab, A_GuiControl)) ;update gui
-            ToolTip("Probes only can assign with numbers 1-8")
-            return
-        }
-        if(InStr(GetHotkeys(), input) && input != "" && OrginalKey != "") ;check duplication
-        {
-            ToolTip(GetHotkeyName(input) . " is used ")
-            ; re-enable hotkey
-            Hotkey, % OrginalKey, %A_GuiControl%, On
-        }
-        else
-        {
-            if(MainTab = "Tool")
-                IniWrite, %input%, %IniFile%, %SubTool%, %A_GuiControl% ;update ini file
-            Else
-                IniWrite, %input%, %IniFile%, %MainT%, %A_GuiControl% ;update ini file
+            GuiControl,, A_GuiControl, % ""
+            Hotkey, % IniRead(SubTool, A_GuiControl), %A_GuiControl%, Off ; disable hotkey
+            IniWrite, % "", %IniFile%, %SubTool%, %A_GuiControl% ;update ini file
             GetSetInventories() ; refresh inventory tab
             GetSetSettings() ;refresh setting tab
             GetSetQuickCast() ;refresh quick cast tab
-            ToolTip(GetHotkeyName(IniRead(MainTab, A_GuiControl)) . " Assigned to " . A_GuiControl)
+            ToolTip(A_GuiControl . " unsigned")
         }
-    return
-
-    GetSetCheckBoxValue:
-        Gui, Submit, Nohide
-        if(MainTab = "Tool")
-            IniWrite, % GetGuiValue(A_Gui, A_GuiControl), %iniFile%, %SubTool%, %A_GuiControl%
-        Else
-            IniWrite, % GetGuiValue(A_Gui, A_GuiControl), %iniFile%, %MainTab%, %A_GuiControl%
-    return
-
-    ; right click any gui
-    GuiContextMenu:
-        Gui, Submit, Nohide
-        ; unsign hotkey
-        if(InStr(IniRead("Inventory"), A_GuiControl) || InStr(IniRead("QuickCast"), A_GuiControl) || InStr(IniRead("Settings"), A_GuiControl)) && (A_GuiControl != "") ; filter gui with ini data only
+        else if(InStr(IniRead(MainTab, A_GuiControl), "$"))
         {
-            ; if gui contains a hotkey
-            if(MainTab = "Tool" && InStr(IniRead(SubTool, A_GuiControl), "$"))
-            {
-                GuiControl,, A_GuiControl, % ""
-                Hotkey, % IniRead(SubTool, A_GuiControl), %A_GuiControl%, Off ; disable hotkey
-                IniWrite, % "", %IniFile%, %SubTool%, %A_GuiControl% ;update ini file
-                GetSetInventories() ; refresh inventory tab
-                GetSetSettings() ;refresh setting tab
-                GetSetQuickCast() ;refresh quick cast tab
-                ToolTip(A_GuiControl . " unsigned")
-            }
-            else if(InStr(IniRead(MainTab, A_GuiControl), "$"))
-            {
-                GuiControl,, A_GuiControl, % ""
-                Hotkey, % IniRead(MainTab, A_GuiControl), %A_GuiControl%, Off ; disable hotkey
-                IniWrite, % "", %IniFile%, %MainTab%, %A_GuiControl% ;update ini file
-                GetSetInventories() ; refresh inventory tab
-                GetSetSettings() ;refresh setting tab
-                GetSetQuickCast() ;refresh quick cast tab
-                ToolTip(A_GuiControl . " unsigned")
-            }
-        }
-    Return
-
-    ;------------------------------------Functions-------------------------------------
-    initial()
-    {
-        clientVersion := IniRead("Settings", "Version")
-        if(clientVersion < 2.0) ; 2.0 initial and inventory added
-        {
-            ;Address
-            IniWrite, % A_MyDocuments . "\Warcraft III\CustomMapData\TWRPG", %iniFile%, Address, TWrpgFolder
-            ;LastLoaded
-            IniWrite, Hero1, %iniFile%, LastLoaded, Hero
-            IniWrite, leebot, %iniFile%, LastLoaded, Bot
-            IniWrite, game name, %iniFile%, LastLoaded, GameName
-            ;TWrpgHeros
-            IniWrite, % "", %iniFile%, TWrpgHeros, Hero1
-            ;LoadingString
-            IniWrite, Loading Hero1, %iniFile%, LoadingString, Hero1
-            ;TWrpgBots
-            IniWrite, !load twre, %iniFile%, TWrpgBots, leebot
-            ;Inventory
-            IniWrite, $F2, %iniFile%, Inventory, InventoryToggle
-            IniWrite, $~1, %iniFile%, Inventory, Numpad7
-            IniWrite, $~2, %iniFile%, Inventory, Numpad8
-            IniWrite, $~3, %iniFile%, Inventory, Numpad4
-            IniWrite, $~4, %iniFile%, Inventory, Numpad5
-            IniWrite, $~5, %iniFile%, Inventory, Numpad1
-            ;Settings
-            IniWrite, 2.0, %iniFile%, Settings, Version ; update client version the first time
-            IniWrite, 1, %iniFile%, Settings, DisableAll
-            IniWrite, 1, %iniFile%, Settings, DisableAllNativeFunctions
-            IniWrite, $F8, %iniFile%, Settings, ShowHideMain
-            ;2.0 relocated files
-            if FileExist("SearchIcon.png")
-                FileDelete, SearchIcon.png
-        }
-        if(clientVersion < 2.1) ; 2.1 show hide overlay added
-        {
-            IniWrite, $F7, %iniFile%, Settings, ShowHideOverlay
-        }
-        if(clientVersion < 2.2) ; 2.2 bug fix, add pause
-        {
-            IniWrite, % "", %iniFile%, Inventory, Numpad2
-            IniWrite, $Pause, %iniFile%, Settings, PauseGame
-        }
-        if(clientVersion < 2.3) ; 2.3 changed autocast to quickcast
-        {
-            IniDelete, %iniFile%, Inventory, Numpad1AutoCast
-            IniDelete, %iniFile%, Inventory, Numpad2AutoCast
-            IniDelete, %iniFile%, Inventory, Numpad4AutoCast
-            IniDelete, %iniFile%, Inventory, Numpad5AutoCast
-            IniDelete, %iniFile%, Inventory, Numpad7AutoCast
-            IniDelete, %iniFile%, Inventory, Numpad8AutoCast
-        }
-        if(clientVersion < 3.0) ; 3.0 add quick cast
-        {
-            IniWrite, $F3, %iniFile%, QuickCast, QuickCastToggle
-            IniWrite, $~6, %iniFile%, QuickCast, ProbeQuickCast1
-            IniWrite, $~7, %iniFile%, QuickCast, ProbeQuickCast2
-            IniWrite, $~8, %iniFile%, QuickCast, ProbeQuickCast3
-            IniWrite, $~a, %iniFile%, QuickCast, QuickCast1
-            IniWrite, $~p, %iniFile%, QuickCast, QuickCast2
-            IniWrite, $~d, %iniFile%, QuickCast, QuickCast3
-            IniWrite, $~t, %iniFile%, QuickCast, QuickCast4
-            IniWrite, $~f, %iniFile%, QuickCast, QuickCast5
-            IniWrite, $~q, %iniFile%, QuickCast, QuickCast6
-            IniWrite, $~w, %iniFile%, QuickCast, QuickCast7
-            IniWrite, $~e, %iniFile%, QuickCast, QuickCast8
-            IniWrite, $~r, %iniFile%, QuickCast, QuickCast9
-        }
-        if(clientVersion < 3.5) ; 3.5 I missed a few data to save
-        {
-            IniWrite, 1, %iniFile%, Loader, ConvertToggle
-            IniWrite, 1, %iniFile%, Host, BotCommandToggle
-            IniWrite, 1, %iniFile%, Host, GameNamePlusToggle
-        }
-        if(clientVersion < 4.1) ; 4.1 Add hide gui and overlay settings on start
-        {
-            IniWrite, 0, %iniFile%, Settings, HideGuiOnStart
-            IniWrite, 0, %iniFile%, Settings, HideOverlayOnStart
-        }
-        if(clientVersion < 4.13) ; 4.13 add announce game lobby in chat option
-        {
-            IniWrite, 1, %iniFile%, Host, GameAnnounceToggle
-        }
-        if(clientVersion < 4.15) ; 4.15 combine inventory and quickcast to Tool
-        {
-            IniWrite, 1, %iniFile%, Inventory, InventoryToggle
-            IniWrite, 1, %iniFile%, QuickCast, QuickCastToggle
-
-            IniWrite, $F2, %iniFile%, Settings, ToolToggle
-        }
-        IniWrite, %version%, %iniFile%, Settings, Version ; update client version
-    }
-
-    GetSetLoader()
-    {
-        OutputVar := IniRead("Loader") ;get all lines in section
-        lines := StrSplit(OutputVar, "`n") ;split by newline
-        Loop % lines.MaxIndex()
-        {
-            keyValue := StrSplit(lines[A_Index], "=") ; split line to key and value
-            GuiControl, 1:, % keyValue[1] , % GetHotkeyName(keyValue[2]) ; update gui
+            GuiControl,, A_GuiControl, % ""
+            Hotkey, % IniRead(MainTab, A_GuiControl), %A_GuiControl%, Off ; disable hotkey
+            IniWrite, % "", %IniFile%, %MainTab%, %A_GuiControl% ;update ini file
+            GetSetInventories() ; refresh inventory tab
+            GetSetSettings() ;refresh setting tab
+            GetSetQuickCast() ;refresh quick cast tab
+            ToolTip(A_GuiControl . " unsigned")
         }
     }
+Return
 
-    GetSetHost()
+;------------------------------------Functions-------------------------------------
+initial()
+{
+    clientVersion := IniRead("Settings", "Version")
+    if(clientVersion < 2.0) ; 2.0 initial and inventory added
     {
-        OutputVar := IniRead("Host") ;get all lines in section
-        lines := StrSplit(OutputVar, "`n") ;split by newline
-        Loop % lines.MaxIndex()
+        ;Address
+        IniWrite, % A_MyDocuments . "\Warcraft III\CustomMapData\TWRPG", %iniFile%, Address, TWrpgFolder
+        ;LastLoaded
+        IniWrite, Hero1, %iniFile%, LastLoaded, Hero
+        IniWrite, leebot, %iniFile%, LastLoaded, Bot
+        IniWrite, game name, %iniFile%, LastLoaded, GameName
+        ;TWrpgHeros
+        IniWrite, % "", %iniFile%, TWrpgHeros, Hero1
+        ;LoadingString
+        IniWrite, Loading Hero1, %iniFile%, LoadingString, Hero1
+        ;TWrpgBots
+        IniWrite, !load twre, %iniFile%, TWrpgBots, leebot
+        ;Inventory
+        IniWrite, $F2, %iniFile%, Inventory, InventoryToggle
+        IniWrite, $~1, %iniFile%, Inventory, Numpad7
+        IniWrite, $~2, %iniFile%, Inventory, Numpad8
+        IniWrite, $~3, %iniFile%, Inventory, Numpad4
+        IniWrite, $~4, %iniFile%, Inventory, Numpad5
+        IniWrite, $~5, %iniFile%, Inventory, Numpad1
+        ;Settings
+        IniWrite, 2.0, %iniFile%, Settings, Version ; update client version the first time
+        IniWrite, 1, %iniFile%, Settings, DisableAll
+        IniWrite, 1, %iniFile%, Settings, DisableAllNativeFunctions
+        IniWrite, $F8, %iniFile%, Settings, ShowHideMain
+        ;2.0 relocated files
+        if FileExist("SearchIcon.png")
+            FileDelete, SearchIcon.png
+    }
+    if(clientVersion < 2.1) ; 2.1 show hide overlay added
+    {
+        IniWrite, $F7, %iniFile%, Settings, ShowHideOverlay
+    }
+    if(clientVersion < 2.2) ; 2.2 bug fix, add pause
+    {
+        IniWrite, % "", %iniFile%, Inventory, Numpad2
+        IniWrite, $Pause, %iniFile%, Settings, PauseGame
+    }
+    if(clientVersion < 2.3) ; 2.3 changed autocast to quickcast
+    {
+        IniDelete, %iniFile%, Inventory, Numpad1AutoCast
+        IniDelete, %iniFile%, Inventory, Numpad2AutoCast
+        IniDelete, %iniFile%, Inventory, Numpad4AutoCast
+        IniDelete, %iniFile%, Inventory, Numpad5AutoCast
+        IniDelete, %iniFile%, Inventory, Numpad7AutoCast
+        IniDelete, %iniFile%, Inventory, Numpad8AutoCast
+    }
+    if(clientVersion < 3.0) ; 3.0 add quick cast
+    {
+        IniWrite, $F3, %iniFile%, QuickCast, QuickCastToggle
+        IniWrite, $~6, %iniFile%, QuickCast, ProbeQuickCast1
+        IniWrite, $~7, %iniFile%, QuickCast, ProbeQuickCast2
+        IniWrite, $~8, %iniFile%, QuickCast, ProbeQuickCast3
+        IniWrite, $~a, %iniFile%, QuickCast, QuickCast1
+        IniWrite, $~p, %iniFile%, QuickCast, QuickCast2
+        IniWrite, $~d, %iniFile%, QuickCast, QuickCast3
+        IniWrite, $~t, %iniFile%, QuickCast, QuickCast4
+        IniWrite, $~f, %iniFile%, QuickCast, QuickCast5
+        IniWrite, $~q, %iniFile%, QuickCast, QuickCast6
+        IniWrite, $~w, %iniFile%, QuickCast, QuickCast7
+        IniWrite, $~e, %iniFile%, QuickCast, QuickCast8
+        IniWrite, $~r, %iniFile%, QuickCast, QuickCast9
+    }
+    if(clientVersion < 3.5) ; 3.5 I missed a few data to save
+    {
+        IniWrite, 1, %iniFile%, Loader, ConvertToggle
+        IniWrite, 1, %iniFile%, Host, BotCommandToggle
+        IniWrite, 1, %iniFile%, Host, GameNamePlusToggle
+    }
+    if(clientVersion < 4.1) ; 4.1 Add hide gui and overlay settings on start
+    {
+        IniWrite, 0, %iniFile%, Settings, HideGuiOnStart
+        IniWrite, 0, %iniFile%, Settings, HideOverlayOnStart
+    }
+    if(clientVersion < 4.13) ; 4.13 add announce game lobby in chat option
+    {
+        IniWrite, 1, %iniFile%, Host, GameAnnounceToggle
+    }
+    if(clientVersion < 4.15) ; 4.15 combine inventory and quickcast to Tool
+    {
+        IniWrite, 1, %iniFile%, Inventory, InventoryToggle
+        IniWrite, 1, %iniFile%, QuickCast, QuickCastToggle
+
+        IniWrite, $F2, %iniFile%, Settings, ToolToggle
+    }
+    IniWrite, %version%, %iniFile%, Settings, Version ; update client version
+}
+
+GetSetLoader()
+{
+    OutputVar := IniRead("Loader") ;get all lines in section
+    lines := StrSplit(OutputVar, "`n") ;split by newline
+    Loop % lines.MaxIndex()
+    {
+        keyValue := StrSplit(lines[A_Index], "=") ; split line to key and value
+        GuiControl, 1:, % keyValue[1] , % GetHotkeyName(keyValue[2]) ; update gui
+    }
+}
+
+GetSetHost()
+{
+    OutputVar := IniRead("Host") ;get all lines in section
+    lines := StrSplit(OutputVar, "`n") ;split by newline
+    Loop % lines.MaxIndex()
+    {
+        keyValue := StrSplit(lines[A_Index], "=") ; split line to key and value
+        GuiControl, 1:, % keyValue[1] , % GetHotkeyName(keyValue[2]) ; update gui
+    }
+}
+
+GetSetSettings()
+{
+    OutputVar := IniRead("Settings") ;get all lines in section
+    lines := StrSplit(OutputVar, "`n") ;split by newline
+    Loop % lines.MaxIndex()
+    {
+        keyValue := StrSplit(lines[A_Index], "=") ; split line to key and value
+        GuiControl, 1:, % keyValue[1] , % GetHotkeyName(keyValue[2]) ; update gui
+        ; assign hotkeys to labels
+        if(keyValue[2] != "") && (InStr(keyValue[1], "ShowHide") || InStr(keyValue[1], "PauseGame") || InStr(keyValue[1], "ToolToggle"))
         {
-            keyValue := StrSplit(lines[A_Index], "=") ; split line to key and value
-            GuiControl, 1:, % keyValue[1] , % GetHotkeyName(keyValue[2]) ; update gui
+            Hotkey, % keyValue[2], % keyValue[1], On
         }
     }
+}
 
-    GetSetSettings()
+GetSetHeros()
+{
+    TwrpgHeros := "|"
+    OutputVar := IniRead("TWrpgHeros") ;get all lines in section
+    lines := StrSplit(OutputVar, "`n") ;split by newline
+    Loop % lines.MaxIndex()
     {
-        OutputVar := IniRead("Settings") ;get all lines in section
-        lines := StrSplit(OutputVar, "`n") ;split by newline
-        Loop % lines.MaxIndex()
+        TwrpgHeros .= StrSplit(lines[A_Index], "=")[1]"|" ;get key
+        if(StrSplit(lines[A_Index], "=")[1] = IniRead("LastLoaded", "Hero")) ; set default hero by last loaded hero
+            TwrpgHeros .= "|"
+    }
+    GuiControl, 1:, HeroChoice, %TwrpgHeros%
+    if IniRead("Settings", "ConvertToggle") is Digit
+        GuiControl, 1:, ConvertToggle, % IniRead("Settings", "ConvertToggle")
+    GuiControl, 2:, HeroChoice, %TwrpgHeros%
+    if(GetGuiValue("2", "HeroChoice") != "")
+    {
+        GuiControl, 2:, URL, % IniRead("TWrpgHeros", GetGuiValue("2", "HeroChoice"))
+        GuiControl, 2:, LoadingString, % IniRead("LoadingString", GetGuiValue("2", "HeroChoice"))
+    }
+}
+
+GetSetBots()
+{
+    TwrpgBots := "|"
+    OutputVar := IniRead("TWrpgBots") ;get all lines in section
+    lines := StrSplit(OutputVar, "`n") ;split by newline
+    Loop % lines.MaxIndex()
+    {
+        TwrpgBots .= StrSplit(lines[A_Index], "=")[1]"|" ;get key
+        if(StrSplit(lines[A_Index], "=")[1] = IniRead("LastLoaded", "Bot")) ; set default hero by last loaded hero
+            TwrpgBots .= "|"
+    }
+    GuiControl, 1:, BotChoice, %TwrpgBots%
+    if(GetGuiValue("1", "BotChoice") != "")
+        GuiControl, 1:, BotCommand, % IniRead("TwrpgBots", GetGuiValue("1", "BotChoice"))
+    else
+        GuiControl, 1:, BotCommand, 
+    if IniRead("Settings", "BotCommandToggle") is Digit
+        GuiControl, 1:, BotCommandToggle, % IniRead("Settings", "BotCommandToggle")
+    GuiControl, 1:, GN, % IniRead("LastLoaded", "GameName")
+    if IniRead("Settings", "GameNamePlusToggle") is Digit
+        GuiControl, 1:, GameNamePlusToggle, % IniRead("Settings", "GameNamePlusToggle")
+}
+
+GetSetInventories()
+{
+    OutputVar := IniRead("Inventory") ;get all lines in section
+    lines := StrSplit(OutputVar, "`n") ;split by newline
+    Loop % lines.MaxIndex()
+    {
+        keyValue := StrSplit(lines[A_Index], "=") ; split line to key and value
+        GuiControl, 1:, % keyValue[1] , % GetHotkeyName(keyValue[2]) ; update gui
+        ; assign hotkeys to labels
+        if(keyValue[2] != "" && !InStr(keyValue[1], "QuickCast") && (!InStr(keyValue[1], "Toggle")))
         {
-            keyValue := StrSplit(lines[A_Index], "=") ; split line to key and value
-            GuiControl, 1:, % keyValue[1] , % GetHotkeyName(keyValue[2]) ; update gui
-            ; assign hotkeys to labels
-            if(keyValue[2] != "") && (InStr(keyValue[1], "ShowHide") || InStr(keyValue[1], "PauseGame") || InStr(keyValue[1], "ToolToggle"))
-            {
+            Hotkey, IfWinActive, Warcraft III
                 Hotkey, % keyValue[2], % keyValue[1], On
-            }
         }
+        Hotkey, IfWinActive ; end if wc3 for hotkeys
+
     }
+}
 
-    GetSetHeros()
+GetSetQuickCast()
+{
+    OutputVar := IniRead("QuickCast") ;get all lines in section
+    lines := StrSplit(OutputVar, "`n") ;split by newline
+    Loop % lines.MaxIndex()
     {
-        TwrpgHeros := "|"
-        OutputVar := IniRead("TWrpgHeros") ;get all lines in section
-        lines := StrSplit(OutputVar, "`n") ;split by newline
-        Loop % lines.MaxIndex()
+        keyValue := StrSplit(lines[A_Index], "=") ; split line to key and value
+        GuiControl, 1:, % keyValue[1] , % GetHotkeyName(keyValue[2]) ; update gui
+        ; assign hotkeys to labels
+        if(keyValue[2] != "" && (!InStr(keyValue[1], "Toggle")))
         {
-            TwrpgHeros .= StrSplit(lines[A_Index], "=")[1]"|" ;get key
-            if(StrSplit(lines[A_Index], "=")[1] = IniRead("LastLoaded", "Hero")) ; set default hero by last loaded hero
-                TwrpgHeros .= "|"
+            Hotkey, IfWinActive, Warcraft III
+                Hotkey, % keyValue[2], % keyValue[1], On
         }
-        GuiControl, 1:, HeroChoice, %TwrpgHeros%
-        if IniRead("Settings", "ConvertToggle") is Digit
-            GuiControl, 1:, ConvertToggle, % IniRead("Settings", "ConvertToggle")
-        GuiControl, 2:, HeroChoice, %TwrpgHeros%
-        if(GetGuiValue("2", "HeroChoice") != "")
-        {
-            GuiControl, 2:, URL, % IniRead("TWrpgHeros", GetGuiValue("2", "HeroChoice"))
-            GuiControl, 2:, LoadingString, % IniRead("LoadingString", GetGuiValue("2", "HeroChoice"))
-        }
+        Hotkey, IfWinActive ; end if wc3 for hotkeys
+
     }
+}
 
-    GetSetBots()
-    {
-        TwrpgBots := "|"
-        OutputVar := IniRead("TWrpgBots") ;get all lines in section
-        lines := StrSplit(OutputVar, "`n") ;split by newline
-        Loop % lines.MaxIndex()
-        {
-            TwrpgBots .= StrSplit(lines[A_Index], "=")[1]"|" ;get key
-            if(StrSplit(lines[A_Index], "=")[1] = IniRead("LastLoaded", "Bot")) ; set default hero by last loaded hero
-                TwrpgBots .= "|"
-        }
-        GuiControl, 1:, BotChoice, %TwrpgBots%
-        if(GetGuiValue("1", "BotChoice") != "")
-            GuiControl, 1:, BotCommand, % IniRead("TwrpgBots", GetGuiValue("1", "BotChoice"))
-        else
-            GuiControl, 1:, BotCommand, 
-        if IniRead("Settings", "BotCommandToggle") is Digit
-            GuiControl, 1:, BotCommandToggle, % IniRead("Settings", "BotCommandToggle")
-        GuiControl, 1:, GN, % IniRead("LastLoaded", "GameName")
-        if IniRead("Settings", "GameNamePlusToggle") is Digit
-            GuiControl, 1:, GameNamePlusToggle, % IniRead("Settings", "GameNamePlusToggle")
-    }
-
-    GetSetInventories()
-    {
-        OutputVar := IniRead("Inventory") ;get all lines in section
-        lines := StrSplit(OutputVar, "`n") ;split by newline
-        Loop % lines.MaxIndex()
-        {
-            keyValue := StrSplit(lines[A_Index], "=") ; split line to key and value
-            GuiControl, 1:, % keyValue[1] , % GetHotkeyName(keyValue[2]) ; update gui
-            ; assign hotkeys to labels
-            if(keyValue[2] != "" && !InStr(keyValue[1], "QuickCast") && (!InStr(keyValue[1], "Toggle")))
-            {
-                Hotkey, IfWinActive, Warcraft III
-                    Hotkey, % keyValue[2], % keyValue[1], On
-            }
-            Hotkey, IfWinActive ; end if wc3 for hotkeys
-
-        }
-    }
-
-    GetSetQuickCast()
-    {
-        OutputVar := IniRead("QuickCast") ;get all lines in section
-        lines := StrSplit(OutputVar, "`n") ;split by newline
-        Loop % lines.MaxIndex()
-        {
-            keyValue := StrSplit(lines[A_Index], "=") ; split line to key and value
-            GuiControl, 1:, % keyValue[1] , % GetHotkeyName(keyValue[2]) ; update gui
-            ; assign hotkeys to labels
-            if(keyValue[2] != "" && (!InStr(keyValue[1], "Toggle")))
-            {
-                Hotkey, IfWinActive, Warcraft III
-                    Hotkey, % keyValue[2], % keyValue[1], On
-            }
-            Hotkey, IfWinActive ; end if wc3 for hotkeys
-
-        }
-    }
-
-    IniRead(Section, Key := "")
-    {
-        IniRead, OutputVar, %iniFile%, %Section%, %Key%
-        if(OutputVar = "ERROR")
-            OutputVar := ""
-    return OutputVar
+IniRead(Section, Key := "")
+{
+    IniRead, OutputVar, %iniFile%, %Section%, %Key%
+    if(OutputVar = "ERROR")
+        OutputVar := ""
+return OutputVar
 }
 
 GetGuiValue(GuiID, GuiVar)
 {
     GuiControlGet, Value, %GuiID%:, %GuiVar%
-    return %Value%
+return %Value%
 }
 
 DownloadFileFromUrl(URL)
@@ -810,7 +806,7 @@ DownloadFileFromUrl(URL)
     pData := NumGet(ComObjValue(arr) + 8 + A_PtrSize)
     length := arr.MaxIndex() + 1
     result := StrGet(pData, length, "utf-8")
-    return result
+return result
 }
 
 WC3Chat(String)
@@ -852,12 +848,12 @@ FileExistCheck()
     code =
 
     if not ErrorLevel{
-    return codeChecker
-}
-else
-{
-    return ErrorLevel ; 1(Error)
-}
+        return codeChecker
+    }
+    else
+    {
+        return ErrorLevel ; 1(Error)
+    }
 }
 
 ToolTip(String, Timer = -3000)
@@ -886,8 +882,8 @@ KeyWaitAny(Options:="")
     }
     else
     {
-    return -1
-}
+        return -1
+    }
 }
 
 GetHotkeys()
@@ -900,7 +896,7 @@ GetHotkeys()
         if(InStr(value, "$"))
             Hotkeys .= value . ", " ;get all hotkeys from value
     }
-    return Hotkeys
+return Hotkeys
 }
 
 GetHotkeyName(Hotkey)
@@ -910,14 +906,14 @@ GetHotkeyName(Hotkey)
     {
         Hotkey := StrReplace(Hotkey, value[1], value[2])
     }
-    return Hotkey
+return Hotkey
 }
 
 GetNewVersionTag()
 {
     result := DownloadFileFromUrl("https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/tags")
     RegExMatch(result, "tag\/([\W\d]+)"">", match)
-    return match1
+return match1
 }
 
 ;Tools
