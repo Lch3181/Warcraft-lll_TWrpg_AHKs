@@ -9,9 +9,10 @@ Lee's old twrpg loader: [Script to load characters](https://www.twrpg.com/viewto
 ![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/wc3rpgLoaderGUI.png)
 ![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/wc3rpgHerosEditorGUI.png)
 ![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/wc3rpgHostGUI.png)
-![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/wc3rpgInventoryGUI.png))
+![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/wc3rpgInventoryGUI.png)
 ![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/wc3rpgQuickCastGUI.png)
 ![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/wc3rpgSettingsGUI.png)
+![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/wc3rpgSettingsGUI2.png)
 
 ## How to use:
 Loading hero on first time, select the twrpg save folder on the bottom; next, click the add button to add heros, download URL if any, and the loading String if you want; then, click add/update; finally, select the hero you would like to load and click the load button.
@@ -20,7 +21,13 @@ Scan save files to add all heros at once.
 
 Hosting on the first time, type the bot's name, map load command if any, and game name; then click private/public to host. Everything will be saved for the next time when you want to host. Click Delete Bot History to delete the selected bot info.
 
-Inventory, default F2 to enable/disable it. Click the button then click a key on your keyboard to remap that key for inventory. Check box for quick cast.
+Tools:
+
+Default F2 enable/disable all.
+
+Checkbox for enable that specific tool in each tab
+
+Inventory, click the button then click a key on your keyboard to remap that key for inventory. Check box for quick cast.
 
 Right Click the button to unsign the hotkey
 
