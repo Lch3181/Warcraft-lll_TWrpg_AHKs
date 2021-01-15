@@ -148,7 +148,7 @@ Gui, Add, Button, x+20 w100 h30 gDeleteBot, Delete Bot History
 ;-----------------------------------------Hero Editor-------------------------------------------------------
 Gui, 2: Color, DCDCDC
 Gui, 2: Add, Text, x10 y10, Hero:
-Gui, 2: Add, ComboBox, y+5 w340 R10 vHeroChoice gOnSelectHero
+Gui, 2: Add, ComboBox, y+5 w340 R20 vHeroChoice gOnSelectHero
 Gui, 2: Add, Text, y+10, Download URL(Empty if none):
 Gui, 2: Add, Edit, y+5 vURL w340 h20
 Gui, 2: Add, Text, y+10, Loading String:
@@ -421,7 +421,7 @@ ScanSaveFiles:
 return
 
 HerosEditorButton:
-    Gui, 2:Show, AutoSize, TWrpg Heros Editor
+    Gui, 2:Show, AutoSize, TWrpg Heroes Editor
 return
 
 AddHeroSubmit:
@@ -519,10 +519,11 @@ GetSetKey:
     }
     else
     {
+        ;update ini file
         if(MainTab = "Tool")
-            IniWrite, %input%, %IniFile%, %SubTool%, %A_GuiControl% ;update ini file
+            IniWrite, %input%, %IniFile%, %SubTool%, %A_GuiControl%
         Else
-            IniWrite, %input%, %IniFile%, %MainT%, %A_GuiControl% ;update ini file
+            IniWrite, %input%, %IniFile%, %MainTab%, %A_GuiControl%
         GetSetInventories() ; refresh inventory tab
         GetSetSettings() ;refresh setting tab
         GetSetQuickCast() ;refresh quick cast tab
