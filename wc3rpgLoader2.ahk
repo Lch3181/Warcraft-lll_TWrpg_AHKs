@@ -718,7 +718,7 @@ initial()
     {
         IniWrite, 0, %iniFile%, NoMouse, NoMouseToggle
         IniWrite, % "", %iniFile%, NoMouse, NoMouse1
-        IniWrite, $space, %iniFile%, NoMouse, NoMouse2
+        IniWrite, % "", %iniFile%, NoMouse, NoMouse2
     }
     IniWrite, %version%, %iniFile%, Settings, Version ; update client version
 }
