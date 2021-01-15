@@ -12,7 +12,7 @@ SetWinDelay, -1
 SetBatchLines, -1
 SetControlDelay -1
 Thread, interrupt, 0
-global version := 4.2
+global version := 4.3
 global iniFile := "wc3rpgLoaderData.ini"
 global KeyWaiting := False
 global GUIShow := False
@@ -52,7 +52,7 @@ Gui, Add, Picture, x+10 w20 h20 vTWrpgFolder gGetSetFolder, Images\SearchIcon.pn
 Gui, Add, Button, x20 y+10 w150 h30 gScanSaveFiles, Scan Save Files
 ;-------------------------------------------Tools Tab-------------------------------------------------------
 Gui, Color, DCDCDC
-Gui, Add, Tab3, x0 y20 w380 h240 vSubTool, Inventory|QuickCast|Probe
+Gui, Add, Tab3, x0 y20 w380 h240 vSubTool, Inventory|QuickCast|Probe|NoMouse|
 ;--------------- For Inventory ---------------
 Gui, Tab, Inventory
 Gui, Add, Picture, x20 y50 Icon , Images\Inventory.jpg
@@ -96,15 +96,24 @@ Gui, Add, Button, x+14 w50 h20 gGetSetKey vQuickCast12
 Gui, Tab, Probe
 Gui, Add, Picture, x20 y60 Icon , Images\Chaika.png
 Gui, Add, Picture, x+20 y90 w50 h50 Icon , Images\Probe.png
-Gui, Add, Picture, x+10     w50 h50 Icon , Images\Probe.png
-Gui, Add, Picture, x+10     w50 h50 Icon , Images\Probe.png
+Gui, Add, Picture, x+10 w50 h50 Icon , Images\Probe.png
+Gui, Add, Picture, x+10 w50 h50 Icon , Images\Probe.png
 Gui, Font, s12
 Gui, Add, Text, x170 y60 , Enable
 Gui, Font, s8
-Gui, Add, Checkbox, x+10 y60 w13 h13 gGetSetCheckBoxValue vProbeToggle
+Gui, Add, Checkbox, x+10 y65 w13 h13 gGetSetCheckBoxValue vProbeToggle
 Gui, Add, Button, x165 y140 w50 h20 gGetSetKey vProbe1
-Gui, Add, Button, x+13      w50 h20 gGetSetKey vProbe2
-Gui, Add, Button, x+13      w50 h20 gGetSetKey vProbe3
+Gui, Add, Button, x+13 w50 h20 gGetSetKey vProbe2
+Gui, Add, Button, x+13 w50 h20 gGetSetKey vProbe3
+;---------------- For No Mouse -----------------
+Gui, Tab, NoMouse
+Gui, Add, Picture, w150 h150 y+20 Icon , Images\Mouse.png
+Gui, Font, s12
+Gui, Add, Text, x170 y60 , Enable
+Gui, Font, s8
+Gui, Add, Checkbox, x+10 y65 w13 h13 gGetSetCheckBoxValue vNoMouseToggle
+Gui, Add, Button, x28 y80 w50 h20 gGetSetKey vNoMouse1
+Gui, Add, Button, x+18 w50 h20 gGetSetKey vNoMouse2
 
 GuiControl, Hide, SubTool
 ;-------------------------------------------Setting Tab-------------------------------------------------------
@@ -187,6 +196,7 @@ GetSetInventories()
 GetSetSettings()
 GetSetQuickCast()
 GetSetProbe()
+GetSetNoMouse()
 
 ;Show Gui on Start
 GUIShow := GetGuiValue("1", "HideGuiOnStart")
@@ -501,27 +511,38 @@ return
 GetSetKey:
     Gui, Submit, Nohide
     ; temporary disable hotkey
-    OrginalKey := % IniRead(MainTab, A_GuiControl)
+    currentTab=
+    if(MainTab = "Tools")
+        currentTab := SubTool
+    else
+        currentTab := MainTab
+
+    OrginalKey := IniRead(currentTab, A_GuiControl)
     if(OrginalKey != "")
-        Hotkey, % OrginalKey, %A_GuiControl%, Off
+    {
+        if(!InStr(A_GuiControl, "Toggle"))
+            Hotkey, IfWinActive, Warcraft III
+            Hotkey, %OrginalKey%, %A_GuiControl%, Off
+    }
+
     ToolTip("Please assign a key to "A_GuiControl, -999999)
     ; Wait a key press
     input := % KeyWaitAny("V E C M")
     if(input = -1) ;still waiting key to assign for previous button
     {
-        GuiControl,, %A_GuiControl%, % GetHotkeyName(IniRead(MainTab, A_GuiControl)) ;update gui
-        ToolTip("Please finish assigning previous button or click ESC to unsign that button")
+        GuiControl,, %A_GuiControl%, % GetHotkeyName(IniRead(currentTab, A_GuiControl)) ;update gui
+        ToolTip("Please finish assigning previous button or right click it to unsign that button")
         return
     }
     if(input = "$Escape") ; escape key to cancel
     {
-        GuiControl,, %A_GuiControl%, % GetHotkeyName(IniRead(MainTab, A_GuiControl)) ;update gui
+        GuiControl,, %A_GuiControl%, % GetHotkeyName(IniRead(currentTab, A_GuiControl)) ;update gui
         ToolTip("Canceled")
         return
     }
     if(InStr(A_GuiControl, "Probe")) && (RegExMatch(input, "\W+[1-8]") = 0 && input != "") ; probes only can assign with numbers
     {
-        GuiControl,, %A_GuiControl%, % GetHotkeyName(IniRead(MainTab, A_GuiControl)) ;update gui
+        GuiControl,, %A_GuiControl%, % GetHotkeyName(IniRead(currentTab, A_GuiControl)) ;update gui
         ToolTip("Probes only can assign with numbers 1-8")
         return
     }
@@ -534,14 +555,14 @@ GetSetKey:
     else
     {
         ;update ini file
-        if(MainTab = "Tools")
-            IniWrite, %input%, %IniFile%, %SubTool%, %A_GuiControl%
-        Else
-            IniWrite, %input%, %IniFile%, %MainTab%, %A_GuiControl%
-        GetSetInventories() ; refresh inventory tab
-        GetSetSettings() ;refresh setting tab
-        GetSetQuickCast() ;refresh quick cast tab
-        ToolTip(GetHotkeyName(IniRead(MainTab, A_GuiControl)) . " Assigned to " . A_GuiControl)
+        IniWrite, %input%, %IniFile%, %currentTab%, %A_GuiControl%
+        ;refresh
+        GetSetInventories()
+        GetSetSettings()
+        GetSetQuickCast()
+        GetSetProbe()
+        GetSetNoMouse()
+        ToolTip(GetHotkeyName(IniRead(currentTab, A_GuiControl)) . " Assigned to " . A_GuiControl)
     }
 return
 
@@ -557,27 +578,26 @@ return
 GuiContextMenu:
     Gui, Submit, Nohide
     ; unsign hotkey
-    if(InStr(IniRead("Inventory"), A_GuiControl) || InStr(IniRead("QuickCast"), A_GuiControl) || InStr(IniRead("Settings"), A_GuiControl)) && (A_GuiControl != "") ; filter gui with ini data only
+    if(InStr(GetHotkeys(), GetGuiValue("1", A_GuiControl)) && (GetGuiValue("1", A_GuiControl) != "")) ; filter gui with ini data only
     {
         ; if gui contains a hotkey
+        currentTab=
         if(MainTab = "Tools" && InStr(IniRead(SubTool, A_GuiControl), "$"))
+            currentTab := SubTool
+        Else
+            currentTab := MainTab
+
+        if(InStr(IniRead(currentTab, A_GuiControl), "$"))
         {
             GuiControl,, A_GuiControl, % ""
-            Hotkey, % IniRead(SubTool, A_GuiControl), %A_GuiControl%, Off ; disable hotkey
-            IniWrite, % "", %IniFile%, %SubTool%, %A_GuiControl% ;update ini file
-            GetSetInventories() ; refresh inventory tab
-            GetSetSettings() ;refresh setting tab
-            GetSetQuickCast() ;refresh quick cast tab
-            ToolTip(A_GuiControl . " unsigned")
-        }
-        else if(InStr(IniRead(MainTab, A_GuiControl), "$"))
-        {
-            GuiControl,, A_GuiControl, % ""
-            Hotkey, % IniRead(MainTab, A_GuiControl), %A_GuiControl%, Off ; disable hotkey
-            IniWrite, % "", %IniFile%, %MainTab%, %A_GuiControl% ;update ini file
-            GetSetInventories() ; refresh inventory tab
-            GetSetSettings() ;refresh setting tab
-            GetSetQuickCast() ;refresh quick cast tab
+            Hotkey, % IniRead(currentTab, A_GuiControl), %A_GuiControl%, Off ; disable hotkey
+            IniWrite, % "", %IniFile%, %currentTab%, %A_GuiControl% ;update ini file
+            ;refresh
+            GetSetInventories()
+            GetSetSettings()
+            GetSetQuickCast()
+            GetSetProbe()
+            GetSetNoMouse()
             ToolTip(A_GuiControl . " unsigned")
         }
     }
@@ -693,6 +713,12 @@ initial()
         IniWrite, $~w, %iniFile%, QuickCast, QuickCast10
         IniWrite, $~e, %iniFile%, QuickCast, QuickCast11
         IniWrite, $~r, %iniFile%, QuickCast, QuickCast12
+    }
+    if(clientVersion < 4.3) ; 4.3 add No Mouse
+    {
+        IniWrite, 0, %iniFile%, NoMouse, NoMouseToggle
+        IniWrite, % "", %iniFile%, NoMouse, NoMouse1
+        IniWrite, $space, %iniFile%, NoMouse, NoMouse2
     }
     IniWrite, %version%, %iniFile%, Settings, Version ; update client version
 }
@@ -837,6 +863,25 @@ GetSetProbe()
     }
 }
 
+GetSetNoMouse()
+{
+    OutputVar := IniRead("NoMouse") ;get all lines in section
+    lines := StrSplit(OutputVar, "`n") ;split by newline
+    Loop % lines.MaxIndex()
+    {
+        keyValue := StrSplit(lines[A_Index], "=") ; split line to key and value
+        GuiControl, 1:, % keyValue[1] , % GetHotkeyName(keyValue[2]) ; update gui
+        ; assign hotkeys to labels
+        if(keyValue[2] != "" && (!InStr(keyValue[1], "Toggle")))
+        {
+            Hotkey, IfWinActive, Warcraft III
+                Hotkey, % keyValue[2], % keyValue[1], On
+        }
+        Hotkey, IfWinActive ; end if wc3 for hotkeys
+
+    }
+}
+
 IniRead(Section, Key := "")
 {
     IniRead, OutputVar, %iniFile%, %Section%, %Key%
@@ -848,7 +893,7 @@ return OutputVar
 GetGuiValue(GuiID, GuiVar)
 {
     GuiControlGet, Value, %GuiID%:, %GuiVar%
-return %Value%
+return Value
 }
 
 DownloadFileFromUrl(URL)
@@ -974,6 +1019,7 @@ return match1
 ;Tools
 ToolToggle:
     Tools := !Tools ; toggle Tools
+    Gui, Submit, Nohide
     GuiControl, 3: Text, ActiveTool, % "Tools: " ((Tools) ? ("Enabled") : ("Disabled")) ;update GUI
 return
 
@@ -1031,8 +1077,42 @@ Probe3:
         MouseClick, Right
         SendInput, {9}{0}
     }
+    else if (!GetGuiValue("1", "DisableAllNativeFunctions") && !Tools && !InStr(A_ThisHotKey, "~")) ; send hotkey when native function is blocked and inventory is disabled
+    {
+        if(RegExMatch(A_ThisHotKey, "\w{2}") != 0) ; Function keys F1~F12
+            SendInput, % "{" . RegExReplace(A_ThisHotKey, "[$<>]", "") . "}"
+        else ; Combined keys ex: ALT+T
+            Send, % RegExReplace(A_ThisHotKey, "[$<>]", "")
+    }
 Return
 
+;No Mouse
+NoMouse1:
+    if(Tools && NoMouseToggle)
+    {
+        MouseClick, Left
+    }
+    else if (!GetGuiValue("1", "DisableAllNativeFunctions") && !Tools && !InStr(A_ThisHotKey, "~")) ; send hotkey when native function is blocked and inventory is disabled
+    {
+        if(RegExMatch(A_ThisHotKey, "\w{2}") != 0) ; Function keys F1~F12
+            SendInput, % "{" . RegExReplace(A_ThisHotKey, "[$<>]", "") . "}"
+        else ; Combined keys ex: ALT+T
+            Send, % RegExReplace(A_ThisHotKey, "[$<>]", "")
+    }
+return
+NoMouse2:
+    if(Tools && NoMouseToggle)
+    {
+        MouseClick, Right
+    }
+    else if (!GetGuiValue("1", "DisableAllNativeFunctions") && !Tools && !InStr(A_ThisHotKey, "~")) ; send hotkey when native function is blocked and inventory is disabled
+    {
+        if(RegExMatch(A_ThisHotKey, "\w{2}") != 0 || InStr(A_ThisHotkey, "space") != 0) ; Function keys F1~F12 or space
+            SendInput, % "{" . RegExReplace(A_ThisHotKey, "[$<>]", "") . "}"
+        else ; Combined keys ex: ALT+T
+            Send, % RegExReplace(A_ThisHotKey, "[$<>]", "")
+    }
+return
 
 ;Setting
 ShowHideMain:
