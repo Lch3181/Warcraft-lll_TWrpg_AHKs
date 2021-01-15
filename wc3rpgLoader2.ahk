@@ -12,13 +12,14 @@ SetWinDelay, -1
 SetBatchLines, -1
 SetControlDelay -1
 Thread, interrupt, 0
-global version := 4.14
+global version := 4.15
 global iniFile := "wc3rpgLoaderData.ini"
 global KeyWaiting := False
 global GUIShow := False
 global OverlayShow := False
 global WC3Chating := False
 global SettingsHistory := []
+global Tool := False
 global inventory := False
 global QuickCast := False
 ;force run as admin
@@ -56,11 +57,10 @@ Gui, Add, Tab3, x0 y20 w380 h240 vSubTool, Inventory|QuickCast
 Gui, Tab, Inventory
 Gui, Add, Picture, x20 y50 Icon , Images\Inventory.jpg
 Gui, Font, s12
-Gui, Add, Text, x+10 y40 , Enable/Disable
-Gui, Add, Text, y+0 , CheckBox for Quick Cast
-Gui, Add, Text, y+10, Click a button to assign a key,`nRight Click to unsign a key 
+Gui, Add, Text, x+10 y50 , Enable
+Gui, Add, Text, y+20 , CheckBox above button for `nQuick Cast
 Gui, Font, s8
-Gui, Add, Button, x285 y40 w50 h20 gGetSetKey vInventoryToggle
+Gui, Add, Checkbox, x225 y55 w13 h13 gGetSetCheckBoxValue vInventoryToggle
 Gui, Add, Button, x29 y90 w50 h20 gGetSetKey vNumpad7
 Gui, Add, Button, x+21 w50 h20 gGetSetKey vNumpad8
 Gui, Add, Button, x29 y+50 w50 h20 gGetSetKey vNumpad4
@@ -77,9 +77,9 @@ Gui, Add, CheckBox, x+58 w13 h13 gGetSetCheckBoxValue vNumpad2QuickCast
 Gui, Tab, QuickCast
 Gui, Add, Picture, x20 y50 Icon , Images\Spells.jpg
 Gui, Font, s12
-Gui, Add, Text, x+10 y50 , Enable/`nDisable
+Gui, Add, Text, x+10 y50 , Enable
 Gui, Font, s8
-Gui, Add, Button, x295 y95 w50 h20 gGetSetKey vQuickCastToggle
+Gui, Add, Checkbox, x350 y55 w13 h13 gGetSetCheckBoxValue vQuickCastToggle
 Gui, Add, Button, x32 y92 w50 h20 gGetSetKey vProbeQuickCast1
 Gui, Add, Button, x+14 w50 h20 gGetSetKey vProbeQuickCast2
 Gui, Add, Button, x+13 w50 h20 gGetSetKey vProbeQuickCast3
@@ -114,13 +114,15 @@ Gui, Add, Checkbox, y+5 gGetSetCheckBoxValue vHideOverlayOnStart
 ;--------------- For Hotkeys ---------------
 Gui, Tab, Hotkeys
 Gui, Font, s12
-Gui, Add, Text, x10 y50, Show/Hide
+Gui, Add, Text, x10 y50, Tool Enable/Disable
+Gui, Add, Text, y+0, Show/Hide
 Gui, Add, Text, y+0, Overlay Show/Hide
 Gui, Add, Text, y+0, Pause Game
 Gui, Add, Text, y+0, Unsign Hotkey
 Gui, Add, Text, y+0, Exit
 Gui, Font, s8
-Gui, Add, Button, x300 y50 w70 h20 gGetSetKey vShowHideMain
+Gui, Add, Button, x300 y50 w70 h20 gGetSetKey vToolToggle
+Gui, Add, Button, y+0 w70 h20 gGetSetKey vShowHideMain
 Gui, Add, Button, y+0 w70 h20 gGetSetKey vShowHideOverlay
 Gui, Add, Button, y+0 w70 h20 gGetSetKey vPauseGame
 Gui, Add, Button, y+0 w70 h20 disabled, Right Click
@@ -159,11 +161,7 @@ Gui, 2: Add, Button, x+20 w100 h30 gDeleteHeroSubmit, Delete
 Gui, 3: +LastFound +AlwaysOnTop -Caption
 Gui, 3: Font, s12
 Gui, 3: Font, cRed
-Gui, 3: Add, Text, vActiveInventory x0 y0 , % "Inventory: " ((inventory) ? ("Enabled") : ("Disabled"))
-Gui, 3: Add, Text, vActiveQuickCast x0 y+0, % "Quick Cast: " ((QuickCast) ? ("Enabled") : ("Disabled"))
-;Gui, 3: Add, Text, vActiveQuickCall x0 y+0, % "Quick Call: " ((QuickCall) ? ("Enabled") : ("Disabled"))
-;Gui, 3: Add, Text, vTarget x+5 w100, No Target
-;Gui, 3: Add, Text, vActiveNoMouse   x0 y+0, % "No Mouse: " ((NoMouse) ? ("Enabled") : ("Disabled"))
+Gui, 3: Add, Text, vActiveTool x0 y0 , % "Tool: " ((Tool) ? ("Enabled") : ("Disabled"))
 Gui, 3: Color, EEAA99
 WinSet, TransColor, EEAA99
 
@@ -525,7 +523,10 @@ TabSwitched:
         }
         else
         {
-            IniWrite, %input%, %IniFile%, %MainTab%, %A_GuiControl% ;update ini file
+            if(MainTab = "Tool")
+                IniWrite, %input%, %IniFile%, %SubTool%, %A_GuiControl% ;update ini file
+            Else
+                IniWrite, %input%, %IniFile%, %MainT%, %A_GuiControl% ;update ini file
             GetSetInventories() ; refresh inventory tab
             GetSetSettings() ;refresh setting tab
             GetSetQuickCast() ;refresh quick cast tab
@@ -535,7 +536,10 @@ TabSwitched:
 
     GetSetCheckBoxValue:
         Gui, Submit, Nohide
-        IniWrite, % GetGuiValue(A_Gui, A_GuiControl), %iniFile%, %MainTab%, %A_GuiControl%
+        if(MainTab = "Tool")
+            IniWrite, % GetGuiValue(A_Gui, A_GuiControl), %iniFile%, %SubTool%, %A_GuiControl%
+        Else
+            IniWrite, % GetGuiValue(A_Gui, A_GuiControl), %iniFile%, %MainTab%, %A_GuiControl%
     return
 
     ; right click any gui
@@ -545,7 +549,17 @@ TabSwitched:
         if(InStr(IniRead("Inventory"), A_GuiControl) || InStr(IniRead("QuickCast"), A_GuiControl) || InStr(IniRead("Settings"), A_GuiControl)) && (A_GuiControl != "") ; filter gui with ini data only
         {
             ; if gui contains a hotkey
-            if(InStr(IniRead(MainTab, A_GuiControl), "$"))
+            if(MainTab = "Tool" && InStr(IniRead(SubTool, A_GuiControl), "$"))
+            {
+                GuiControl,, A_GuiControl, % ""
+                Hotkey, % IniRead(SubTool, A_GuiControl), %A_GuiControl%, Off ; disable hotkey
+                IniWrite, % "", %IniFile%, %SubTool%, %A_GuiControl% ;update ini file
+                GetSetInventories() ; refresh inventory tab
+                GetSetSettings() ;refresh setting tab
+                GetSetQuickCast() ;refresh quick cast tab
+                ToolTip(A_GuiControl . " unsigned")
+            }
+            else if(InStr(IniRead(MainTab, A_GuiControl), "$"))
             {
                 GuiControl,, A_GuiControl, % ""
                 Hotkey, % IniRead(MainTab, A_GuiControl), %A_GuiControl%, Off ; disable hotkey
@@ -641,6 +655,13 @@ TabSwitched:
         {
             IniWrite, 1, %iniFile%, Host, GameAnnounceToggle
         }
+        if(clientVersion < 4.15) ; 4.15 combine inventory and quickcast to Tool
+        {
+            IniWrite, 1, %iniFile%, Inventory, InventoryToggle
+            IniWrite, 1, %iniFile%, QuickCast, QuickCastToggle
+
+            IniWrite, $F2, %iniFile%, Settings, ToolToggle
+        }
         IniWrite, %version%, %iniFile%, Settings, Version ; update client version
     }
 
@@ -675,7 +696,7 @@ TabSwitched:
             keyValue := StrSplit(lines[A_Index], "=") ; split line to key and value
             GuiControl, 1:, % keyValue[1] , % GetHotkeyName(keyValue[2]) ; update gui
             ; assign hotkeys to labels
-            if(keyValue[2] != "") && (InStr(keyValue[1], "ShowHide") || InStr(keyValue[1], "PauseGame"))
+            if(keyValue[2] != "") && (InStr(keyValue[1], "ShowHide") || InStr(keyValue[1], "PauseGame") || InStr(keyValue[1], "ToolToggle"))
             {
                 Hotkey, % keyValue[2], % keyValue[1], On
             }
@@ -736,14 +757,14 @@ TabSwitched:
             keyValue := StrSplit(lines[A_Index], "=") ; split line to key and value
             GuiControl, 1:, % keyValue[1] , % GetHotkeyName(keyValue[2]) ; update gui
             ; assign hotkeys to labels
-            if(keyValue[2] != "" && !InStr(keyValue[1], "QuickCast"))
+            if(keyValue[2] != "" && !InStr(keyValue[1], "QuickCast") && (!InStr(keyValue[1], "Toggle")))
             {
-                if(!InStr(keyValue[1], "Toggle")) ; let non-toggle hotkeys only work in wc3
-                    Hotkey, IfWinActive, Warcraft III
+                Hotkey, IfWinActive, Warcraft III
                     Hotkey, % keyValue[2], % keyValue[1], On
             }
             Hotkey, IfWinActive ; end if wc3 for hotkeys
-            }
+
+        }
     }
 
     GetSetQuickCast()
@@ -755,14 +776,14 @@ TabSwitched:
             keyValue := StrSplit(lines[A_Index], "=") ; split line to key and value
             GuiControl, 1:, % keyValue[1] , % GetHotkeyName(keyValue[2]) ; update gui
             ; assign hotkeys to labels
-            if(keyValue[2] != "")
+            if(keyValue[2] != "" && (!InStr(keyValue[1], "Toggle")))
             {
-                if(!InStr(keyValue[1], "Toggle")) ; let non-toggle hotkeys only work in wc3
-                    Hotkey, IfWinActive, Warcraft III
+                Hotkey, IfWinActive, Warcraft III
                     Hotkey, % keyValue[2], % keyValue[1], On
             }
             Hotkey, IfWinActive ; end if wc3 for hotkeys
-            }
+
+        }
     }
 
     IniRead(Section, Key := "")
@@ -899,28 +920,28 @@ GetNewVersionTag()
     return match1
 }
 
-;Hotkeys
-;Inventory
-InventoryToggle:
-    inventory := !inventory ; toggle inventory
-    GuiControl, 3: Text, ActiveInventory, % "Inventory: " ((inventory) ? ("Enabled") : ("Disabled")) ;update GUI
+;Tools
+ToolToggle:
+    Tool := !Tool ; toggle Tool
+    GuiControl, 3: Text, ActiveTool, % "Tool: " ((Tool) ? ("Enabled") : ("Disabled")) ;update GUI
 return
 
+;Inventory
 Numpad7:
 Numpad2:
 Numpad1:
 Numpad5:
 Numpad4:
 Numpad8:
-    if(inventory)
+    if(Tool && InventoryToggle)
         SendInput, {%A_ThisLabel%}
-    if(inventory && GetGuiValue("1", A_ThisLabel . "QuickCast") = 1)
+    if(Tool && InventoryToggle && GetGuiValue("1", A_ThisLabel . "QuickCast") = 1)
     {
         SendInput, {CtrlDown}{9}{0}{CtrlUp}
         MouseClick, Left
         SendInput, {9}{0}
     }
-    else if (!GetGuiValue("1", "DisableAllNativeFunctions") && !inventory && !InStr(A_ThisHotKey, "~")) ; send hotkey when native function is blocked and inventory is disabled
+    else if (!GetGuiValue("1", "DisableAllNativeFunctions") && !Tool && !InStr(A_ThisHotKey, "~")) ; send hotkey when native function is blocked and inventory is disabled
     {
         if(RegExMatch(A_ThisHotKey, "\w{2}") != 0) ; Function keys F1~F12
             SendInput, % "{" . RegExReplace(A_ThisHotKey, "[$<>]", "") . "}"
@@ -930,15 +951,10 @@ Numpad8:
 return
 
 ;QuickCast
-QuickCastToggle:
-    QuickCast := !QuickCast ; toggle QuickCast
-    GuiControl, 3: Text, ActiveQuickCast, % "Quick Cast: " ((QuickCast) ? ("Enabled") : ("Disabled")) ;update GUI
-Return
-
 ProbeQuickCast1:
 ProbeQuickCast2:
 ProbeQuickCast3:
-    if(QuickCast)
+    if(Tool && QuickCastToggle)
     {
         MouseClick, Right
         SendInput, {9}{0}
@@ -954,7 +970,7 @@ QuickCast6:
 QuickCast7:
 QuickCast8:
 QuickCast9:
-    if(QuickCast)
+    if(Tool && QuickCastToggle)
     {
         SendInput, {CtrlDown}{9}{0}{CtrlUp}
         MouseClick, Left
@@ -986,27 +1002,15 @@ return
 
 disableCastsOnChatting(){
     WC3Chating := True
-    SettingsHistory := [inventory, QuickCast, QuickCall, NoMouse]
-    inventory := False
-    QuickCast := False
-    QuickCall := False
-    NoMouse := False
-    GuiControl, 3: Text, ActiveInventory, % "Inventory: " ((inventory) ? ("Enabled") : ("Disabled"))
-    GuiControl, 3: Text, ActiveQuickCast, % "Quick Cast: " ((QuickCast) ? ("Enabled") : ("Disabled"))
-    ;GuiControl, 3: Text, ActiveQuickCall, % "Quick Call: " ((QuickCall) ? ("Enabled") : ("Disabled"))
-    ;GuiControl, 3: Text, ActiveNoMouse  , % "No Mouse: " ((NoMouse) ? ("Enabled") : ("Disabled"))
+    SettingsHistory := [Tool]
+    Tool := False
+    GuiControl, 3: Text, ActiveTool, % "Tool: " ((Tool) ? ("Enabled") : ("Disabled"))
 }
 
 enableCastsAfterChatting(){
     WC3Chating := False
-    inventory := SettingsHistory[1]
-    QuickCast := SettingsHistory[2]
-    QuickCall := SettingsHistory[3]
-    NoMouse := SettingsHistory[4]
-    GuiControl, 3: Text, ActiveInventory, % "Inventory: " ((inventory) ? ("Enabled") : ("Disabled"))
-    GuiControl, 3: Text, ActiveQuickCast, % "Quick Cast: " ((QuickCast) ? ("Enabled") : ("Disabled"))
-    ;GuiControl, 3: Text, ActiveQuickCall, % "Quick Call: " ((QuickCall) ? ("Enabled") : ("Disabled"))
-    ;GuiControl, 3: Text, ActiveNoMouse  , % "No Mouse: " ((NoMouse) ? ("Enabled") : ("Disabled"))
+    Tool := SettingsHistory[1]
+    GuiControl, 3: Text, ActiveTool, % "Tool: " ((Tool) ? ("Enabled") : ("Disabled"))
 }
 
 ;Common
@@ -1042,7 +1046,5 @@ GuiEscape:
     GUIShow := False
     ToolTip
 return
-
-$!r::reload
 
 $!esc::ExitApp
