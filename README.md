@@ -11,6 +11,8 @@ Lee's old twrpg loader: [Script to load characters](https://www.twrpg.com/viewto
 ![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/wc3rpgHostGUI.png)
 ![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/wc3rpgInventoryGUI.png)
 ![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/wc3rpgQuickCastGUI.png)
+![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/wc3rpgProbeGUI.png)
+![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/wc3rpgNoMouseGUI.png)
 ![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/wc3rpgSettingsGUI.png)
 ![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/wc3rpgSettingsGUI2.png)
 
@@ -21,15 +23,15 @@ Scan save files to add all heros at once.
 
 Hosting on the first time, type the bot's name, map load command if any, and game name; then click private/public to host. Everything will be saved for the next time when you want to host. Click Delete Bot History to delete the selected bot info.
 
-Tools:
-
+## Tools:
 Default F2 enable/disable all.
 
 Checkbox for enable that specific tool in each tab
 
-Inventory, click the button then click a key on your keyboard to remap that key for inventory. Check box for quick cast.
+## Inventory
+Click the button then click a key on your keyboard to remap that key for inventory. Checkbox for quick cast.
 
-Right Click the button to unsign the hotkey
+**Right Click the button to unsign the hotkey**
 
 Note: Mouse buttons cannot be detected when assigning a key for inventory/quick cast, but user can edit the data.ini file to make mouse button works. I cannot find a way to detect mouse buttons on ahk, let me know if any knows how to do it.
 
@@ -44,12 +46,16 @@ Numpad4=$Xbutton2
 Numpad5=$~4
 Numpad1=$~5
 ```
+## Quick Cast
+The assigned key is also the spell for quick cast, unsign spells that do not need quick cast.
 
-Quick cast: The assigned key is also the spell for quick cast, unsign spells that do not need quick cast.
+## Probe Quick Cast
+only can be assign to number 1-8
 
-Probes quick cast, only can be assign to number 1-8
+**Quick cast meaning: its basically cast that spell on mouse hover without needing to left click or right click.**
 
-Quick cast meaning: its basically cast that spell on mouse hover without needing to left click.
+## No Mouse
+For laptop users to remap a key to left click or right click
 
 ## Default hotkeys:
 Enter: temporary disable all inventory and quick cast functions for wc3 ingame chat. Can be turnned off in settings
@@ -81,6 +87,8 @@ F2: Toggle Inventory function
 qweradfp: quickcast
 
 Alt+Esc: exit wc3 rpg tool
+
+Pause/Break: pause the game
 ## Important:
 Download URL has to be a direct download link instead of a share link(google if you do not know how to get it from a share link)
 
