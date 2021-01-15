@@ -1040,7 +1040,7 @@ Numpad8:
     }
     else if (!GetGuiValue("1", "DisableAllNativeFunctions") && !Tools && !InStr(A_ThisHotKey, "~")) ; send hotkey when native function is blocked and inventory is disabled
     {
-        if(RegExMatch(A_ThisHotKey, "\w{2}") != 0) ; Function keys F1~F12
+        if(RegExMatch(A_ThisHotKey, "\w{2}") != 0 || InStr(A_ThisHotkey, "space") != 0) ; Function keys F1~F12 or space
             SendInput, % "{" . RegExReplace(A_ThisHotKey, "[$<>]", "") . "}"
         else ; Combined keys ex: ALT+T
             Send, % RegExReplace(A_ThisHotKey, "[$<>]", "")
@@ -1079,7 +1079,7 @@ Probe3:
     }
     else if (!GetGuiValue("1", "DisableAllNativeFunctions") && !Tools && !InStr(A_ThisHotKey, "~")) ; send hotkey when native function is blocked and inventory is disabled
     {
-        if(RegExMatch(A_ThisHotKey, "\w{2}") != 0) ; Function keys F1~F12
+        if(RegExMatch(A_ThisHotKey, "\w{2}") != 0 || InStr(A_ThisHotkey, "space") != 0) ; Function keys F1~F12 or space
             SendInput, % "{" . RegExReplace(A_ThisHotKey, "[$<>]", "") . "}"
         else ; Combined keys ex: ALT+T
             Send, % RegExReplace(A_ThisHotKey, "[$<>]", "")
@@ -1094,7 +1094,7 @@ NoMouse1:
     }
     else if (!GetGuiValue("1", "DisableAllNativeFunctions") && !Tools && !InStr(A_ThisHotKey, "~")) ; send hotkey when native function is blocked and inventory is disabled
     {
-        if(RegExMatch(A_ThisHotKey, "\w{2}") != 0) ; Function keys F1~F12
+        if(RegExMatch(A_ThisHotKey, "\w{2}") != 0 || InStr(A_ThisHotkey, "space") != 0) ; Function keys F1~F12 or space
             SendInput, % "{" . RegExReplace(A_ThisHotKey, "[$<>]", "") . "}"
         else ; Combined keys ex: ALT+T
             Send, % RegExReplace(A_ThisHotKey, "[$<>]", "")
