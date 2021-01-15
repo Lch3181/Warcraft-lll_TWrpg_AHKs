@@ -19,7 +19,7 @@ global GUIShow := False
 global OverlayShow := False
 global WC3Chating := False
 global SettingsHistory := []
-global Tool := False
+global Tools := False
 global inventory := False
 global QuickCast := False
 ;force run as admin
@@ -50,7 +50,7 @@ Gui, Add, Text, x20 y+10 , TWRPG Folder:
 Gui, Add, Edit, x20 y+10 w310 h30 R1 vTWrpgFolderAddress ReadOnly, % IniRead("Address", "TWrpgFolder")
 Gui, Add, Picture, x+10 w20 h20 vTWrpgFolder gGetSetFolder, Images\SearchIcon.png
 Gui, Add, Button, x20 y+10 w150 h30 gScanSaveFiles, Scan Save Files
-;-------------------------------------------Tool Tab-------------------------------------------------------
+;-------------------------------------------Tools Tab-------------------------------------------------------
 Gui, Color, DCDCDC
 Gui, Add, Tab3, x0 y20 w380 h240 vSubTool, Inventory|QuickCast
 ;--------------- For Inventory ---------------
@@ -114,7 +114,7 @@ Gui, Add, Checkbox, y+5 gGetSetCheckBoxValue vHideOverlayOnStart
 ;--------------- For Hotkeys ---------------
 Gui, Tab, Hotkeys
 Gui, Font, s12
-Gui, Add, Text, x10 y50, Tool Enable/Disable
+Gui, Add, Text, x10 y50, Tools Enable/Disable
 Gui, Add, Text, y+0, Show/Hide
 Gui, Add, Text, y+0, Overlay Show/Hide
 Gui, Add, Text, y+0, Pause Game
@@ -130,7 +130,7 @@ Gui, Add, Button, y+0 w70 h20 disabled, Alt+ESC
 
 GuiControl, Hide, SubSetting
 ;-------------------------------------------Main Tab-------------------------------------------------------
-Gui, Add, Tab2, x0 y0 w380 h260 gTabSwitched vMainTab, Loader|Host|Tool|Settings
+Gui, Add, Tab2, x0 y0 w380 h260 gTabSwitched vMainTab, Loader|Host|Tools|Settings
 ;---- For Hosting
 Gui, Tab, Host
 Gui, Add, Text, x20 y30 , Pick:
@@ -161,7 +161,7 @@ Gui, 2: Add, Button, x+20 w100 h30 gDeleteHeroSubmit, Delete
 Gui, 3: +LastFound +AlwaysOnTop -Caption
 Gui, 3: Font, s12
 Gui, 3: Font, cRed
-Gui, 3: Add, Text, vActiveTool x0 y0 , % "Tool: " ((Tool) ? ("Enabled") : ("Disabled"))
+Gui, 3: Add, Text, vActiveTool x0 y0 , % "Tools: " ((Tools) ? ("Enabled") : ("Disabled"))
 Gui, 3: Color, EEAA99
 WinSet, TransColor, EEAA99
 
@@ -374,7 +374,7 @@ TabSwitched:
 
     if(MainTab = "Loader")
         GuiControl, Show, SubLoader
-    else if(MainTab = "Tool")
+    else if(MainTab = "Tools")
         GuiControl, Show, SubTool
     else if(MainTab = "Settings")
         GuiControl, Show, SubSetting
@@ -520,7 +520,7 @@ GetSetKey:
     else
     {
         ;update ini file
-        if(MainTab = "Tool")
+        if(MainTab = "Tools")
             IniWrite, %input%, %IniFile%, %SubTool%, %A_GuiControl%
         Else
             IniWrite, %input%, %IniFile%, %MainTab%, %A_GuiControl%
@@ -533,7 +533,7 @@ return
 
 GetSetCheckBoxValue:
     Gui, Submit, Nohide
-    if(MainTab = "Tool")
+    if(MainTab = "Tools")
         IniWrite, % GetGuiValue(A_Gui, A_GuiControl), %iniFile%, %SubTool%, %A_GuiControl%
     Else
         IniWrite, % GetGuiValue(A_Gui, A_GuiControl), %iniFile%, %MainTab%, %A_GuiControl%
@@ -546,7 +546,7 @@ GuiContextMenu:
     if(InStr(IniRead("Inventory"), A_GuiControl) || InStr(IniRead("QuickCast"), A_GuiControl) || InStr(IniRead("Settings"), A_GuiControl)) && (A_GuiControl != "") ; filter gui with ini data only
     {
         ; if gui contains a hotkey
-        if(MainTab = "Tool" && InStr(IniRead(SubTool, A_GuiControl), "$"))
+        if(MainTab = "Tools" && InStr(IniRead(SubTool, A_GuiControl), "$"))
         {
             GuiControl,, A_GuiControl, % ""
             Hotkey, % IniRead(SubTool, A_GuiControl), %A_GuiControl%, Off ; disable hotkey
@@ -652,7 +652,7 @@ initial()
     {
         IniWrite, 1, %iniFile%, Host, GameAnnounceToggle
     }
-    if(clientVersion < 4.15) ; 4.15 combine inventory and quickcast to Tool
+    if(clientVersion < 4.15) ; 4.15 combine inventory and quickcast to Tools
     {
         IniWrite, 1, %iniFile%, Inventory, InventoryToggle
         IniWrite, 1, %iniFile%, QuickCast, QuickCastToggle
@@ -919,8 +919,8 @@ return match1
 
 ;Tools
 ToolToggle:
-    Tool := !Tool ; toggle Tool
-    GuiControl, 3: Text, ActiveTool, % "Tool: " ((Tool) ? ("Enabled") : ("Disabled")) ;update GUI
+    Tools := !Tools ; toggle Tools
+    GuiControl, 3: Text, ActiveTool, % "Tools: " ((Tools) ? ("Enabled") : ("Disabled")) ;update GUI
 return
 
 ;Inventory
@@ -930,15 +930,15 @@ Numpad1:
 Numpad5:
 Numpad4:
 Numpad8:
-    if(Tool && InventoryToggle)
+    if(Tools && InventoryToggle)
         SendInput, {%A_ThisLabel%}
-    if(Tool && InventoryToggle && GetGuiValue("1", A_ThisLabel . "QuickCast") = 1)
+    if(Tools && InventoryToggle && GetGuiValue("1", A_ThisLabel . "QuickCast") = 1)
     {
         SendInput, {CtrlDown}{9}{0}{CtrlUp}
         MouseClick, Left
         SendInput, {9}{0}
     }
-    else if (!GetGuiValue("1", "DisableAllNativeFunctions") && !Tool && !InStr(A_ThisHotKey, "~")) ; send hotkey when native function is blocked and inventory is disabled
+    else if (!GetGuiValue("1", "DisableAllNativeFunctions") && !Tools && !InStr(A_ThisHotKey, "~")) ; send hotkey when native function is blocked and inventory is disabled
     {
         if(RegExMatch(A_ThisHotKey, "\w{2}") != 0) ; Function keys F1~F12
             SendInput, % "{" . RegExReplace(A_ThisHotKey, "[$<>]", "") . "}"
@@ -951,7 +951,7 @@ return
 ProbeQuickCast1:
 ProbeQuickCast2:
 ProbeQuickCast3:
-    if(Tool && QuickCastToggle)
+    if(Tools && QuickCastToggle)
     {
         MouseClick, Right
         SendInput, {9}{0}
@@ -967,7 +967,7 @@ QuickCast6:
 QuickCast7:
 QuickCast8:
 QuickCast9:
-    if(Tool && QuickCastToggle)
+    if(Tools && QuickCastToggle)
     {
         SendInput, {CtrlDown}{9}{0}{CtrlUp}
         MouseClick, Left
@@ -979,7 +979,7 @@ Return
 ShowHideMain:
     GUIShow := !GUIShow
     if (GUIShow)
-        Gui, Show, w380 h260, wc3 rpg Tool v%version%
+        Gui, Show, w380 h260, wc3 rpg Tools v%version%
     else
         Gui, Hide
 return
@@ -999,15 +999,15 @@ return
 
 disableCastsOnChatting(){
     WC3Chating := True
-    SettingsHistory := [Tool]
-    Tool := False
-    GuiControl, 3: Text, ActiveTool, % "Tool: " ((Tool) ? ("Enabled") : ("Disabled"))
+    SettingsHistory := [Tools]
+    Tools := False
+    GuiControl, 3: Text, ActiveTool, % "Tools: " ((Tools) ? ("Enabled") : ("Disabled"))
 }
 
 enableCastsAfterChatting(){
     WC3Chating := False
-    Tool := SettingsHistory[1]
-    GuiControl, 3: Text, ActiveTool, % "Tool: " ((Tool) ? ("Enabled") : ("Disabled"))
+    Tools := SettingsHistory[1]
+    GuiControl, 3: Text, ActiveTool, % "Tools: " ((Tools) ? ("Enabled") : ("Disabled"))
 }
 
 ;Common
