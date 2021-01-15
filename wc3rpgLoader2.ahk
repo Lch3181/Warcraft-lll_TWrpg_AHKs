@@ -12,7 +12,7 @@ SetWinDelay, -1
 SetBatchLines, -1
 SetControlDelay -1
 Thread, interrupt, 0
-global version := 4.15
+global version := 4.2
 global iniFile := "wc3rpgLoaderData.ini"
 global KeyWaiting := False
 global GUIShow := False
@@ -52,7 +52,7 @@ Gui, Add, Picture, x+10 w20 h20 vTWrpgFolder gGetSetFolder, Images\SearchIcon.pn
 Gui, Add, Button, x20 y+10 w150 h30 gScanSaveFiles, Scan Save Files
 ;-------------------------------------------Tools Tab-------------------------------------------------------
 Gui, Color, DCDCDC
-Gui, Add, Tab3, x0 y20 w380 h240 vSubTool, Inventory|QuickCast
+Gui, Add, Tab3, x0 y20 w380 h240 vSubTool, Inventory|QuickCast|Probe
 ;--------------- For Inventory ---------------
 Gui, Tab, Inventory
 Gui, Add, Picture, x20 y50 Icon , Images\Inventory.jpg
@@ -80,18 +80,31 @@ Gui, Font, s12
 Gui, Add, Text, x+10 y50 , Enable
 Gui, Font, s8
 Gui, Add, Checkbox, x350 y55 w13 h13 gGetSetCheckBoxValue vQuickCastToggle
-Gui, Add, Button, x32 y92 w50 h20 gGetSetKey vProbeQuickCast1
-Gui, Add, Button, x+14 w50 h20 gGetSetKey vProbeQuickCast2
-Gui, Add, Button, x+13 w50 h20 gGetSetKey vProbeQuickCast3
-Gui, Add, Button, x+14 w50 h20 gGetSetKey vQuickCast1
-Gui, Add, Button, x32 y+43 w50 h20 gGetSetKey vQuickCast2
-Gui, Add, Button, x+14 w50 h20 gGetSetKey vQuickCast3
-Gui, Add, Button, x+13 w50 h20 gGetSetKey vQuickCast4
-Gui, Add, Button, x+14 w50 h20 gGetSetKey vQuickCast5
-Gui, Add, Button, x32 y+43 w50 h20 gGetSetKey vQuickCast6 
-Gui, Add, Button, x+14 w50 h20 gGetSetKey vQuickCast7 
-Gui, Add, Button, x+13 w50 h20 gGetSetKey vQuickCast8
-Gui, Add, Button, x+14 w50 h20 gGetSetKey vQuickCast9
+Gui, Add, Button, x31 y92 w50 h20 gGetSetKey vQuickCast1
+Gui, Add, Button, x+14 w50 h20 gGetSetKey vQuickCast2
+Gui, Add, Button, x+13 w50 h20 gGetSetKey vQuickCast3
+Gui, Add, Button, x+14 w50 h20 gGetSetKey vQuickCast4
+Gui, Add, Button, x31 y+43 w50 h20 gGetSetKey vQuickCast5
+Gui, Add, Button, x+14 w50 h20 gGetSetKey vQuickCast6
+Gui, Add, Button, x+13 w50 h20 gGetSetKey vQuickCast7
+Gui, Add, Button, x+14 w50 h20 gGetSetKey vQuickCast8
+Gui, Add, Button, x31 y+43 w50 h20 gGetSetKey vQuickCast9 
+Gui, Add, Button, x+14 w50 h20 gGetSetKey vQuickCast10
+Gui, Add, Button, x+13 w50 h20 gGetSetKey vQuickCast11
+Gui, Add, Button, x+14 w50 h20 gGetSetKey vQuickCast12
+;----------------- For Probes -----------------
+Gui, Tab, Probe
+Gui, Add, Picture, x20 y60 Icon , Images\Chaika.png
+Gui, Add, Picture, x+20 y90 w50 h50 Icon , Images\Probe.png
+Gui, Add, Picture, x+10     w50 h50 Icon , Images\Probe.png
+Gui, Add, Picture, x+10     w50 h50 Icon , Images\Probe.png
+Gui, Font, s12
+Gui, Add, Text, x170 y60 , Enable
+Gui, Font, s8
+Gui, Add, Checkbox, x+10 y60 w13 h13 gGetSetCheckBoxValue vProbeToggle
+Gui, Add, Button, x165 y140 w50 h20 gGetSetKey vProbe1
+Gui, Add, Button, x+13      w50 h20 gGetSetKey vProbe2
+Gui, Add, Button, x+13      w50 h20 gGetSetKey vProbe3
 
 GuiControl, Hide, SubTool
 ;-------------------------------------------Setting Tab-------------------------------------------------------
@@ -173,6 +186,7 @@ GetSetBots()
 GetSetInventories()
 GetSetSettings()
 GetSetQuickCast()
+GetSetProbe()
 
 ;Show Gui on Start
 GUIShow := GetGuiValue("1", "HideGuiOnStart")
@@ -656,8 +670,29 @@ initial()
     {
         IniWrite, 1, %iniFile%, Inventory, InventoryToggle
         IniWrite, 1, %iniFile%, QuickCast, QuickCastToggle
-
         IniWrite, $F2, %iniFile%, Settings, ToolToggle
+    }
+    if(clientVersion < 4.2) ; 4.2 moved probes quickcast now has an independent tab
+    {
+        IniDelete, %iniFile%, QuickCast, ProbeQuickCast1
+        IniDelete, %iniFile%, QuickCast, ProbeQuickCast2
+        IniDelete, %iniFile%, QuickCast, ProbeQuickCast3
+        IniWrite, 0, %iniFile%, Probe, ProbeToggle
+        IniWrite, $~6, %iniFile%, Probe, Probe1
+        IniWrite, $~7, %iniFile%, Probe, Probe2
+        IniWrite, % "", %iniFile%, Probe, Probe3
+        IniWrite, $~m, %iniFile%, QuickCast, QuickCast1
+        IniWrite, % "", %iniFile%, QuickCast, QuickCast2
+        IniWrite, % "", %iniFile%, QuickCast, QuickCast3
+        IniWrite, $~a, %iniFile%, QuickCast, QuickCast4
+        IniWrite, $~p, %iniFile%, QuickCast, QuickCast5
+        IniWrite, $~d, %iniFile%, QuickCast, QuickCast6
+        IniWrite, $~t, %iniFile%, QuickCast, QuickCast7
+        IniWrite, $~f, %iniFile%, QuickCast, QuickCast8
+        IniWrite, $~q, %iniFile%, QuickCast, QuickCast9
+        IniWrite, $~w, %iniFile%, QuickCast, QuickCast10
+        IniWrite, $~e, %iniFile%, QuickCast, QuickCast11
+        IniWrite, $~r, %iniFile%, QuickCast, QuickCast12
     }
     IniWrite, %version%, %iniFile%, Settings, Version ; update client version
 }
@@ -767,6 +802,25 @@ GetSetInventories()
 GetSetQuickCast()
 {
     OutputVar := IniRead("QuickCast") ;get all lines in section
+    lines := StrSplit(OutputVar, "`n") ;split by newline
+    Loop % lines.MaxIndex()
+    {
+        keyValue := StrSplit(lines[A_Index], "=") ; split line to key and value
+        GuiControl, 1:, % keyValue[1] , % GetHotkeyName(keyValue[2]) ; update gui
+        ; assign hotkeys to labels
+        if(keyValue[2] != "" && (!InStr(keyValue[1], "Toggle")))
+        {
+            Hotkey, IfWinActive, Warcraft III
+                Hotkey, % keyValue[2], % keyValue[1], On
+        }
+        Hotkey, IfWinActive ; end if wc3 for hotkeys
+
+    }
+}
+
+GetSetProbe()
+{
+    OutputVar := IniRead("Probe") ;get all lines in section
     lines := StrSplit(OutputVar, "`n") ;split by newline
     Loop % lines.MaxIndex()
     {
@@ -948,16 +1002,6 @@ Numpad8:
 return
 
 ;QuickCast
-ProbeQuickCast1:
-ProbeQuickCast2:
-ProbeQuickCast3:
-    if(Tools && QuickCastToggle)
-    {
-        MouseClick, Right
-        SendInput, {9}{0}
-    }
-Return
-
 QuickCast1:
 QuickCast2:
 QuickCast3:
@@ -967,6 +1011,9 @@ QuickCast6:
 QuickCast7:
 QuickCast8:
 QuickCast9:
+QuickCast10:
+QuickCast11:
+QuickCast12:
     if(Tools && QuickCastToggle)
     {
         SendInput, {CtrlDown}{9}{0}{CtrlUp}
@@ -974,6 +1021,18 @@ QuickCast9:
         SendInput, {9}{0}
     }
 Return
+
+;Probes
+Probe1:
+Probe2:
+Probe3:
+    if(Tools && ProbeToggle)
+    {
+        MouseClick, Right
+        SendInput, {9}{0}
+    }
+Return
+
 
 ;Setting
 ShowHideMain:
