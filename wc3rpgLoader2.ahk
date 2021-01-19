@@ -5,14 +5,8 @@ SendMode Input
 SetWorkingDir, %A_ScriptDir%
 SetTitleMatchMode 2
 DetectHiddenWindows, On
-SetDefaultMouseSpeed, 0
-SetMouseDelay, -1
-SetKeyDelay, -1
-SetWinDelay, -1
-SetBatchLines, -1
-SetControlDelay -1
 Thread, interrupt, 0
-global version := 4.3
+global version := 4.4
 global iniFile := "wc3rpgLoaderData.ini"
 global KeyWaiting := False
 global GUIShow := False
@@ -20,13 +14,9 @@ global OverlayShow := False
 global WC3Chating := False
 global SettingsHistory := []
 global Tools := False
-global inventory := False
-global QuickCast := False
 ;force run as admin
 if not A_IsAdmin
-{
     Run *RunAs "%A_ScriptFullPath%"
-}
 ;Includes the specified file inside the compiled version of the script.
 FileCreateDir, Images
 FileInstall, Images\SearchIcon.png, Images\SearchIcon.png
@@ -123,13 +113,15 @@ Gui, Add, Tab3, x0 y20 w380 h240 vSubSetting, Settings|Hotkeys
 Gui, Tab, Settings
 Gui, Font, s12
 Gui, Add, Text, x10 y50, Disable All during chat (wc3 only)
+Gui, Add, Text, y+0, Drop powders at start
 Gui, Add, Text, y+0, Disable Hotkeys' Native Functions
 Gui, Add, Text, y+0, Ex: Alt+q or space if assigned
 Gui, Add, Text, y+0, Hide GUI on start
 Gui, Add, Text, y+0, Hide Overlay on start
 Gui, Add, Text, y+0, % "Newest version:`t`t`t`t " . GetNewVersionTag()
 Gui, Font, s8
-Gui, Add, Checkbox, x300 y55 gGetSetCheckBoxValue vDisableAll 
+Gui, Add, Checkbox, x300 y55 gGetSetCheckBoxValue vDisableAll
+Gui, Add, Checkbox, y+5 gGetSetCheckBoxValue vDropPowders
 Gui, Add, Checkbox, y+25 gGetSetCheckBoxValue vDisableAllNativeFunctions
 Gui, Add, Checkbox, y+5 gGetSetCheckBoxValue vHideGuiOnStart
 Gui, Add, Checkbox, y+5 gGetSetCheckBoxValue vHideOverlayOnStart
@@ -279,13 +271,28 @@ twrpg:
 Return
 ;----------------------------------------------------------------------------------
 tw_skills(){
-    SendInput, {F1 2}
-    Sleep, 100
+    SendInput, {Esc 2}{F1 2}
+    Sleep, 300
     SendInput, {Ctrl down}{1}{9}{0}{Ctrl up}
-    Sleep, 100
-    SendInput, {Esc}{o}
-    sleep, 25
+    Sleep, 50
+    SendInput, {o}
+    sleep, 50
     SendInput, {t}{q}{w}{e}{r}
+    ; drop powders at start
+    if(GetGuiValue("1", "DropPowders"))
+    {
+        SendMode, Event
+        WinGetPos, , , Width, Height, Warcraft III
+        MouseClickDrag, Left, % Width * 0.45, % Height * 0.35, % Width * 0.55, % Height * 0.55, 1
+        SendInput, {Tab 2}
+        Sleep, 50
+        SendInput, {e 2}
+        Sleep, 50
+        SendInput, {Tab}
+        Sleep, 50
+        SendInput, {e 2}{9}{0}
+        SendMode, Input
+    }
 }
 ;----------------------------------------------------------------------------------
 Plus:
@@ -719,6 +726,10 @@ initial()
         IniWrite, 0, %iniFile%, NoMouse, NoMouseToggle
         IniWrite, % "", %iniFile%, NoMouse, NoMouse1
         IniWrite, % "", %iniFile%, NoMouse, NoMouse2
+    }
+    if(clientVersion < 4.4) ; 4.4 added drop powders at start
+    {
+        IniWrite, 0, %iniFile%, Settings, DropPowders
     }
     IniWrite, %version%, %iniFile%, Settings, Version ; update client version
 }
