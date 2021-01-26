@@ -34,7 +34,7 @@ Gui, Tab, TWRPG
 Gui, Add, Text, x20 y50, Hero:
 Gui, Add, DropDownList, y+5 w340 R20 vHeroChoice
 Gui, Add, Checkbox, y+10 vConvertToggle gGetSetCheckBoxValue, -Convert for Warcraft III Reforged
-Gui, Add, Button, x20 y+10 w150 h30 gtwrpg , Load
+Gui, Add, Button, x20 y+10 w150 h30 gtwrpg +Default, Load
 Gui, Add, Button, x+20 w170 h30 gHerosEditorButton, Add/Edit/Delete
 Gui, Add, Text, x20 y+10 , TWRPG Folder:
 Gui, Add, Edit, x20 y+10 w310 h30 R1 vTWrpgFolderAddress ReadOnly, % IniRead("Address", "TWrpgFolder")
@@ -255,7 +255,7 @@ twrpg:
         }
         WC3Chat("-refresh")
         code =
-        sleep 3000
+        sleep 2500
         tw_skills()
     }
     else
@@ -272,7 +272,10 @@ Return
 ;----------------------------------------------------------------------------------
 tw_skills(){
     SendInput, {Esc 2}{F1 2}
-    Sleep, 300
+    if(GetGuiValue("1", "DropPowders"))
+        Sleep, 1000
+    Else
+        Sleep, 50
     SendInput, {Ctrl down}{1}{9}{0}{Ctrl up}
     Sleep, 50
     SendInput, {o}
