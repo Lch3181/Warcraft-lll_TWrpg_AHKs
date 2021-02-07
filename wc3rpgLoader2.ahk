@@ -6,7 +6,7 @@ SetWorkingDir, %A_ScriptDir%
 SetTitleMatchMode 2
 DetectHiddenWindows, On
 Thread, interrupt, 0
-global version := 4.4
+global version := 4.41
 global iniFile := "wc3rpgLoaderData.ini"
 global KeyWaiting := False
 global GUIShow := False
@@ -532,7 +532,8 @@ GetSetKey:
     {
         if(!InStr(A_GuiControl, "Toggle"))
             Hotkey, IfWinActive, Warcraft III
-            Hotkey, %OrginalKey%, %A_GuiControl%, Off
+
+        Hotkey, %OrginalKey%, %A_GuiControl%, Off
     }
 
     ToolTip("Please assign a key to "A_GuiControl, -999999)
@@ -556,11 +557,12 @@ GetSetKey:
         ToolTip("Probes only can assign with numbers 1-8")
         return
     }
-    if(InStr(GetHotkeys(), input) && input != "" && OrginalKey != "") ;check duplication
+    if(InStr(GetHotkeys(), input) && input != "") ;check duplication
     {
         ToolTip(GetHotkeyName(input) . " is used ")
         ; re-enable hotkey
-        Hotkey, % OrginalKey, %A_GuiControl%, On
+        if(OrginalKey != "")
+            Hotkey, % OrginalKey, %A_GuiControl%, On
     }
     else
     {
@@ -1106,7 +1108,7 @@ NoMouse1:
     {
         MouseClick, Left
     }
-    else if (!GetGuiValue("1", "DisableAllNativeFunctions") && !Tools && !InStr(A_ThisHotKey, "~")) ; send hotkey when native function is blocked and inventory is disabled
+    else if (!GetGuiValue("1", "DisableAllNativeFunctions") && !NoMouseToggle && !InStr(A_ThisHotKey, "~")) ; send hotkey when native function is blocked and inventory is disabled
     {
         if(RegExMatch(A_ThisHotKey, "\w{2}") != 0 || InStr(A_ThisHotkey, "space") != 0) ; Function keys F1~F12 or space
             SendInput, % "{" . RegExReplace(A_ThisHotKey, "[$<>]", "") . "}"
@@ -1119,7 +1121,7 @@ NoMouse2:
     {
         MouseClick, Right
     }
-    else if (!GetGuiValue("1", "DisableAllNativeFunctions") && !Tools && !InStr(A_ThisHotKey, "~")) ; send hotkey when native function is blocked and inventory is disabled
+    else if (!GetGuiValue("1", "DisableAllNativeFunctions") && !NoMouseToggle && !InStr(A_ThisHotKey, "~")) ; send hotkey when native function is blocked and inventory is disabled
     {
         if(RegExMatch(A_ThisHotKey, "\w{2}") != 0 || InStr(A_ThisHotkey, "space") != 0) ; Function keys F1~F12 or space
             SendInput, % "{" . RegExReplace(A_ThisHotKey, "[$<>]", "") . "}"
