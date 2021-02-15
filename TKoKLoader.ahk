@@ -2,8 +2,7 @@
 SendMode Input
 SetWorkingDir, %A_ScriptDir%
 GUIShow := true
-; for custom save folder please insert below
-global TKoKFolder := ""
+global TKoKFolder =
 global heroes = 
 global AccountName = 
 global AccountCode =
@@ -11,7 +10,7 @@ global HeroCode1 =
 global HeroCode2 =
 
 ;get default TKoK Folder
-if FileExist(A_MyDocuments . "\Warcraft III\CustomMapData\TKoK_Save_Files\TKoK_3.5.15") && (TKoKFolder = "")
+if FileExist(A_MyDocuments . "\Warcraft III\CustomMapData\TKoK_Save_Files\TKoK_3.5.15")
     TKoKFolder := % A_MyDocuments . "\Warcraft III\CustomMapData\TKoK_Save_Files\TKoK_3.5.15"
 Else
 {
@@ -33,7 +32,7 @@ Gui, Add, Text, y+10 w100 vStarGlass, Star Glass:
 Gui, Add, Button, y+10 gLoadTKoK, Load
 Gui, Add, Button, x+10 gLoadAccount, Load Account
 
-;main code
+;main
 GetSetAccount()
 GetSetHeroes()
 GetHeroInfo()
@@ -154,7 +153,13 @@ LoadAccount:
     }
 
     ; load account only
+    WC3Chat("-loadwith "AccountName)
+    Sleep, 1000
     WC3Chat(AccountCode)
+
+    ;close gui
+    Gui, Hide
+    GUIShow := False
 Return
 
 LoadTKoK:
@@ -179,6 +184,10 @@ LoadTKoK:
     WC3Chat(HeroCode2)
     Sleep, 2000
     WC3Chat(AccountCode)
+
+    ;close gui
+    Gui, Hide
+    GUIShow := False
 Return
 
 ;hotkey
