@@ -1108,7 +1108,7 @@ NoMouse1:
     {
         MouseClick, Left
     }
-    else if (!GetGuiValue("1", "DisableAllNativeFunctions") && !NoMouseToggle && !InStr(A_ThisHotKey, "~")) ; send hotkey when native function is blocked and inventory is disabled
+    else if (!GetGuiValue("1", "DisableAllNativeFunctions") && !InStr(A_ThisHotKey, "~")) && (!Tools || !NoMouseToggle) ; send hotkey when native function is blocked and inventory is disabled
     {
         if(RegExMatch(A_ThisHotKey, "\w{2}") != 0 || InStr(A_ThisHotkey, "space") != 0) ; Function keys F1~F12 or space
             SendInput, % "{" . RegExReplace(A_ThisHotKey, "[$<>]", "") . "}"
@@ -1121,7 +1121,7 @@ NoMouse2:
     {
         MouseClick, Right
     }
-    else if (!GetGuiValue("1", "DisableAllNativeFunctions") && !NoMouseToggle && !InStr(A_ThisHotKey, "~")) ; send hotkey when native function is blocked and inventory is disabled
+    else if (!GetGuiValue("1", "DisableAllNativeFunctions") && !InStr(A_ThisHotKey, "~")) ; send hotkey when native function is blocked and inventory is disabled
     {
         if(RegExMatch(A_ThisHotKey, "\w{2}") != 0 || InStr(A_ThisHotkey, "space") != 0) ; Function keys F1~F12 or space
             SendInput, % "{" . RegExReplace(A_ThisHotKey, "[$<>]", "") . "}"
