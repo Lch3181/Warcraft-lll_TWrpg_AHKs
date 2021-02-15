@@ -5,6 +5,7 @@ GUIShow := true
 ; for custom save folder please insert below
 global TKoKFolder := ""
 global heroes = 
+global AccountName = 
 global AccountCode =
 global HeroCode1 = 
 global HeroCode2 =
@@ -24,7 +25,7 @@ Gui, Add, Text, y+10 w100 vName, Name:
 Gui, Add, Text, y+10 w100 vAPT, APT: 
 Gui, Add, Text, y+10 w100 vDEDIPTS, DEDI PTS: 
 Gui, Add, Text, y+10, Hero:
-Gui, Add, DropDownList, y+5 r5 gOnSelectHero vTKoKHeroes
+Gui, Add, DropDownList, y+5 r15 gOnSelectHero vTKoKHeroes
 Gui, Add, Text, y+10 w100 vLevel, Level: 
 Gui, Add, Text, y+10 w100 vExp, Exp: 
 Gui, Add, Text, y+10 w100 vGold, Gold: 
@@ -60,6 +61,7 @@ GetSetAccount()
     FileRead, OutputVar, % TKoKFolder . "\" . FileItem2 ;read file
     ;find account name
     res := RegExMatch(OutputVar, "Name: (.*)", Match)
+    AccountName := Match1
     GuiControl,, Name, % "Name: " . Match1 ;update gui
     ;find apt
     res := RegExMatch(OutputVar, "APT: (.*)", Match)
@@ -171,6 +173,8 @@ LoadTKoK:
     }
 
     ; load hero
+    WC3Chat("-loadwith "AccountName)
+    Sleep, 1000
     WC3Chat(HeroCode1)
     WC3Chat(HeroCode2)
     Sleep, 2000
