@@ -6,7 +6,7 @@ SetWorkingDir, %A_ScriptDir%
 SetTitleMatchMode 2
 DetectHiddenWindows, On
 Thread, interrupt, 0
-global version := 4.41
+global version := 4.42
 global iniFile := "wc3rpgLoaderData.ini"
 global KeyWaiting := False
 global GUIShow := False
@@ -255,7 +255,7 @@ twrpg:
         }
         WC3Chat("-refresh")
         code =
-        sleep 2500
+        sleep 1500
         tw_skills()
     }
     else
@@ -273,27 +273,21 @@ Return
 tw_skills(){
     SendInput, {Esc 2}{F1 2}
     if(GetGuiValue("1", "DropPowders"))
-        Sleep, 1000
+        Sleep, 500
     Else
         Sleep, 50
     SendInput, {Ctrl down}{1}{9}{0}{Ctrl up}
-    Sleep, 50
-    SendInput, {o}
-    sleep, 50
-    SendInput, {t}{q}{w}{e}{r}
     ; drop powders at start
     if(GetGuiValue("1", "DropPowders"))
     {
         SendMode, Event
         WinGetPos, , , Width, Height, Warcraft III
         MouseClickDrag, Left, % Width * 0.45, % Height * 0.35, % Width * 0.55, % Height * 0.55, 1
-        SendInput, {Tab 2}
-        Sleep, 50
-        SendInput, {e 2}
-        Sleep, 50
         SendInput, {Tab}
-        Sleep, 50
-        SendInput, {e 2}{9}{0}
+        Sleep, 100
+        SendInput, {e}
+        Sleep, 100
+        SendInput, {e}{9}{0}
         SendMode, Input
     }
 }
