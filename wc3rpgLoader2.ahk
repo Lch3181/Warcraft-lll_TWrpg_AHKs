@@ -6,7 +6,7 @@ SetWorkingDir, %A_ScriptDir%
 SetTitleMatchMode 2
 DetectHiddenWindows, On
 Thread, interrupt, 0
-global version := 4.5
+global version := 4.51
 global iniFile := "wc3rpgLoaderData.ini"
 global KeyWaiting := False
 global GUIShow := False
@@ -1076,16 +1076,20 @@ QuickCast9:
 QuickCast10:
 QuickCast11:
 QuickCast12:
-    if(Tools && QuickCastToggle)
+    if(Tools)
     {
         ; Fist Ult (Numpad8)
         if(GetGuiValue("1", "FistUlt") && InStr(A_ThisHotkey, "f"))
         {
             SendInput, {Numpad8}
         }
-        SendInput, {CtrlDown}{9}{0}{CtrlUp}
-        MouseClick, Left
-        SendInput, {9}{0}
+
+        if(QuickCastToggle)
+        {
+            SendInput, {CtrlDown}{9}{0}{CtrlUp}
+            MouseClick, Left
+            SendInput, {9}{0}
+        }
     }
 Return
 
