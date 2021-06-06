@@ -6,7 +6,7 @@ SetWorkingDir, %A_ScriptDir%
 SetTitleMatchMode 2
 DetectHiddenWindows, On
 Thread, interrupt, 0
-global version := 4.42
+global version := 4.5
 global iniFile := "wc3rpgLoaderData.ini"
 global KeyWaiting := False
 global GUIShow := False
@@ -114,6 +114,7 @@ Gui, Tab, Settings
 Gui, Font, s12
 Gui, Add, Text, x10 y50, Disable All during chat (wc3 only)
 Gui, Add, Text, y+0, Drop powders at start
+Gui, Add, Text, y+0, Fist Ult (Numpad8)
 Gui, Add, Text, y+0, Disable Hotkeys' Native Functions
 Gui, Add, Text, y+0, Ex: Alt+q or space if assigned
 Gui, Add, Text, y+0, Hide GUI on start
@@ -122,6 +123,7 @@ Gui, Add, Text, y+0, % "Newest version:`t`t`t`t " . GetNewVersionTag()
 Gui, Font, s8
 Gui, Add, Checkbox, x300 y55 gGetSetCheckBoxValue vDisableAll
 Gui, Add, Checkbox, y+5 gGetSetCheckBoxValue vDropPowders
+Gui, Add, Checkbox, y+5 gGetSetCheckBoxValue vFistUlt
 Gui, Add, Checkbox, y+25 gGetSetCheckBoxValue vDisableAllNativeFunctions
 Gui, Add, Checkbox, y+5 gGetSetCheckBoxValue vHideGuiOnStart
 Gui, Add, Checkbox, y+5 gGetSetCheckBoxValue vHideOverlayOnStart
@@ -286,7 +288,7 @@ tw_skills(){
         SendInput, {Tab}
         Sleep, 100
         SendInput, {e}
-        Sleep, 100
+        Sleep, 300
         SendInput, {e}{9}{0}
         SendMode, Input
     }
@@ -730,6 +732,10 @@ initial()
     {
         IniWrite, 0, %iniFile%, Settings, DropPowders
     }
+    if(clientVersion < 4.5) ; 4.4 added Fist ult
+    {
+        IniWrite, 0, %iniFile%, Settings, FistUlt
+    }
     IniWrite, %version%, %iniFile%, Settings, Version ; update client version
 }
 
@@ -1072,6 +1078,11 @@ QuickCast11:
 QuickCast12:
     if(Tools && QuickCastToggle)
     {
+        ; Fist Ult (Numpad8)
+        if(GetGuiValue("1", "FistUlt") && InStr(A_ThisHotkey, "f"))
+        {
+            SendInput, {Numpad8}
+        }
         SendInput, {CtrlDown}{9}{0}{CtrlUp}
         MouseClick, Left
         SendInput, {9}{0}
