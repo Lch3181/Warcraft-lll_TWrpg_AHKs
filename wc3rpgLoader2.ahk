@@ -6,7 +6,7 @@ SetWorkingDir, %A_ScriptDir%
 SetTitleMatchMode 2
 DetectHiddenWindows, On
 Thread, interrupt, 0
-global version := 4.51
+global version := 4.6
 global iniFile := "wc3rpgLoaderData.ini"
 global KeyWaiting := False
 global GUIShow := False
@@ -28,12 +28,15 @@ initial()
 ;GUI
 ;-------------------------------------------Loader Tab---------------------------------------------------
 Gui, Color, DCDCDC
-Gui, Add, Tab3, x0 y20 w380 h240 vSubLoader, TWrpg
+Gui, Add, Tab3, x0 y20 w380 h290 vSubLoader, TWrpg
 ;--------------- For TWRPG ---------------
 Gui, Tab, TWRPG
 Gui, Add, Text, x20 y50, Hero:
 Gui, Add, DropDownList, y+5 w340 R20 vHeroChoice
-Gui, Add, Checkbox, y+10 vConvertToggle gGetSetCheckBoxValue, -Convert for Warcraft III Reforged
+Gui, Add, Text, x20 y+10, Angle:
+Gui, Add, Edit, y+5 w170 h20 vAngle
+Gui, Add, Checkbox, x+10 vAngleToggle gGetSetCheckBoxValue, Enable/Disable
+Gui, Add, Checkbox, x20 y+20 vConvertToggle gGetSetCheckBoxValue, -Convert for Warcraft III Reforged
 Gui, Add, Button, x20 y+10 w150 h30 gtwrpg +Default, Load
 Gui, Add, Button, x+20 w170 h30 gHerosEditorButton, Add/Edit/Delete
 Gui, Add, Text, x20 y+10 , TWRPG Folder:
@@ -42,7 +45,7 @@ Gui, Add, Picture, x+10 w20 h20 vTWrpgFolder gGetSetFolder, Images\SearchIcon.pn
 Gui, Add, Button, x20 y+10 w150 h30 gScanSaveFiles, Scan Save Files
 ;-------------------------------------------Tools Tab-------------------------------------------------------
 Gui, Color, DCDCDC
-Gui, Add, Tab3, x0 y20 w380 h240 vSubTool, Inventory|QuickCast|Probe|NoMouse|
+Gui, Add, Tab3, x0 y20 w380 h290 vSubTool, Inventory|QuickCast|Probe|NoMouse|
 ;--------------- For Inventory ---------------
 Gui, Tab, Inventory
 Gui, Add, Picture, x20 y50 Icon , Images\Inventory.jpg
@@ -108,7 +111,7 @@ Gui, Add, Button, x+18 w50 h20 gGetSetKey vNoMouse2
 GuiControl, Hide, SubTool
 ;-------------------------------------------Setting Tab-------------------------------------------------------
 Gui, Color, DCDCDC
-Gui, Add, Tab3, x0 y20 w380 h240 vSubSetting, Settings|Hotkeys
+Gui, Add, Tab3, x0 y20 w380 h290 vSubSetting, Settings|Hotkeys
 ;--------------- For Settings ---------------
 Gui, Tab, Settings
 Gui, Font, s12
@@ -124,7 +127,7 @@ Gui, Font, s8
 Gui, Add, Checkbox, x300 y55 gGetSetCheckBoxValue vDisableAll
 Gui, Add, Checkbox, y+5 gGetSetCheckBoxValue vDropPowders
 Gui, Add, Checkbox, y+5 gGetSetCheckBoxValue vFistUlt
-Gui, Add, Checkbox, y+25 gGetSetCheckBoxValue vDisableAllNativeFunctions
+Gui, Add, Checkbox, y+35 gGetSetCheckBoxValue vDisableAllNativeFunctions
 Gui, Add, Checkbox, y+5 gGetSetCheckBoxValue vHideGuiOnStart
 Gui, Add, Checkbox, y+5 gGetSetCheckBoxValue vHideOverlayOnStart
 ;--------------- For Hotkeys ---------------
@@ -146,7 +149,7 @@ Gui, Add, Button, y+0 w70 h20 disabled, Alt+ESC
 
 GuiControl, Hide, SubSetting
 ;-------------------------------------------Main Tab-------------------------------------------------------
-Gui, Add, Tab2, x0 y0 w380 h260 gTabSwitched vMainTab, Loader|Host|Tools|Settings
+Gui, Add, Tab2, x0 y0 w380 h310 gTabSwitched vMainTab, Loader|Host|Tools|Settings
 ;---- For Hosting
 Gui, Tab, Host
 Gui, Add, Text, x20 y30 , Pick:
@@ -241,10 +244,19 @@ twrpg:
 
         ;output to wc3 chat
         WC3Chat(IniRead("LoadingString", GetGuiValue(A_Gui,"HeroChoice")))
-        if(charName != "" && GetGuiValue(A_Gui, "Convert"))
+
+        if(GetGuiValue(A_Gui, "AngleToggle")) ;angle
+        {
+            WC3Chat("-angle "GetGuiValue(A_Gui, "Angle"))
+            IniWrite, % GetGuiValue(A_Gui, "Angle"), %iniFile%, Settings, Angle
+            sleep, 50
+        }
+
+        if(charName != "" && GetGuiValue(A_Gui, "Convert")) ;convert name
             WC3Chat("-convert "charName)
         sleep, 100
 
+        ;codes
         i := 1
         while(i <= count){
             pos := InStr(code, "-load",, 1, i)
@@ -732,9 +744,14 @@ initial()
     {
         IniWrite, 0, %iniFile%, Settings, DropPowders
     }
-    if(clientVersion < 4.5) ; 4.4 added Fist ult
+    if(clientVersion < 4.5) ; 4.5 added Fist ult
     {
         IniWrite, 0, %iniFile%, Settings, FistUlt
+    }
+    if(clientVersion < 4.6) ; 4.6 added angle
+    {
+        IniWrite, 34, %iniFile%, Settings, Angle
+        IniWrite, 0, %iniFile%, Loader, AngleToggle
     }
     IniWrite, %version%, %iniFile%, Settings, Version ; update client version
 }
@@ -1143,7 +1160,11 @@ return
 ShowHideMain:
     GUIShow := !GUIShow
     if (GUIShow)
-        Gui, Show, w380 h260, wc3 rpg Tools v%version%
+    {
+        GuiControl, Choose, MainTab, 1
+        Gosub, TabSwitched
+        Gui, Show, w380 h310, wc3 rpg Tools v%version%
+    }
     else
         Gui, Hide
 return
