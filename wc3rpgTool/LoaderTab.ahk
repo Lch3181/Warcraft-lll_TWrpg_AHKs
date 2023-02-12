@@ -5,10 +5,8 @@ class LoaderTab {
     TWRPGFolder := A_MyDocuments "\Warcraft III\CustomMapData\TWRPG"
     saveFiles := ["Hero1", "Hero2"]
 
-    __New(gui := Gui(), tab := Gui().AddTab3(, ["Loader"])) {
-        ; init gui
-        MainGui := gui
-        Tab := tab
+    __New(MainGui, Tab) {
+        ; init tab
         Tab.UseTab("Loader")
 
         ; files
@@ -21,12 +19,12 @@ class LoaderTab {
         MainGui.AddGroupBox("xp-200 yp+50 w550 h100", "Settings")
         convertNameCheckBox := MainGui.AddCheckbox("xp+20 yp+20", "Convert Name for Warcraft III Reforged")
         MainGui.AddText("yp+25", "TWRPG Folder:")
-        TWRPGFolderTextField := MainGui.AddEdit("Disabled", this.TWRPGFolder)
+        TWRPGFolderTextField := MainGui.AddEdit("w350 r1 ReadOnly", this.TWRPGFolder)
         MainGui.AddButton("x+20 w60", "Select").OnEvent("Click", selectTWRPGFolder)
         MainGui.AddButton("x+20 w60", "Open").OnEvent("Click", openTWRPGFolder)
 
         ; stats
-        MainGui.AddGroupBox("xp-460 yp+50 w550 h350", "Stats")
+        MainGui.AddGroupBox("xp-470 yp+50 w550 h350", "Stats")
         statsText := MainGui.AddEdit("xp+20 yp+20 w510 h310 ReadOnly", "")
 
         ; init variables
@@ -48,6 +46,7 @@ class LoaderTab {
 
         openTWRPGFolder(Button, Info) {
             Run(this.TWRPGFolder)
+            return
         }
 
 
@@ -71,14 +70,14 @@ class LoaderTab {
             }
             return
         }
-        
+
         getSaveFileNames() {
             fileNames := []
 
             for file in GetFileNamesInFolder(this.TWRPGFolder) {
                 text := FileRead(this.TWRPGFolder "\" file)
                 ; if it is a save file
-                if(RegExMatch(text, '(----------(?|Hero Inventory|영웅 아이템)----------)') > 0) {
+                if (RegExMatch(text, '(----------(?|Hero Inventory|영웅 아이템)----------)') > 0) {
                     fileNames.Push(StrReplace(file, ".txt", ""))
                 }
             }
@@ -88,7 +87,7 @@ class LoaderTab {
                 selectedFileDDL.Delete()
                 selectedFileDDL.Add(this.saveFiles)
                 selectedFileDDL.Choose(1)
-                getStats(selectedFileDDL, 0)    
+                getStats(selectedFileDDL, 0)
             }
 
             return
