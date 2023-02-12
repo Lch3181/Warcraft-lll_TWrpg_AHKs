@@ -58,10 +58,6 @@ GetSetAccount()
         StringSplit, FileItem, A_LoopField, %A_Tab% ; Split into two parts at the tab char.
     }
     FileRead, OutputVar, % TKoKFolder . "\" . FileItem2 ;read file
-    ;find account name
-    res := RegExMatch(OutputVar, "Name: (.*)", Match)
-    AccountName := Match1
-    GuiControl,, Name, % "Name: " . Match1 ;update gui
     ;find apt
     res := RegExMatch(OutputVar, "APT: (.*)", Match)
     GuiControl,, APT, % "APT: " . Match1 ;update gui
@@ -98,6 +94,10 @@ GetHeroInfo()
         StringSplit, FileItem, A_LoopField, %A_Tab% ; Split into two parts at the tab char.
     }
     FileRead, OutputVar, % TKoKFolder . "\" . GetGuiValue("1", "TKoKHeroes") . "\" . FileItem2 ;read file
+    ;find account name
+    res := RegExMatch(OutputVar, "Name: (.*)\""", Match)
+    AccountName := Match1
+    GuiControl,, Name, % "Name: " . Match1 ;update gui
     ;find levels
     res := RegExMatch(OutputVar, "Level: (.*)""", Match)
     GuiControl,, Level, % "Level: " . Match1 ;update gui
