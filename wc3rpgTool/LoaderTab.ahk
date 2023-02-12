@@ -12,7 +12,7 @@ class LoaderTab {
         ; files
         MainGui.AddGroupBox("w550", "Files")
         selectedFileDDL := MainGui.AddDropDownList("xp+20 yp+20 w160 Choose1", [])
-        selectedFileDDL.OnEvent("Change", getStats)
+        selectedFileDDL.OnEvent("Change", onChangeSelectedFile)
         MainGui.AddButton("x+20 w60", "Load").OnEvent("Click", loadSaveFile)
         MainGui.AddText("x+20 yp+5", "Drag and drop new save file to anywhere")
 
@@ -33,6 +33,7 @@ class LoaderTab {
         TWRPGFolder.Text := IniRead(iniFileName, "LoaderTab", "TWRPGFolder", A_MyDocuments "\Warcraft III\CustomMapData\TWRPG")
         getSaveFileNames()
         convertNameCheckBox.Value := IniRead(iniFileName, "LoaderTab", "convertNameCheckBox", true)
+        selectedFileDDL.Choose(IniRead(iniFileName, "LoaderTab", "selectedFile", 0))
 
         ; events
         selectTWRPGFolder(Button, Info) {
@@ -42,37 +43,14 @@ class LoaderTab {
                 IniWrite(TWRPGFolder.Text, iniFileName, "LoaderTab", "TWRPGFolder")
                 getSaveFileNames()
             }
-            return
         }
 
         openTWRPGFolder(Button, Info) {
             Run(TWRPGFolder.Text)
-            return
         }
 
 
         loadSaveFile(Button, Info) {
-            return
-        }
-
-        getStats(Button, Info) {
-            address := TWRPGFolder.Text "\" Button.Text ".txt"
-            if not FileExist(address) {
-                statsText.Text := ""
-                return
-            }
-
-            text := FileRead(address)
-            pattern := "s)(\tcall Preload.*)\tcall PreloadEnd\( 0\.0 \)"
-
-            if (RegExMatch(text, pattern, &matches) > 0) {
-                text := matches[1]
-                text := StrReplace(text, "	call Preload", "")
-                statsText.Text := text
-            } else {
-                statsText.Text := ""
-            }
-            return
         }
 
         getSaveFileNames(choose := 1) {
@@ -93,9 +71,31 @@ class LoaderTab {
                 selectedFileDDL.Choose(choose)
             }
 
-            getStats(selectedFileDDL, 0)
+            getStats(selectedFileDDL.Text)
+        }
 
-            return
+        onChangeSelectedFile(Button, Info) {
+            IniWrite(Button.Text, iniFileName, "LoaderTab", "selectedFile")
+            getStats(Button.Text)
+        }
+
+        getStats(fileName) {
+            address := TWRPGFolder.Text "\" fileName ".txt"
+            if not FileExist(address) {
+                statsText.Text := ""
+                return
+            }
+
+            text := FileRead(address)
+            pattern := "s)(\tcall Preload.*)\tcall PreloadEnd\( 0\.0 \)"
+
+            if (RegExMatch(text, pattern, &matches) > 0) {
+                text := matches[1]
+                text := StrReplace(text, "	call Preload", "")
+                statsText.Text := text
+            } else {
+                statsText.Text := ""
+            }
         }
 
         onClickConvertNameCheckBox(Button, Info) {
