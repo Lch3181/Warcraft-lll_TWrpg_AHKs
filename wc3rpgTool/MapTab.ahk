@@ -34,6 +34,15 @@ class MapTab {
         filter.Text := IniRead(iniFileName, "MapTab", "filter", "twrpg")
         updateMapList(filter.text)
 
+        ; fix admin drop files
+        WM_COPYDATA := 0x4A
+        WM_COPYGLOBALDATA := 0x0049
+        WM_DROPFILES := 0x233
+        MSGFLT_ALLOW := 1
+        DllCall("ChangeWindowMessageFilterEx", "Ptr", MainGui.Hwnd, "UInt", WM_COPYDATA, "UInt", MSGFLT_ALLOW, "Ptr", 0)
+        DllCall("ChangeWindowMessageFilterEx", "Ptr", MainGui.Hwnd, "UInt", WM_COPYGLOBALDATA, "UInt", MSGFLT_ALLOW, "Ptr", 0)
+        DllCall("ChangeWindowMessageFilterEx", "Ptr", MainGui.Hwnd, "UInt", WM_DROPFILES, "UInt", MSGFLT_ALLOW, "Ptr", 0)
+
         ; events
         selectMapFolder(Button, Info) {
             Folder := SelectFolder()
