@@ -2,9 +2,6 @@
 #Include Helper.ahk
 
 class LoaderTab {
-    TWRPGFolder := A_MyDocuments "\Warcraft III\CustomMapData\TWRPG"
-    saveFiles := ["Hero1", "Hero2"]
-
     __New(MainGui, Tab) {
         ; init tab
         Tab.UseTab("Loader")
@@ -14,7 +11,7 @@ class LoaderTab {
 
         ; files
         MainGui.AddGroupBox("w550", "Files")
-        selectedFileDDL := MainGui.AddDropDownList("xp+20 yp+20 w160 Choose1", this.saveFiles)
+        selectedFileDDL := MainGui.AddDropDownList("xp+20 yp+20 w160 Choose1", [])
         selectedFileDDL.OnEvent("Change", getStats)
         MainGui.AddButton("x+20 w60", "Load").OnEvent("Click", loadSaveFile)
         MainGui.AddText("x+20 yp+5", "Drag and drop new save file to anywhere")
@@ -22,8 +19,9 @@ class LoaderTab {
         ; settings
         MainGui.AddGroupBox("xp-280 yp+50 w550 h100", "Settings")
         convertNameCheckBox := MainGui.AddCheckbox("xp+20 yp+20", "Convert Name for Warcraft III Reforged")
+        convertNameCheckBox.OnEvent("Click", onClickConvertNameCheckBox)
         MainGui.AddText("yp+25", "TWRPG Folder:")
-        TWRPGFolderTextField := MainGui.AddEdit("w350 r1 ReadOnly", this.TWRPGFolder)
+        TWRPGFolder := MainGui.AddEdit("w350 r1 ReadOnly", "")
         MainGui.AddButton("x+20 w60", "Select").OnEvent("Click", selectTWRPGFolder)
         MainGui.AddButton("x+20 w60", "Open").OnEvent("Click", openTWRPGFolder)
 
@@ -32,24 +30,23 @@ class LoaderTab {
         statsText := MainGui.AddEdit("xp+20 yp+20 w510 h310 ReadOnly", "")
 
         ; init variables
-        ; get twrpg folder
-        TWRPGFolderTextField.Text := this.TWRPGFolder
-
-        ; update save files drop down list
+        TWRPGFolder.Text := IniRead(iniFileName, "LoaderTab", "TWRPGFolder", A_MyDocuments "\Warcraft III\CustomMapData\TWRPG")
         getSaveFileNames()
+        convertNameCheckBox.Value := IniRead(iniFileName, "LoaderTab", "convertNameCheckBox", true)
 
         ; events
         selectTWRPGFolder(Button, Info) {
             Folder := SelectFolder()
             if Folder != "" {
-                this.TWRPGFolder := Folder
-                TWRPGFolderTextField.Text := Folder
+                TWRPGFolder.Text := Folder
+                IniWrite(TWRPGFolder.Text, iniFileName, "LoaderTab", "TWRPGFolder")
+                getSaveFileNames()
             }
             return
         }
 
         openTWRPGFolder(Button, Info) {
-            Run(this.TWRPGFolder)
+            Run(TWRPGFolder.Text)
             return
         }
 
@@ -59,8 +56,9 @@ class LoaderTab {
         }
 
         getStats(Button, Info) {
-            address := this.TWRPGFolder "\" Button.Text ".txt"
+            address := TWRPGFolder.Text "\" Button.Text ".txt"
             if not FileExist(address) {
+                statsText.Text := ""
                 return
             }
 
@@ -71,6 +69,8 @@ class LoaderTab {
                 text := matches[1]
                 text := StrReplace(text, "	call Preload", "")
                 statsText.Text := text
+            } else {
+                statsText.Text := ""
             }
             return
         }
@@ -78,23 +78,28 @@ class LoaderTab {
         getSaveFileNames(choose := 1) {
             fileNames := []
 
-            for file in GetFileNamesInFolder(this.TWRPGFolder) {
-                text := FileRead(this.TWRPGFolder "\" file)
+            for file in GetFileNamesInFolder(TWRPGFolder.Text) {
+                text := FileRead(TWRPGFolder.Text "\" file)
                 ; if it is a save file
                 if (RegExMatch(text, '(----------(?|Hero Inventory|영웅 아이템)----------)') > 0) {
                     fileNames.Push(StrReplace(file, ".txt", ""))
                 }
             }
 
+            selectedFileDDL.Delete()
+            selectedFileDDL.Add(fileNames)
+
             if (fileNames.Length > 0) {
-                this.saveFiles := fileNames
-                selectedFileDDL.Delete()
-                selectedFileDDL.Add(this.saveFiles)
                 selectedFileDDL.Choose(choose)
-                getStats(selectedFileDDL, 0)
             }
 
+            getStats(selectedFileDDL, 0)
+
             return
+        }
+
+        onClickConvertNameCheckBox(Button, Info) {
+            IniWrite(Button.Value, iniFileName, "LoaderTab", "convertNameCheckBox")
         }
 
         dropSaveFiles(GuiObj, GuiCtrlObj, FileArray, X, Y) {
@@ -105,7 +110,7 @@ class LoaderTab {
             fileNames := []
             for file in FileArray {
                 if InStr(file, ".txt") {
-                    FileCopy(file, this.TWRPGFolder "\", 1)
+                    FileCopy(file, TWRPGFolder.Text "\", 1)
                     split := StrSplit(file, "\")
                     fileNames.Push(StrReplace(split.Pop(), ".txt", ""))
                 }
@@ -115,6 +120,5 @@ class LoaderTab {
                 getSaveFileNames(fileNames[1])
             }
         }
-
     }
 }

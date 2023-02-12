@@ -5,7 +5,7 @@
 
 ;GUI
 MainGui := Gui()
-Tab := MainGui.AddTab3("W580 H580 Choose4", ["Loader", "Tool", "Host", "Map", "Settings"])
+Tab := MainGui.AddTab3("W580 H580 Choose1", ["Loader", "Tool", "Host", "Map", "Settings"])
 LoaderTab(MainGui, Tab)
 MapTab(MainGui, Tab)
 MainGui.Show("W600 H600")

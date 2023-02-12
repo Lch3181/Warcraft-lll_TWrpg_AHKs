@@ -68,7 +68,6 @@ class MapTab {
         }
 
         onClickCol(ListView, Info) {
-            OutputDebug(Info)
             if (Info == 2) {
                 ListView.ModifyCol(3, this.sortAsc ? "Sort" : "SortDesc")
                 this.sortAsc := !this.sortAsc
