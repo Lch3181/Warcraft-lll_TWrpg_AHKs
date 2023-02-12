@@ -9,14 +9,18 @@ class LoaderTab {
         ; init tab
         Tab.UseTab("Loader")
 
+        ; drag and drop save file
+        MainGui.OnEvent("DropFiles", dropSaveFiles)
+
         ; files
         MainGui.AddGroupBox("w550", "Files")
         selectedFileDDL := MainGui.AddDropDownList("xp+20 yp+20 w160 Choose1", this.saveFiles)
         selectedFileDDL.OnEvent("Change", getStats)
-        MainGui.AddButton("xp+180 w60", "Load").OnEvent("Click", loadSaveFile)
+        MainGui.AddButton("x+20 w60", "Load").OnEvent("Click", loadSaveFile)
+        MainGui.AddText("x+20 yp+5", "Drag and drop new save file to anywhere")
 
         ; settings
-        MainGui.AddGroupBox("xp-200 yp+50 w550 h100", "Settings")
+        MainGui.AddGroupBox("xp-280 yp+50 w550 h100", "Settings")
         convertNameCheckBox := MainGui.AddCheckbox("xp+20 yp+20", "Convert Name for Warcraft III Reforged")
         MainGui.AddText("yp+25", "TWRPG Folder:")
         TWRPGFolderTextField := MainGui.AddEdit("w350 r1 ReadOnly", this.TWRPGFolder)
@@ -71,7 +75,7 @@ class LoaderTab {
             return
         }
 
-        getSaveFileNames() {
+        getSaveFileNames(choose := 1) {
             fileNames := []
 
             for file in GetFileNamesInFolder(this.TWRPGFolder) {
@@ -86,11 +90,31 @@ class LoaderTab {
                 this.saveFiles := fileNames
                 selectedFileDDL.Delete()
                 selectedFileDDL.Add(this.saveFiles)
-                selectedFileDDL.Choose(1)
+                selectedFileDDL.Choose(choose)
                 getStats(selectedFileDDL, 0)
             }
 
             return
         }
+
+        dropSaveFiles(GuiObj, GuiCtrlObj, FileArray, X, Y) {
+            if (Tab.Text != "Loader") {
+                return
+            }
+
+            fileNames := []
+            for file in FileArray {
+                if InStr(file, ".txt") {
+                    FileCopy(file, this.TWRPGFolder "\", 1)
+                    split := StrSplit(file, "\")
+                    fileNames.Push(StrReplace(split.Pop(), ".txt", ""))
+                }
+            }
+            if (fileNames.Length > 0) {
+                MsgBox("Added: `n" Join("`n", fileNames*))
+                getSaveFileNames(fileNames[1])
+            }
+        }
+
     }
 }
