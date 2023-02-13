@@ -10,14 +10,14 @@ class LoaderTab {
         MainGui.OnEvent("DropFiles", dropSaveFiles)
 
         ; files
-        MainGui.AddGroupBox("w550", "Files")
+        MainGui.AddGroupBox("Section w550", "Files")
         selectedFileDDL := MainGui.AddDropDownList("xp+20 yp+20 w160 Choose1", [])
         selectedFileDDL.OnEvent("Change", onChangeSelectedFile)
         MainGui.AddButton("x+20 w60", "Load").OnEvent("Click", load)
         MainGui.AddText("x+20 yp+5", "Drag and drop new save file to anywhere")
 
         ; settings
-        MainGui.AddGroupBox("xp-280 yp+50 w550 h100", "Settings")
+        MainGui.AddGroupBox("Section xs ys y+30 w550 h100", "Settings")
         convertNameCheckBox := MainGui.AddCheckbox("xp+20 yp+20", "Convert Name for Warcraft III Reforged")
         convertNameCheckBox.OnEvent("Click", onClickConvertNameCheckBox)
         MainGui.AddText("yp+25", "TWRPG Folder:")
@@ -26,7 +26,7 @@ class LoaderTab {
         MainGui.AddButton("x+20 w60", "Open").OnEvent("Click", openTWRPGFolder)
 
         ; stats
-        MainGui.AddGroupBox("xp-470 yp+50 w550 h350", "Stats")
+        MainGui.AddGroupBox("Section xs ys y+30 w550 h350", "Stats")
         statsText := MainGui.AddEdit("xp+20 yp+20 w510 h310 ReadOnly", "")
 
         ; init variables
