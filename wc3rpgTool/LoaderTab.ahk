@@ -13,7 +13,7 @@ class LoaderTab {
         MainGui.AddGroupBox("w550", "Files")
         selectedFileDDL := MainGui.AddDropDownList("xp+20 yp+20 w160 Choose1", [])
         selectedFileDDL.OnEvent("Change", onChangeSelectedFile)
-        MainGui.AddButton("x+20 w60", "Load").OnEvent("Click", loadSaveFile)
+        MainGui.AddButton("x+20 w60", "Load").OnEvent("Click", load)
         MainGui.AddText("x+20 yp+5", "Drag and drop new save file to anywhere")
 
         ; settings
@@ -31,9 +31,14 @@ class LoaderTab {
 
         ; init variables
         TWRPGFolder.Text := IniRead(iniFileName, "LoaderTab", "TWRPGFolder", A_MyDocuments "\Warcraft III\CustomMapData\TWRPG")
-        getSaveFileNames()
+        getSaveFileNames(IniRead(iniFileName, "LoaderTab", "selectedFile", 0))
         convertNameCheckBox.Value := IniRead(iniFileName, "LoaderTab", "convertNameCheckBox", true)
-        selectedFileDDL.Choose(IniRead(iniFileName, "LoaderTab", "selectedFile", 0))
+
+        ; hotstrings
+        HotIfWinactive(WarcraftIII)
+        Hotstring(":XB0:-loadlast", loadSaveFile)
+        Hotstring(":XB0:-ll", loadSaveFile)
+        HotIfWinactive()
 
         ; events
         selectTWRPGFolder(Button, Info) {
@@ -50,7 +55,50 @@ class LoaderTab {
         }
 
 
-        loadSaveFile(Button, Info) {
+        load(Button, Info) {
+            loadSaveFile()
+        }
+
+        loadSaveFile(thishotkey?) {
+            path := TWRPGFolder.Text "\" selectedFileDDL.Text ".txt"
+
+            ; save last load
+            IniWrite(selectedFileDDL.Text, iniFileName, "LoaderTab", "selectedFile")
+
+            ; read save file
+            if not FileExist(path) {
+                ToolTip("File does not exist")
+                return
+            }
+
+            ; read file
+            text := FileRead(path)
+            ; count load codes
+            StrReplace(text, "-load", "-load", , &count)
+
+            ; get username
+            pattern := '(User Name|아이디):\s((?:[^""]|\\"")*)'
+            if (RegExMatch(text, pattern, &Matches) <= 0) {
+                return
+            }
+            userName := Matches[2]
+
+            ; get code
+            i := 1
+            codes := []
+            while(i <= count) {
+                pos := InStr(text, "-load",, 1, i)
+                RegExMatch(text, "(-load [a-zA-Z\d\?@#$%&-]*)", &Match, pos)
+                codes.Push(Match[1])
+
+                i += 1
+            }
+
+            wc3Chat("-convert " userName)
+            for code in codes {
+                wc3Chat(code)
+            }
+            wc3Chat("-refresh")
         }
 
         getSaveFileNames(choose := 1) {
@@ -75,7 +123,6 @@ class LoaderTab {
         }
 
         onChangeSelectedFile(Button, Info) {
-            IniWrite(Button.Text, iniFileName, "LoaderTab", "selectedFile")
             getStats(Button.Text)
         }
 
