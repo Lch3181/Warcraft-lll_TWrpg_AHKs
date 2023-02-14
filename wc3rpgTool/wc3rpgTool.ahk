@@ -4,8 +4,11 @@
 #Include MapTab.ahk
 #Include ToolTab.ahk
 #Include overlay.ahk
+#Include Settings.ahk
 
 toolEnabled := true
+showMainGui := false
+showOverlay := false
 
 ;force run as admin
 if not A_IsAdmin {
@@ -20,16 +23,54 @@ if not A_IsAdmin {
 
 ;GUI
 MainGui := Gui()
-Tab := MainGui.AddTab3("x0 y0 W580 H580 -Theme Choose2", ["Loader", "Tool", "Host", "Map", "Settings"])
+Tab := MainGui.AddTab3("x0 y0 W580 H580 -Theme Choose1", ["Loader", "Tool", "Host", "Map", "Settings"])
 LoaderTab(MainGui, Tab)
 tool := ToolTab(MainGui, Tab)
 MapTab(MainGui, Tab)
+Settings(MainGui, Tab)
 ol := Overlay()
 MainGui.Show("W580 H580")
+MainGui.OnEvent("Close", onCloseGui)
+showMainGui := true
+
+; events
+onCloseGui(GuiObj) {
+    global showMainGui := false
+}
 
 ; common hotkeys
+; show hide main gui
+$~f8::
+{
+    global
+    showMainGui := !showMainGui
+    if showMainGui {
+        MainGui.Show("W580 H580")
+    } else {
+        MainGui.Hide()
+    }
+}
+
+; show hide overlay
+$~f7::
+{
+    global
+    showOverlay := !showOverlay
+    if showOverlay {
+        ol.overlayGui.Show()
+    } else {
+        ol.overlayGui.Hide()
+    }
+}
+
+; exit app alt+esc
+$!esc:: ExitApp
+
+; wc3 hotkeys
 #HotIf WinActive(WarcraftIII)
-$~f3::
+; toggle tool
+$~f2::
+$~f10::
 $~+Enter::    ; Shift Enter
 $~NumpadEnter::    ; numpad Enter
 $~Enter::    ; Regular Enter
@@ -40,7 +81,7 @@ $~Enter::    ; Regular Enter
     tool.registerHotkeys()
 }
 
-; If chatting was canceled
+; enable tool If chatting was canceled
 $~LButton::    ; Left Click - Might be problematic if user clicks in UI area instead of play area
 $~Esc::    ; Escape
 {
@@ -50,6 +91,3 @@ $~Esc::    ; Escape
     tool.registerHotkeys()
 }
 #HotIf
-
-; exit app alt+esc
-$!esc:: ExitApp

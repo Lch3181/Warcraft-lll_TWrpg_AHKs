@@ -3,15 +3,17 @@
 #Include Helper.ahk
 
 class Overlay {
+    overlayGui := Gui
     textGui := Gui.Text
 
     __New() {
-        overlayGui := Gui("AlwaysOnTop -SysMenu Owner LastFound -Caption")
-        this.textGui := overlayGui.AddText("w100 h80", "Tool: " (toolEnabled ? "Enabled" : "Disabled"))
+        this.overlayGui := Gui("AlwaysOnTop -SysMenu Owner LastFound -Caption")
+        this.textGui := this.overlayGui.AddText("w100 h80", "Tool: " (toolEnabled ? "Enabled" : "Disabled"))
         this.textGui.SetFont("s12 cRed")
-        overlayGui.BackColor := "EEAA99"
-        WinSetTransColor("EEAA99", overlayGui.Hwnd)
-        overlayGui.Show("x0 y0")
+        this.overlayGui.BackColor := "EEAA99"
+        WinSetTransColor("EEAA99", this.overlayGui.Hwnd)
+        this.overlayGui.Show("x0 y0")
+        global showOverlay := true
     }
 
     updateText() {

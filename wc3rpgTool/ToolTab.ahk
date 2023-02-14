@@ -146,19 +146,9 @@ class ToolTab {
             if InStr(HK.Name, "newSpellHK") || InStr(HK.Name, "inventoryHK") {
                 HK.OnEvent("ContextMenu", onRightClickHK)
 
-                ; set remaped hotkeys
-                setRemapedHotkeys(HK)
-
                 ; write quickcast to ini
                 writeQuickcastIni(HK)
             }
-
-            ; mouse
-            if InStr(HK.Name, "mouseHK") {
-                ; set remaped hotkeys
-                setRemapedHotkeys(HK)
-            }
-
         }
 
         ; var
@@ -170,7 +160,9 @@ class ToolTab {
         onClickHK(Button, Info) {
             ; remove existing text
             Button.Text := ""
+            IniWrite("", iniFileName, "ToolTab", Button.Name)
             inihk := IniRead(iniFileName, "ToolTab", Button.Name, "")
+            this.setRemapedHotkeys()
 
             ; disable old hotkey
             HotIfWinactive(WarcraftIII)
@@ -182,7 +174,6 @@ class ToolTab {
             ; capture input
             this.focusedHotKey := Button
             if not ih.InProgress {
-                IniWrite("", iniFileName, "ToolTab", Button.Name)
                 KeyWaitCombo()
             }
         }
@@ -202,8 +193,6 @@ class ToolTab {
                 writeHotkeyIni(hk, this.focusedHotKey)
 
                 this.registerHotkeys()
-
-                setRemapedHotkeys(this.focusedHotKey)
             }
         }
 
@@ -250,16 +239,14 @@ class ToolTab {
                 TextGui.SetFont("cGreen")
             }
         }
+    }
 
-        setRemapedHotkeys(HKGui) {
+    setRemapedHotkeys() {
+        for HKGui in this.allHK {
             if InStr(HKGui.Name, "newSpellHK") {
                 RegExMatch(HKGui.Name, "(\d+)", &pos)
                 remapedHotkey := IniRead(iniFileName, "ToolTab", HKGui.Name, "")
                 originalKey := IniRead(iniFileName, "ToolTab", "originalSpellHK" pos[1], "")
-
-                if (remapedHotkey == "" || originalKey == "") {
-                    return
-                }
 
                 this.remapedKeys.Set(remapedHotkey, originalKey)
 
@@ -295,9 +282,12 @@ class ToolTab {
                 }
             }
         }
+        ; remove empty key
+        this.remapedKeys.Delete("")
     }
 
     registerHotkeys() {
+        this.setRemapedHotkeys()
         HotIfWinactive(WarcraftIII)
 
         for HK in this.allHk {
