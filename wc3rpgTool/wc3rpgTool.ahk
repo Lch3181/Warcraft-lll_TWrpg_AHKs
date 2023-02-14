@@ -2,6 +2,7 @@
 #Include Helper.ahk
 #Include LoaderTab.ahk
 #Include MapTab.ahk
+#Include ToolTab.ahk
 
 ;force run as admin
 if not A_IsAdmin {
@@ -16,7 +17,8 @@ if not A_IsAdmin {
 
 ;GUI
 MainGui := Gui()
-Tab := MainGui.AddTab3("W580 H580 Choose1", ["Loader", "Tool", "Host", "Map", "Settings"])
+Tab := MainGui.AddTab3("x0 y0 W580 H580 -Theme Choose2", ["Loader", "Tool", "Host", "Map", "Settings"])
 LoaderTab(MainGui, Tab)
+ToolTab(MainGui, Tab)
 MapTab(MainGui, Tab)
-MainGui.Show("W600 H600")
+MainGui.Show("W580 H580")

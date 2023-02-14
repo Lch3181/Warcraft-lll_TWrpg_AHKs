@@ -68,6 +68,7 @@ class LoaderTab {
             ; read save file
             if not FileExist(path) {
                 ToolTip("File does not exist")
+                SetTimer () => ToolTip(), -5000
                 return
             }
 

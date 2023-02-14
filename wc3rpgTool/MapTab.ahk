@@ -21,6 +21,7 @@ class MapTab {
         mapFolder := MainGui.AddEdit("w350 ReadOnly", "")
         MainGui.AddButton("x+20 w60", "Select").OnEvent("Click", selectMapFolder)
         MainGui.AddButton("x+20 w60", "Open").OnEvent("Click", openMapFolder)
+        
         ; maps
         MainGui.AddGroupBox("Section xs ys y+30 w550 h370", "Maps")
         MainGui.AddText("xp+20 yp+20", "Map Filter:")
