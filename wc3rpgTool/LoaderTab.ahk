@@ -87,8 +87,8 @@ class LoaderTab {
             ; get code
             i := 1
             codes := []
-            while(i <= count) {
-                pos := InStr(text, "-load",, 1, i)
+            while (i <= count) {
+                pos := InStr(text, "-load", , 1, i)
                 RegExMatch(text, "(-load [a-zA-Z\d\?@#$%&-]*)", &Match, pos)
                 codes.Push(Match[1])
 

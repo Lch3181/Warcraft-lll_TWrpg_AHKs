@@ -1,27 +1,27 @@
 #Requires AutoHotkey v2.0
-global iniFileName := "wc3rpgToolData.ini"
-global WarcraftIII := "Warcraft III"
-global ih := InputHook("V","{Esc}")
+iniFileName := "wc3rpgToolData.ini"
+WarcraftIII := "Warcraft III"
+ih := InputHook("V", "{Esc}")
 
 KeyWaitCombo()
 {
     ih.VisibleNonText := false
-    ih.KeyOpt("{All}", "E")  ; End
+    ih.KeyOpt("{All}", "E")    ; End
     ; Exclude the modifiers
     ih.KeyOpt("{LCtrl}{RCtrl}{LAlt}{RAlt}{LShift}{RShift}{LWin}{RWin}", "-E")
     ih.Start()
-    ErrorLevel := ih.Wait()  ; Store EndReason in ErrorLevel
-    return ih.EndMods . ih.EndKey  ; Return a string like <^<+Esc
+    ErrorLevel := ih.Wait()    ; Store EndReason in ErrorLevel
+    return ih.EndMods . ih.EndKey    ; Return a string like <^<+Esc
 }
 
 ReadableHotkey(hotkey) {
     hotkeyMap1 := Map(
-        "<", "L", 
+        "<", "L",
         ">", "R")
 
     hotkeyMap2 := Map(
-        "#", "Win + ", 
-        "!", "Alt + ", 
+        "#", "Win + ",
+        "!", "Alt + ",
         "^", "Ctrl + ",
         "+", "Shift + "
     )
@@ -62,7 +62,7 @@ Join(sep, params*) {
 
 ON_EN_SETFOCUS(wParam, lParam, msg, hwnd)
 {
-    static EM_SETSEL   := 0x00B1
+    static EM_SETSEL := 0x00B1
     static EN_SETFOCUS := 0x0100
     critical
     if ((wParam >> 16) = EN_SETFOCUS) {

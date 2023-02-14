@@ -1,4 +1,5 @@
 #Requires AutoHotkey v2.0
+#Include wc3rpgTool.ahk
 #Include Helper.ahk
 
 class ToolTab {
@@ -16,17 +17,17 @@ class ToolTab {
         ; new
         MainGui.AddGroupBox("xp+10 yp+15 w320 h250", "New")
 
-        newSpellHK1  := MainGui.AddText("xp+10 yp+20 w60 h60 Border vnewSpellHK1", "M")
-        newSpellHK2  := MainGui.AddText("x+20 w60 h60 Border vnewSpellHK2", "S")
-        newSpellHK3  := MainGui.AddText("x+20 w60 h60 Border vnewSpellHK3", "H")
-        newSpellHK4  := MainGui.AddText("x+20 w60 h60 Border vnewSpellHK4", "A")
+        newSpellHK1 := MainGui.AddText("xp+10 yp+20 w60 h60 Border vnewSpellHK1", "M")
+        newSpellHK2 := MainGui.AddText("x+20 w60 h60 Border vnewSpellHK2", "S")
+        newSpellHK3 := MainGui.AddText("x+20 w60 h60 Border vnewSpellHK3", "H")
+        newSpellHK4 := MainGui.AddText("x+20 w60 h60 Border vnewSpellHK4", "A")
 
-        newSpellHK5  := MainGui.AddText("xp-240 y+20 w60 h60 Border vnewSpellHK5", "P")
-        newSpellHK6  := MainGui.AddText("x+20 w60 h60 Border vnewSpellHK6", "D")
-        newSpellHK7  := MainGui.AddText("x+20 w60 h60 Border vnewSpellHK7", "T")
-        newSpellHK8  := MainGui.AddText("x+20 w60 h60 Border vnewSpellHK8", "F")
+        newSpellHK5 := MainGui.AddText("xp-240 y+20 w60 h60 Border vnewSpellHK5", "P")
+        newSpellHK6 := MainGui.AddText("x+20 w60 h60 Border vnewSpellHK6", "D")
+        newSpellHK7 := MainGui.AddText("x+20 w60 h60 Border vnewSpellHK7", "T")
+        newSpellHK8 := MainGui.AddText("x+20 w60 h60 Border vnewSpellHK8", "F")
 
-        newSpellHK9  := MainGui.AddText("xp-240 y+20 w60 h60 Border vnewSpellHK9", "Q")
+        newSpellHK9 := MainGui.AddText("xp-240 y+20 w60 h60 Border vnewSpellHK9", "Q")
         newSpellHK10 := MainGui.AddText("x+20 w60 h60 Border vnewSpellHK10", "W")
         newSpellHK11 := MainGui.AddText("x+20 w60 h60 Border vnewSpellHK11", "E")
         newSpellHK12 := MainGui.AddText("x+20 w60 h60 Border vnewSpellHK12", "R")
@@ -34,17 +35,17 @@ class ToolTab {
         ; original
         MainGui.AddGroupBox("xp-250 y+20 w320 h250", "Orignal")
 
-        originalSpellHK1  := MainGui.AddText("xp+10 yp+20 w60 h60 Border voriginalSpellHK1", "M")
-        originalSpellHK2  := MainGui.AddText("x+20 w60 h60 Border voriginalSpellHK2", "S")
-        originalSpellHK3  := MainGui.AddText("x+20 w60 h60 Border voriginalSpellHK3", "H")
-        originalSpellHK4  := MainGui.AddText("x+20 w60 h60 Border voriginalSpellHK4", "A")
- 
-        originalSpellHK5  := MainGui.AddText("xp-240 y+20 w60 h60 Border voriginalSpellHK5", "P")
-        originalSpellHK6  := MainGui.AddText("x+20 w60 h60 Border voriginalSpellHK6", "D")
-        originalSpellHK7  := MainGui.AddText("x+20 w60 h60 Border voriginalSpellHK7", "T")
-        originalSpellHK8  := MainGui.AddText("x+20 w60 h60 Border voriginalSpellHK8", "F")
- 
-        originalSpellHK9  := MainGui.AddText("xp-240 y+20 w60 h60 Border voriginalSpellHK9", "Q")
+        originalSpellHK1 := MainGui.AddText("xp+10 yp+20 w60 h60 Border voriginalSpellHK1", "M")
+        originalSpellHK2 := MainGui.AddText("x+20 w60 h60 Border voriginalSpellHK2", "S")
+        originalSpellHK3 := MainGui.AddText("x+20 w60 h60 Border voriginalSpellHK3", "H")
+        originalSpellHK4 := MainGui.AddText("x+20 w60 h60 Border voriginalSpellHK4", "A")
+
+        originalSpellHK5 := MainGui.AddText("xp-240 y+20 w60 h60 Border voriginalSpellHK5", "P")
+        originalSpellHK6 := MainGui.AddText("x+20 w60 h60 Border voriginalSpellHK6", "D")
+        originalSpellHK7 := MainGui.AddText("x+20 w60 h60 Border voriginalSpellHK7", "T")
+        originalSpellHK8 := MainGui.AddText("x+20 w60 h60 Border voriginalSpellHK8", "F")
+
+        originalSpellHK9 := MainGui.AddText("xp-240 y+20 w60 h60 Border voriginalSpellHK9", "Q")
         originalSpellHK10 := MainGui.AddText("x+20 w60 h60 Border voriginalSpellHK10", "W")
         originalSpellHK11 := MainGui.AddText("x+20 w60 h60 Border voriginalSpellHK11", "E")
         originalSpellHK12 := MainGui.AddText("x+20 w60 h60 Border voriginalSpellHK12", "R")
@@ -58,7 +59,7 @@ class ToolTab {
         inventoryHK4 := MainGui.AddText("x+20 w60 h60 Border vinventoryHK4", "4")
         inventoryHK5 := MainGui.AddText("xp-80 y+20 w60 h60 Border vinventoryHK5", "5")
         inventoryHK6 := MainGui.AddText("x+20 w60 h60 Border vinventoryHK6", "6")
-        
+
         ; remap mouse
         MainGui.AddGroupBox("Section xs ys y+30 w190 h120", "Remap Mouse")
 
@@ -121,7 +122,7 @@ class ToolTab {
             if iniHK {
                 ; update gui
                 iniHK := ReadableHotkey(iniHK)
-                HK.Text := iniHK    
+                HK.Text := iniHK
             } else {
                 ; write hotkey to ini
                 writeHotkeyIni(StrLower(HK.Text), HK)
@@ -150,7 +151,7 @@ class ToolTab {
         ih.OnEnd := endCaptureInput
 
         registerHotkeys()
-        
+
         ; events
         onClickHK(Button, Info) {
             ; remove existing text
@@ -167,7 +168,7 @@ class ToolTab {
             ; capture input
             this.focusedHotKey := Button
             if not ih.InProgress {
-                IniWrite("", iniFileName, "ToolTab", Button.Name)    
+                IniWrite("", iniFileName, "ToolTab", Button.Name)
                 KeyWaitCombo()
             }
         }
@@ -198,7 +199,7 @@ class ToolTab {
                 ; write hk settings to ini
                 if InStr(TextGui.Name, "originalSpellHK") {
                     ; original spells are not hotkey
-                    IniWrite(Hotkey, iniFileName, "ToolTab", TextGui.Name)    
+                    IniWrite(Hotkey, iniFileName, "ToolTab", TextGui.Name)
                 } else {
                     ;  add "$" to hotkey
                     IniWrite("$" Hotkey, iniFileName, "ToolTab", TextGui.Name)
@@ -223,7 +224,7 @@ class ToolTab {
                     TextGui.SetFont("cGreen")
                     this.quickCast.Set(iniHK, true)
                     IniWrite(true, iniFileName, "ToolTab", TextGui.Name "Quickcast")
-                }    
+                }
             } else {
                 this.quickCast.Set(iniHK, true)
                 IniWrite(true, iniFileName, "ToolTab", TextGui.Name "Quickcast")
