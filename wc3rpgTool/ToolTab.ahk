@@ -4,8 +4,10 @@
 
 class ToolTab {
     focusedHotKey := Gui.Control
+    settings := [Gui.Control]
+    allHK := [Gui.Control]
     remapedKeys := Map()
-    quickCast := Map()
+    quickCastMap := Map()
 
     __New(MainGui, Tab) {
         ; init tab
@@ -72,11 +74,23 @@ class ToolTab {
         ; settings
         MainGui.AddGroupBox("Section xs ys y+30 w190 h125", "Settings")
         MainGui.AddText("xp+20 yp+20", "Enable: ")
-        MainGui.AddCheckbox("xp+0 y+10", "Remap Spells")
-        MainGui.AddCheckbox("xp+0 y+10", "Remap Inventory")
-        MainGui.AddCheckbox("xp+0 y+10", "Remap Mouse")
+        enableRemapSpells := MainGui.AddCheckbox("xp+0 y+10 venableRemapSpells", "Remap Spells")
+        enableRemapInventory := MainGui.AddCheckbox("xp+0 y+10 venableRemapInventory", "Remap Inventory")
+        enableRemapMouse := MainGui.AddCheckbox("xp+0 y+10 venableRemapMouse", "Remap Mouse")
 
-        allHk := [
+        this.settings := [
+            enableRemapSpells,
+            enableRemapInventory,
+            enableRemapMouse
+        ]
+
+        for setting in this.settings {
+            setting.OnEvent("Click", onClickCheckbox)
+
+            setting.Value := IniRead(iniFileName, "ToolTab", setting.Name, 1)
+        }
+
+        this.allHk := [
             newSpellHK1,
             newSpellHK2,
             newSpellHK3,
@@ -111,7 +125,7 @@ class ToolTab {
             mouseHK2
         ]
 
-        for HK in allHk {
+        for HK in this.allHk {
             HK.Opt("-Tabstop 0x200 Center")
             HK.SetFont("s8 w600")
             HK.OnEvent("Click", onClickHK)
@@ -150,7 +164,7 @@ class ToolTab {
         ; var
         ih.OnEnd := endCaptureInput
 
-        registerHotkeys()
+        this.registerHotkeys()
 
         ; events
         onClickHK(Button, Info) {
@@ -179,7 +193,7 @@ class ToolTab {
         }
 
         endCaptureInput(inputObj) {
-            if (WinActive(A_ScriptName)) {
+            if (WinActive(A_ScriptName) && Tab.Text == "Tool") {
                 ; captured input
                 hk := ih.EndMods . ih.EndKey
                 this.focusedHotKey.Text := ReadableHotkey(hk)
@@ -187,10 +201,15 @@ class ToolTab {
                 ; write ini
                 writeHotkeyIni(hk, this.focusedHotKey)
 
-                registerHotkeys()
+                this.registerHotkeys()
 
                 setRemapedHotkeys(this.focusedHotKey)
             }
+        }
+
+        onClickCheckbox(Button, Info) {
+            IniWrite(Button.Value, iniFileName, "ToolTab", Button.Name)
+            this.registerHotkeys()
         }
 
         ; functions
@@ -218,15 +237,15 @@ class ToolTab {
                 iniQuickcast := IniRead(iniFileName, "ToolTab", TextGui.Name "Quickcast", true)
                 if (iniQuickcast && reverse) || (!iniQuickcast && !reverse) {
                     TextGui.SetFont("cBlack")
-                    this.quickCast.Set(iniHK, false)
+                    this.quickCastMap.Set(iniHK, false)
                     IniWrite(false, iniFileName, "ToolTab", TextGui.Name "Quickcast")
                 } else {
                     TextGui.SetFont("cGreen")
-                    this.quickCast.Set(iniHK, true)
+                    this.quickCastMap.Set(iniHK, true)
                     IniWrite(true, iniFileName, "ToolTab", TextGui.Name "Quickcast")
                 }
             } else {
-                this.quickCast.Set(iniHK, true)
+                this.quickCastMap.Set(iniHK, true)
                 IniWrite(true, iniFileName, "ToolTab", TextGui.Name "Quickcast")
                 TextGui.SetFont("cGreen")
             }
@@ -276,38 +295,47 @@ class ToolTab {
                 }
             }
         }
+    }
 
-        registerHotkeys() {
-            HotIfWinactive(WarcraftIII)
+    registerHotkeys() {
+        HotIfWinactive(WarcraftIII)
 
-            for HK in allHk {
-                HKName := HK.Name
-                hk := IniRead(iniFileName, "ToolTab", HKName, "")
-                if hk == "" {
-                    continue
-                }
-
-                switch true {
-                    case InStr(HKName, "newSpellHK"):
-                        Hotkey(hk, remapSpell, "On")
-                    case InStr(HKName, "inventoryHK"):
-                        Hotkey(hk, remapInventory, "On")
-                    case InStr(HKName, "mouseHK"):
-                        Hotkey(hk, remapMouse, "On")
-                    default:
-                        continue
-                }
+        for HK in this.allHk {
+            HKName := HK.Name
+            hk := IniRead(iniFileName, "ToolTab", HKName, "")
+            if hk == "" {
+                continue
             }
 
-            HotIfWinactive()
+            switch true {
+                case InStr(HKName, "newSpellHK"):
+                    Hotkey(hk, remapSpell, "On")
+                    if !toolEnabled || !this.settings[1].Value {
+                        Hotkey(hk, remapSpell, "Off")
+                    }
+                case InStr(HKName, "inventoryHK"):
+                    Hotkey(hk, remapInventory, "On")
+                    if !toolEnabled || !this.settings[2].Value {
+                        Hotkey(hk, remapInventory, "Off")
+                    }
+                case InStr(HKName, "mouseHK"):
+                    Hotkey(hk, remapMouse, "On")
+                    if !toolEnabled || !this.settings[3].Value {
+                        Hotkey(hk, remapMouse, "Off")
+                    }
+                default:
+                    continue
+            }
         }
+
+        HotIfWinactive()
 
         remapSpell(thisHotkey) {
             remapedKey := this.remapedKeys.Get(thisHotkey, "")
             SendInput("{" remapedKey "}")
             quickcast(thisHotkey)
         }
-
+        
         remapInventory(thisHotkey) {
             remapedKey := this.remapedKeys.Get(thisHotkey)
             SendInput("{" remapedKey "}")
@@ -320,7 +348,7 @@ class ToolTab {
         }
 
         quickcast(thisHotkey) {
-            if this.quickCast.Get(thisHotkey, false) {
+            if this.quickCastMap.Get(thisHotkey, false) {
                 SendInput("{Ctrl Down}{9}{0}{Ctrl Up}")
                 MouseClick("Left")
                 SendInput("{9}{0}")

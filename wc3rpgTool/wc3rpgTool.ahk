@@ -5,7 +5,7 @@
 #Include ToolTab.ahk
 #Include overlay.ahk
 
-toolEnabled := false
+toolEnabled := true
 
 ;force run as admin
 if not A_IsAdmin {
@@ -22,7 +22,7 @@ if not A_IsAdmin {
 MainGui := Gui()
 Tab := MainGui.AddTab3("x0 y0 W580 H580 -Theme Choose2", ["Loader", "Tool", "Host", "Map", "Settings"])
 LoaderTab(MainGui, Tab)
-ToolTab(MainGui, Tab)
+tool := ToolTab(MainGui, Tab)
 MapTab(MainGui, Tab)
 ol := Overlay()
 MainGui.Show("W580 H580")
@@ -36,6 +36,7 @@ $~Enter::    ; Regular Enter
     global
     toolEnabled := !toolEnabled
     ol.updateText()
+    tool.registerHotkeys()
 }
 
 ; If chatting was canceled
@@ -44,6 +45,7 @@ $~Esc::    ; Escape
 {
     global
     toolEnabled := true
+    tool.registerHotkeys()
 }
 #HotIf WinActive("")
 

@@ -15,7 +15,6 @@ class Overlay {
     }
 
     updateText() {
-        OutputDebug((toolEnabled ? "Enabled" : "Disabled"))
         this.textGui.Text := "Tool: " (toolEnabled ? "Enabled" : "Disabled")
     }
 }
