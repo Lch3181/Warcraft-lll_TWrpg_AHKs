@@ -137,6 +137,13 @@ class ToolTab {
                 ; write quickcast to ini
                 writeQuickcastIni(HK)
             }
+
+            ; mouse
+            if InStr(HK.Name, "mouseHK") {
+                ; set remaped hotkeys
+                setRemapedHotkeys(HK)
+            }
+
         }
 
         ; var
@@ -152,7 +159,9 @@ class ToolTab {
 
             ; disable old hotkey
             HotIfWinactive(WarcraftIII)
-            Hotkey(inihk, "Off")
+            try {
+                Hotkey(inihk, "Off")
+            }
             HotIfWinactive()
 
             ; capture input
@@ -178,6 +187,8 @@ class ToolTab {
                 writeHotkeyIni(hk, this.focusedHotKey)
 
                 registerHotkeys()
+
+                setRemapedHotkeys(this.focusedHotKey)
             }
         }
 
@@ -251,6 +262,17 @@ class ToolTab {
                     default:
                         return
                 }
+            } else if InStr(HKGui.Name, "mouseHK") {
+                remapedHotkey := IniRead(iniFileName, "ToolTab", HKGui.Name, "")
+
+                switch HKGui.Name {
+                    case "mouseHK1":
+                        this.remapedKeys.Set(remapedHotkey, "Left")
+                    case "mouseHK2":
+                        this.remapedKeys.Set(remapedHotkey, "Right")
+                    default:
+                        return
+                }
             }
         }
 
@@ -292,7 +314,8 @@ class ToolTab {
         }
 
         remapMouse(thisHotkey) {
-
+            remapedKey := this.remapedKeys.Get(thisHotkey)
+            MouseClick(remapedKey)
         }
 
         quickcast(thisHotkey) {
