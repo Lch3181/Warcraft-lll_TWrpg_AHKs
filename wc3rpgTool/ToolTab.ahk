@@ -3,6 +3,7 @@
 
 class ToolTab {
     focusedHotKey := Gui.Control
+    quickCast := Map()
 
     __New(MainGui, Tab) {
         ; init tab
@@ -113,22 +114,31 @@ class ToolTab {
             HK.SetFont("s8 w600")
             HK.OnEvent("Click", onClickHK)
 
-            ; quickcast
-            if !InStr(HK.Name, "originalSpellHK") {
-                HK.OnEvent("ContextMenu", onRightClickHK)
-                if IniRead(iniFileName, "ToolTab", HK.Name "Quickcast", true) {
-                    HK.SetFont("cGreen")
-                }
-            }
-            
             ; hotkey
-            iniHK := IniRead(iniFileName, "ToolTab", HK.Name, HK.Text)
-            iniHK := ReadableHotkey(iniHK)
-            HK.Text := iniHK
+            iniHK := IniRead(iniFileName, "ToolTab", HK.Name, "")
+
+            if iniHK {
+                ; update gui
+                iniHK := ReadableHotkey(iniHK)
+                HK.Text := iniHK    
+            } else {
+                ; write hotkey to ini
+                writeHotkeyIni(StrLower(HK.Text), HK)
+            }
+
+            ; quickcast
+            if InStr(HK.Name, "newSpellHK") || InStr(HK.Name, "inventoryHK") {
+                HK.OnEvent("ContextMenu", onRightClickHK)
+
+                ; write quickcast to ini
+                writeQuickcastIni(HK)
+            }
         }
 
         ; var
-        ih.OnEnd := setHotkey
+        ih.OnEnd := endCaptureInput
+
+        registerHotkeys()
         
         ; events
         onClickHK(Button, Info) {
@@ -141,22 +151,108 @@ class ToolTab {
         }
 
         onRightClickHK(Button, Item, IsRightClick, X, Y) {
-            ; quickcast enabled = green else red
-            quickcast := IniRead(iniFileName, "ToolTab", Button.Name "Quickcast", true)
-            if quickcast {
-                Button.SetFont("cBlack")
-                IniWrite(false, iniFileName, "ToolTab", Button.Name "Quickcast")
-            } else {
-                Button.SetFont("cGreen")
-                IniWrite(true, iniFileName, "ToolTab", Button.Name "Quickcast")
+            ; quickcast enabled = green else black
+            writeQuickcastIni(Button)
+        }
+
+        endCaptureInput(inputObj) {
+            if (WinActive(A_ScriptName)) {
+                ; captured input
+                hk := ih.EndMods . ih.EndKey
+                this.focusedHotKey.Text := ReadableHotkey(hk)
+
+                ; write ini
+                writeHotkeyIni(hk, this.focusedHotKey)
             }
         }
 
-        setHotkey(inputObj) {
-            if (WinActive(A_ScriptName)) {
-                hk := ih.EndMods . ih.EndKey
-                this.focusedHotKey.Text := ReadableHotkey(hk)
-                IniWrite(hk, iniFileName, "ToolTab", this.focusedHotKey.Name)    
+        writeHotkeyIni(Hotkey, TextGui) {
+            if (TextGui.Text) {
+                ; write hk settings to ini
+                if InStr(TextGui.Name, "originalSpellHK") {
+                    ; original spells are not hotkey
+                    IniWrite(Hotkey, iniFileName, "ToolTab", TextGui.Name)    
+                } else {
+                    if (StrLen(TextGui.Text) == 1) {
+                        ;  add "$~" to non-modified hotkey
+                        IniWrite("$~" Hotkey, iniFileName, "ToolTab", TextGui.Name)
+                    } else {
+                        ;  add "$" to modified hotkey
+                        IniWrite("$" Hotkey, iniFileName, "ToolTab", TextGui.Name)
+                    }
+                }
+            } else {
+                ; write empty key
+                IniWrite("", iniFileName, "ToolTab", TextGui.Name)
+            }
+        }
+
+        writeQuickcastIni(TextGui) {
+            ; quickcast enabled = green else black
+            iniHK := IniRead(iniFileName, "ToolTab", TextGui.Name, "")
+
+            if IniRead(iniFileName, "ToolTab", TextGui.Name "Quickcast", "") != "" {
+                iniQuickcast := IniRead(iniFileName, "ToolTab", TextGui.Name "Quickcast", true)
+                if iniQuickcast {
+                    TextGui.SetFont("cBlack")
+                    this.quickCast.Set(iniHK, false)
+                    IniWrite(false, iniFileName, "ToolTab", TextGui.Name "Quickcast")
+                } else {
+                    TextGui.SetFont("cGreen")
+                    this.quickCast.Set(iniHK, true)
+                    IniWrite(true, iniFileName, "ToolTab", TextGui.Name "Quickcast")
+                }    
+            } else {
+                this.quickCast.Set(iniHK, true)
+                IniWrite(true, iniFileName, "ToolTab", TextGui.Name "Quickcast")
+                TextGui.SetFont("cGreen")
+            }
+        }
+
+        registerHotkeys() {
+            HotIfWinactive(WarcraftIII)
+
+            for HK in allHk {
+                HKName := HK.Name
+                hk := IniRead(iniFileName, "ToolTab", HKName, "")
+                if hk == "" {
+                    continue
+                }
+
+                switch true {
+                    case InStr(HKName, "newSpellHK"):
+                        Hotkey(hk, remapSpell)
+                    case InStr(HKName, "inventoryHK"):
+                        Hotkey(hk, remapInventory)
+                    case InStr(HKName, "mouseHK"):
+                        Hotkey(hk, remapMouse)
+                    default:
+                        continue
+                }
+            }
+
+            HotIfWinactive()
+        }
+
+        remapSpell(thisHotkey) {
+
+            quickcast(thisHotkey)
+        }
+
+        remapInventory(thisHotkey) {
+
+            quickcast(thisHotkey)
+        }
+
+        remapMouse(thisHotkey) {
+
+        }
+
+        quickcast(thisHotkey) {
+            if this.quickCast.Get(thisHotkey, false) {
+                SendInput("{Ctrl Down}{9}{0}{Ctrl Up}")
+                MouseClick("Left")
+                SendInput("{9}{0}")
             }
         }
     }

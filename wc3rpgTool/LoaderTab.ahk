@@ -31,7 +31,7 @@ class LoaderTab {
 
         ; init variables
         TWRPGFolder.Text := IniRead(iniFileName, "LoaderTab", "TWRPGFolder", A_MyDocuments "\Warcraft III\CustomMapData\TWRPG")
-        getSaveFileNames(IniRead(iniFileName, "LoaderTab", "selectedFile", 0))
+        getSaveFileNames(IniRead(iniFileName, "LoaderTab", "selectedFile", ""))
         convertNameCheckBox.Value := IniRead(iniFileName, "LoaderTab", "convertNameCheckBox", true)
 
         ; hotstrings
@@ -102,7 +102,7 @@ class LoaderTab {
             wc3Chat("-refresh")
         }
 
-        getSaveFileNames(choose := 1) {
+        getSaveFileNames(choose := "") {
             fileNames := []
 
             for file in GetFileNamesInFolder(TWRPGFolder.Text) {
@@ -117,7 +117,11 @@ class LoaderTab {
             selectedFileDDL.Add(fileNames)
 
             if (fileNames.Length > 0) {
-                selectedFileDDL.Choose(choose)
+                if choose == "" {
+                    selectedFileDDL.Choose(1)
+                } else {
+                    selectedFileDDL.Choose(choose)
+                }
             }
 
             getStats(selectedFileDDL.Text)

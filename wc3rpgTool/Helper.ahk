@@ -1,8 +1,7 @@
 #Requires AutoHotkey v2.0
 global iniFileName := "wc3rpgToolData.ini"
 global WarcraftIII := "Warcraft III"
-
-ih := InputHook("V","{Esc}")
+global ih := InputHook("V","{Esc}")
 
 KeyWaitCombo()
 {
@@ -29,6 +28,7 @@ ReadableHotkey(hotkey) {
 
     hotkey := StrUpper(hotkey)
     for key, value in hotkeyMap1 {
+        hotkey := StrReplace(hotkey, "$~", "")
         hotkey := StrReplace(hotkey, key, value)
     }
     for key, value in hotkeyMap2 {
