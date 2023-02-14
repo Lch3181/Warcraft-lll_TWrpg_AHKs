@@ -36,8 +36,7 @@ class LoaderTab {
 
         ; hotstrings
         HotIfWinactive(WarcraftIII)
-        Hotstring(":XB0:-loadlast", loadSaveFile)
-        Hotstring(":XB0:-ll", loadSaveFile)
+        Hotstring(":XB0:-l", loadSaveFile)
         HotIfWinactive()
 
         ; events

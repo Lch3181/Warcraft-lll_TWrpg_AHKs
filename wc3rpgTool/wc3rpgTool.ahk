@@ -29,6 +29,7 @@ MainGui.Show("W580 H580")
 
 ; common hotkeys
 #HotIf WinActive(WarcraftIII)
+$~f3::
 $~+Enter::    ; Shift Enter
 $~NumpadEnter::    ; numpad Enter
 $~Enter::    ; Regular Enter
@@ -45,9 +46,10 @@ $~Esc::    ; Escape
 {
     global
     toolEnabled := true
+    ol.updateText()
     tool.registerHotkeys()
 }
-#HotIf WinActive("")
+#HotIf
 
 ; exit app alt+esc
 $!esc:: ExitApp
