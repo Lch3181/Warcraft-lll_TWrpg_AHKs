@@ -28,7 +28,7 @@ ReadableHotkey(hotkey) {
 
     hotkey := StrUpper(hotkey)
     for key, value in hotkeyMap1 {
-        hotkey := StrReplace(hotkey, "$~", "")
+        hotkey := StrReplace(hotkey, "$", "")
         hotkey := StrReplace(hotkey, key, value)
     }
     for key, value in hotkeyMap2 {
@@ -80,7 +80,7 @@ wc3Chat(Text) {
         SetTimer () => ToolTip(), -5000
         return
     }
-    ControlSend("{Enter}",, WarcraftIII)
-    ControlSend("{Text}" Text,, WarcraftIII)
-    ControlSend("{Enter}",, WarcraftIII)
+    SendInput("{Enter}")
+    SendInput("{Text}" Text)
+    SendInput("{Enter}")
 }

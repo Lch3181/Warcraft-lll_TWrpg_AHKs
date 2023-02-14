@@ -3,6 +3,7 @@
 
 class ToolTab {
     focusedHotKey := Gui.Control
+    remapedKeys := Map()
     quickCast := Map()
 
     __New(MainGui, Tab) {
@@ -130,6 +131,9 @@ class ToolTab {
             if InStr(HK.Name, "newSpellHK") || InStr(HK.Name, "inventoryHK") {
                 HK.OnEvent("ContextMenu", onRightClickHK)
 
+                ; set remaped hotkeys
+                setRemapedHotkeys(HK)
+
                 ; write quickcast to ini
                 writeQuickcastIni(HK)
             }
@@ -142,7 +146,16 @@ class ToolTab {
         
         ; events
         onClickHK(Button, Info) {
+            ; remove existing text
             Button.Text := ""
+            inihk := IniRead(iniFileName, "ToolTab", Button.Name, "")
+
+            ; disable old hotkey
+            HotIfWinactive(WarcraftIII)
+            Hotkey(inihk, "Off")
+            HotIfWinactive()
+
+            ; capture input
             this.focusedHotKey := Button
             if not ih.InProgress {
                 IniWrite("", iniFileName, "ToolTab", Button.Name)    
@@ -152,7 +165,7 @@ class ToolTab {
 
         onRightClickHK(Button, Item, IsRightClick, X, Y) {
             ; quickcast enabled = green else black
-            writeQuickcastIni(Button)
+            writeQuickcastIni(Button, true)
         }
 
         endCaptureInput(inputObj) {
@@ -163,9 +176,12 @@ class ToolTab {
 
                 ; write ini
                 writeHotkeyIni(hk, this.focusedHotKey)
+
+                registerHotkeys()
             }
         }
 
+        ; functions
         writeHotkeyIni(Hotkey, TextGui) {
             if (TextGui.Text) {
                 ; write hk settings to ini
@@ -173,13 +189,8 @@ class ToolTab {
                     ; original spells are not hotkey
                     IniWrite(Hotkey, iniFileName, "ToolTab", TextGui.Name)    
                 } else {
-                    if (StrLen(TextGui.Text) == 1) {
-                        ;  add "$~" to non-modified hotkey
-                        IniWrite("$~" Hotkey, iniFileName, "ToolTab", TextGui.Name)
-                    } else {
-                        ;  add "$" to modified hotkey
-                        IniWrite("$" Hotkey, iniFileName, "ToolTab", TextGui.Name)
-                    }
+                    ;  add "$" to hotkey
+                    IniWrite("$" Hotkey, iniFileName, "ToolTab", TextGui.Name)
                 }
             } else {
                 ; write empty key
@@ -187,13 +198,13 @@ class ToolTab {
             }
         }
 
-        writeQuickcastIni(TextGui) {
+        writeQuickcastIni(TextGui, reverse := false) {
             ; quickcast enabled = green else black
             iniHK := IniRead(iniFileName, "ToolTab", TextGui.Name, "")
 
             if IniRead(iniFileName, "ToolTab", TextGui.Name "Quickcast", "") != "" {
                 iniQuickcast := IniRead(iniFileName, "ToolTab", TextGui.Name "Quickcast", true)
-                if iniQuickcast {
+                if (iniQuickcast && reverse) || (!iniQuickcast && !reverse) {
                     TextGui.SetFont("cBlack")
                     this.quickCast.Set(iniHK, false)
                     IniWrite(false, iniFileName, "ToolTab", TextGui.Name "Quickcast")
@@ -209,6 +220,40 @@ class ToolTab {
             }
         }
 
+        setRemapedHotkeys(HKGui) {
+            if InStr(HKGui.Name, "newSpellHK") {
+                RegExMatch(HKGui.Name, "(\d+)", &pos)
+                remapedHotkey := IniRead(iniFileName, "ToolTab", HKGui.Name, "")
+                originalKey := IniRead(iniFileName, "ToolTab", "originalSpellHK" pos[1], "")
+
+                if (remapedHotkey == "" || originalKey == "") {
+                    return
+                }
+
+                this.remapedKeys.Set(remapedHotkey, originalKey)
+
+            } else if InStr(HKGui.Name, "inventoryHK") {
+                remapedHotkey := IniRead(iniFileName, "ToolTab", HKGui.Name, "")
+
+                switch HKGui.Name {
+                    case "inventoryHK1":
+                        this.remapedKeys.Set(remapedHotkey, "Numpad7")
+                    case "inventoryHK2":
+                        this.remapedKeys.Set(remapedHotkey, "Numpad8")
+                    case "inventoryHK3":
+                        this.remapedKeys.Set(remapedHotkey, "Numpad4")
+                    case "inventoryHK4":
+                        this.remapedKeys.Set(remapedHotkey, "Numpad5")
+                    case "inventoryHK5":
+                        this.remapedKeys.Set(remapedHotkey, "Numpad1")
+                    case "inventoryHK6":
+                        this.remapedKeys.Set(remapedHotkey, "Numpad2")
+                    default:
+                        return
+                }
+            }
+        }
+
         registerHotkeys() {
             HotIfWinactive(WarcraftIII)
 
@@ -221,11 +266,11 @@ class ToolTab {
 
                 switch true {
                     case InStr(HKName, "newSpellHK"):
-                        Hotkey(hk, remapSpell)
+                        Hotkey(hk, remapSpell, "On")
                     case InStr(HKName, "inventoryHK"):
-                        Hotkey(hk, remapInventory)
+                        Hotkey(hk, remapInventory, "On")
                     case InStr(HKName, "mouseHK"):
-                        Hotkey(hk, remapMouse)
+                        Hotkey(hk, remapMouse, "On")
                     default:
                         continue
                 }
@@ -235,12 +280,14 @@ class ToolTab {
         }
 
         remapSpell(thisHotkey) {
-
+            remapedKey := this.remapedKeys.Get(thisHotkey, "")
+            SendInput("{" remapedKey "}")
             quickcast(thisHotkey)
         }
 
         remapInventory(thisHotkey) {
-
+            remapedKey := this.remapedKeys.Get(thisHotkey)
+            SendInput("{" remapedKey "}")
             quickcast(thisHotkey)
         }
 
