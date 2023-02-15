@@ -3,6 +3,7 @@
 #Include LoaderTab.ahk
 #Include MapTab.ahk
 #Include ToolTab.ahk
+#Include HostTab.ahk
 #Include overlay.ahk
 #Include Settings.ahk
 
@@ -26,12 +27,16 @@ MainGui := Gui()
 Tab := MainGui.AddTab3("x0 y0 W580 H580 -Theme Choose1", ["Loader", "Tool", "Host", "Map", "Settings"])
 LoaderTab(MainGui, Tab)
 tool := ToolTab(MainGui, Tab)
+HostTab(MainGui, Tab)
 MapTab(MainGui, Tab)
 Settings(MainGui, Tab)
 ol := Overlay()
-MainGui.Show("W580 H580")
+if !IniRead(iniFileName, "Settings", "hideMain", false) {
+    MainGui.Show("W580 H580")
+    showMainGui := true
+}
+
 MainGui.OnEvent("Close", onCloseGui)
-showMainGui := true
 
 ; events
 onCloseGui(GuiObj) {
@@ -79,6 +84,12 @@ $~Enter::    ; Regular Enter
     toolEnabled := !toolEnabled
     ol.updateText()
     tool.registerHotkeys()
+}
+
+; pause game
+$~Pause::
+{
+    SendInput("{f10}{m}{f10}")
 }
 
 ; enable tool If chatting was canceled

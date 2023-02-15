@@ -20,10 +20,10 @@ ReadableHotkey(hotkey) {
         ">", "R")
 
     hotkeyMap2 := Map(
-        "#", "Win + ",
-        "!", "Alt + ",
-        "^", "Ctrl + ",
-        "+", "Shift + "
+        "#", "W + ",
+        "!", "A + ",
+        "^", "C + ",
+        "+", "S + "
     )
 
     hotkey := StrUpper(hotkey)

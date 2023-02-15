@@ -126,8 +126,8 @@ class ToolTab {
         ]
 
         for HK in this.allHk {
-            HK.Opt("-Tabstop 0x200 Center")
-            HK.SetFont("s8 w600")
+            HK.Opt("0x200 Center")
+            HK.SetFont("s12 w700")
             HK.OnEvent("Click", onClickHK)
 
             ; hotkey
