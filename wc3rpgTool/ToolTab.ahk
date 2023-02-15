@@ -127,7 +127,7 @@ class ToolTab {
 
         for HK in this.allHk {
             HK.Opt("0x200 Center")
-            HK.SetFont("s12 w700")
+            HK.SetFont("s12 w550")
             HK.OnEvent("Click", onClickHK)
 
             ; hotkey
@@ -191,6 +191,8 @@ class ToolTab {
 
                 ; write ini
                 writeHotkeyIni(hk, this.focusedHotKey)
+
+                writeQuickcastIni(this.focusedHotKey)
 
                 this.registerHotkeys()
             }

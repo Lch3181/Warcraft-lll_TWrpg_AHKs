@@ -94,7 +94,9 @@ class LoaderTab {
                 i += 1
             }
 
-            wc3Chat("-convert " userName)
+            if convertNameCheckBox.Value {
+                wc3Chat("-convert " userName)
+            }
             for code in codes {
                 wc3Chat(code)
             }

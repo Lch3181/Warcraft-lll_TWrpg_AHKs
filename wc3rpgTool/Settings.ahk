@@ -10,13 +10,16 @@ class Settings {
         Tab.UseTab("Settings")
 
         ; toggle tool
-        toggleTool := MainGui.AddText("w120 h20 Section Border 0x200 Center Disabled", "F2 / F10 / Enter")
+        toggleTool := MainGui.AddText("x+20 y+20 w120 h20 Section Border 0x200 Center Disabled", "F2 / F10 / Enter")
         MainGui.AddText("x+20 yp+2", "Toggle On Off Tool In WC3")
 
         ; toggle on tool
         toggleOnTool := MainGui.AddText("xs y+20 w120 h20 Section Border 0x200 Center Disabled", "Left Click / Esc")
         MainGui.AddText("x+20 yp+2", "Toggle On Tool in WC3 To Cancel Chat")
 
+        ; hide main gui
+        hideMain := MainGui.AddText("xs y+20 w120 h20 Section Border 0x200 Center Disabled", "Esc")
+        MainGui.AddText("x+20 yp+2", "Hide Main Window")
 
         ; show hide main gui hotkey
         showhideMain := MainGui.AddText("xs y+20 w120 h20 Section Border 0x200 Center Disabled", "F8")
@@ -62,6 +65,7 @@ class Settings {
         this.hotkeys := [
             toggleTool,
             toggleOnTool,
+            hideMain,
             showhideMain,
             showhideOverlay,
             pauseGame,

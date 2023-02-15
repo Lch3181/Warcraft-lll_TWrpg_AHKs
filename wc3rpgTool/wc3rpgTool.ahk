@@ -44,6 +44,17 @@ onCloseGui(GuiObj) {
 }
 
 ; common hotkeys
+#HotIf WinActive(A_ScriptName)
+; hide main gui
+$~Esc::
+{
+    global
+    showMainGui := false
+    MainGui.Hide()
+
+}
+#HotIf
+
 ; show hide main gui
 $~f8::
 {
