@@ -152,7 +152,6 @@ class LoaderTab {
 
         ; functions
         loadSaveFile(thishotkey?) {
-            st := A_TickCount
             path := TWRPGFolder.Text "\" selectedFile.Text
 
             ; save last load
@@ -203,7 +202,6 @@ class LoaderTab {
                 wc3Chat(code)
             }
             wc3Chat("-refresh")
-            OutputDebug(A_TickCount - st)
         }
 
         getHiddenFiles() {

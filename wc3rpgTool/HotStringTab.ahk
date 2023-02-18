@@ -6,6 +6,7 @@ class HotStringTab {
     tabName := "HotStringTab"
     hotStringArrayMap := []
     hotStrings := []
+    focused := Gui.Control
 
     __New(MainGui, Tab) {
         ; init tab
@@ -20,6 +21,7 @@ class HotStringTab {
         hotkeyButton := MainGui.AddButton("xs+20 y+5 w100", "")
         hotkeyButton.OnEvent("Click", onClickHotkey)
         hotStringEditGui := MainGui.AddEdit("x+20 h20 r1 w390")
+        hotStringEditGui.OnEvent("Focus", onFocusEdit)
 
         addButton := MainGui.AddButton("xs+20 y+20 w100 h20", "Add")
         addButton.OnEvent("Click", onClickAdd)
@@ -50,8 +52,13 @@ class HotStringTab {
 
             ; capture input
             if not ih.InProgress {
+                this.focused := Button
                 KeyWaitCombo()
             }
+        }
+
+        onFocusEdit(Edit, Info) {
+            this.focused := Edit
         }
 
         onChangeTab(Tab, Info) {
@@ -62,7 +69,7 @@ class HotStringTab {
         }
 
         endCaptureInput(inputObj) {
-            if (!WinActive(A_ScriptName) && Tab.Text != "Hot String") {
+            if (!WinActive(A_ScriptName) && Tab.Text != "Hot String") || this.focused != hotkeyButton {
                 return
             }
 
