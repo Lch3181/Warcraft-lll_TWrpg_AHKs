@@ -26,9 +26,9 @@ if not A_IsAdmin {
 ;GUI
 MainGui := Gui()
 Tab3 := MainGui.AddTab3("x0 y0 W580 H580 -Theme Choose3", ["Loader", "Tool", "Hot String", "Host", "Map", "Settings"])
-LoaderTab(MainGui, Tab3)
+loader := LoaderTab(MainGui, Tab3)
 tool := ToolTab(MainGui, Tab3)
-HotStringTab(MainGui, Tab3)
+hs := HotStringTab(MainGui, Tab3)
 HostTab(MainGui, Tab3)
 MapTab(MainGui, Tab3)
 Settings(MainGui, Tab3)
@@ -63,6 +63,8 @@ $~f8::
     global
     showMainGui := !showMainGui
     if showMainGui {
+        ; reload loader tab
+        loader := LoaderTab(MainGui, Tab3)
         MainGui.Show("W580 H580")
     } else {
         MainGui.Hide()
@@ -97,6 +99,7 @@ $~Enter::    ; Regular Enter
     toolEnabled := !toolEnabled
     ol.updateText()
     tool.registerHotkeys()
+    hs.updateHotStrings()
 }
 
 ; pause game
@@ -113,5 +116,6 @@ $~Esc::    ; Escape
     toolEnabled := true
     ol.updateText()
     tool.registerHotkeys()
+    hs.updateHotStrings()
 }
 #HotIf

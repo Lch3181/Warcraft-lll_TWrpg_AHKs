@@ -81,13 +81,6 @@ ON_EN_SETFOCUS(wParam, lParam, msg, hwnd)
 
 ; sendinput
 wc3Chat(Text) {
-    if WinExist(WarcraftIII) && !WinActivate(WarcraftIII) {
-        WinActivate
-    } else {
-        ToolTip("Warcraft III not found")
-        SetTimer () => ToolTip(), -5000
-        return
-    }
     SendInput("{Enter}")
     SendInput("{Text}" Text)
     SendInput("{Enter}")

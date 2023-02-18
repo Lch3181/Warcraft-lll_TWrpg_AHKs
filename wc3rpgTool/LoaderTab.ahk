@@ -152,6 +152,7 @@ class LoaderTab {
 
         ; functions
         loadSaveFile(thishotkey?) {
+            st := A_TickCount
             path := TWRPGFolder.Text "\" selectedFile.Text
 
             ; save last load
@@ -187,6 +188,14 @@ class LoaderTab {
                 i += 1
             }
 
+            if WinExist(WarcraftIII) && !WinActivate(WarcraftIII) {
+                WinActivate
+            } else {
+                ToolTip("Warcraft III not found")
+                SetTimer () => ToolTip(), -5000
+                return
+            }        
+
             if convertNameCheckBox.Value {
                 wc3Chat("-convert " userName)
             }
@@ -194,6 +203,7 @@ class LoaderTab {
                 wc3Chat(code)
             }
             wc3Chat("-refresh")
+            OutputDebug(A_TickCount - st)
         }
 
         getHiddenFiles() {
@@ -227,7 +237,7 @@ class LoaderTab {
                     continue
                 }
 
-                fileList.Add(, A_LoopFileName, FormatTime(A_LoopFileTimeModified, "MM/dd/yyyy hh:mm tt"), A_LoopFileTimeModified, A_LoopFileSize, status)
+                fileList.Add(, A_LoopFileName, FormatTime(A_LoopFileTimeModified, "MM/dd/yyyy   hh:mm tt"), A_LoopFileTimeModified, A_LoopFileSize, status)
             }
 
             fileList.ModifyCol

@@ -1,7 +1,12 @@
 #Requires AutoHotkey v2.0
 #Include Helper.ahk
+#Include RemapHK.ahk
 
 class HotStringTab {
+    tabName := "HotStringTab"
+    hotStringArrayMap := []
+    hotStrings := []
+
     __New(MainGui, Tab) {
         ; init tab
         Tab.UseTab("Hot String")
@@ -34,9 +39,7 @@ class HotStringTab {
 
         ; init
         ih.OnEnd := endCaptureInput
-        tabName := "HotStringTab"
         currenHotkey := ""
-        hotStringArrayMap := []
         selectedRow := 0
         getHotStrings()
 
@@ -64,11 +67,7 @@ class HotStringTab {
             }
 
             ; captured input
-            if ih.EndMods {
-                currenHotkey := "$" ih.EndMods . ih.EndKey
-            } else {
-                currenHotkey := "$~" ih.EndMods . ih.EndKey
-            }
+            currenHotkey := "$" ih.EndMods . ih.EndKey
             hotkeyButton.Text := ReadableHotkey(currenHotkey, true)
         }
 
@@ -77,46 +76,48 @@ class HotStringTab {
             hk := hotkeyButton.Text
 
             hotStringLV.Add(, hk, text)
-            hotStringArrayMap.Push(Map(
+            this.hotStringArrayMap.Push(Map(
                 "hotkey", currenHotkey,
                 "text", text))
 
-            for index, value in hotStringArrayMap {
+            for index, value in this.hotStringArrayMap {
                 ; write hotkey
-                IniWrite(value["hotkey"], iniFileName, tabName, "hotkey" index)
+                IniWrite(value["hotkey"], iniFileName, this.tabName, "hotkey" index)
 
                 ;write text
-                IniWrite(value["text"], iniFileName, tabName, "text" index)
+                IniWrite(value["text"], iniFileName, this.tabName, "text" index)
             }
+
+            getHotStrings()
         }
 
         onClickUpdate(Button, Info) {
             newText := hotStringEditGui.Text
             newhk := currenHotkey
-            hotStringArrayMap[selectedRow]["text"] := newText
-            hotStringArrayMap[selectedRow]["hotkey"] := newhk
+            this.hotStringArrayMap[selectedRow]["text"] := newText
+            this.hotStringArrayMap[selectedRow]["hotkey"] := newhk
 
-            for index, value in hotStringArrayMap {
+            for index, value in this.hotStringArrayMap {
                 ; write hotkey
-                IniWrite(value["hotkey"], iniFileName, tabName, "hotkey" index)
+                IniWrite(value["hotkey"], iniFileName, this.tabName, "hotkey" index)
 
                 ;write text
-                IniWrite(value["text"], iniFileName, tabName, "text" index)
+                IniWrite(value["text"], iniFileName, this.tabName, "text" index)
             }
 
             getHotStrings()
         }
 
         onClickDelete(Button, Info) {
-            hotStringArrayMap.RemoveAt(selectedRow)
-            IniDelete(iniFileName, tabName)
+            this.hotStringArrayMap.RemoveAt(selectedRow)
+            IniDelete(iniFileName, this.tabName)
 
-            for index, value in hotStringArrayMap {
+            for index, value in this.hotStringArrayMap {
                 ; write hotkey
-                IniWrite(value["hotkey"], iniFileName, tabName, "hotkey" index)
+                IniWrite(value["hotkey"], iniFileName, this.tabName, "hotkey" index)
 
                 ;write text
-                IniWrite(value["text"], iniFileName, tabName, "text" index)
+                IniWrite(value["text"], iniFileName, this.tabName, "text" index)
             }
 
             getHotStrings()
@@ -126,18 +127,18 @@ class HotStringTab {
             selectedRow := Row
             hotkeyButton.Text := LV.GetText(Row, 1)
             hotStringEditGui.Text := LV.GetText(Row, 2)
-            currenHotkey := hotStringArrayMap[Row]["hotkey"]
+            currenHotkey := this.hotStringArrayMap[Row]["hotkey"]
         }
 
         ; functions
         getHotStrings() {
             hotStringLV.Delete()
-            hotStringArrayMap := []
+            this.hotStringArrayMap := []
 
             hk := ""
             text := ""
 
-            hotStringList := IniRead(iniFileName, tabName,, "")
+            hotStringList := IniRead(iniFileName, this.tabName,, "")
             loop parse hotStringList, "`n" {
                 split := StrSplit(A_LoopField, "=", , 2)
                 if InStr(split[1], "hotkey") {
@@ -145,13 +146,42 @@ class HotStringTab {
                 } else if InStr(split[1], "text") {
                     text := split[2]
                     hotStringLV.Add(, ReadableHotkey(hk, true), text)
-                    hotStringArrayMap.Push(Map(
+                    this.hotStringArrayMap.Push(Map(
                         "hotkey", hk,
                         "text", text))
                 } else {
                     continue
                 }
             }
+
+            this.registerHotkeys()
+        }
+    }
+
+    registerHotkeys() {
+        this.hotStrings := []
+        hotStringsTextMap := Map()
+        hotStringIndexKey := Map()
+
+        ; filter same hotkey and hot strings together
+        for index, value in this.hotStringArrayMap {
+            if !hotStringsTextMap.Has(value["hotkey"]) {
+                hotStringsTextMap.Set(value["hotkey"], [])
+                hotStringIndexKey.Set(value["hotkey"], index)
+            }
+            hotStringsTextMap[value["hotkey"]].Push(value["text"])
+        }
+
+        ; register hotstrings
+        for key, value in hotStringsTextMap {
+            index := hotStringIndexKey.Get(key)
+            this.hotStrings.Push(RemapHK("hotkey" index, this.tabName, WarcraftIII, "",, true, value))
+        }
+    }
+
+    updateHotStrings() {
+        for hk in this.hotStrings {
+            hk.registerHotkey()
         }
     }
 }

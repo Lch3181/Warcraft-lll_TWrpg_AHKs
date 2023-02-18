@@ -11,17 +11,19 @@ class RemapHK {
     defaultNewHotkey := ""
     quickcast := false
     enabled := false
+    hotStrings := []
 
-    __New(Name, Section, TargetWindow, OriginalKey, DefaultNewHotkey := "", Enabled := false) {
+    __New(Name, Section, TargetWindow, OriginalKey := "", DefaultNewHotkey := "", Enabled := false, HotStrings := []) {
         this.name := Name
         this.section := Section
         this.targetWindow := TargetWindow
         this.originalKey := OriginalKey
         this.defaultNewHotkey := DefaultNewHotkey
         this.enabled := Enabled
+        this.hotStrings := HotStrings
 
         this.newHotkey := IniRead(iniFileName, this.section, this.name, "")
-        if !this.newHotkey {
+        if !this.newHotkey && this.section != "HotStringTab" {
             this.newHotkey := this.defaultNewHotkey
             if this.defaultNewHotkey {
                 IniWrite("$" this.defaultNewHotkey, iniFileName, this.section, this.name)
@@ -45,6 +47,11 @@ class RemapHK {
         ; if mouse
         if InStr(this.name, "mouseHK") {
             function := mouseFunction
+        }
+
+        ; if hot string
+        if this.section == "HotStringTab" {
+            function := hotstringFunction
         }
 
         ; register hotkey
@@ -74,6 +81,12 @@ class RemapHK {
                 MouseClick("Left")
                 SendInput("{9}{0}")
             }
-        }    
+        }
+
+        hotstringFunction(thisHotkey) {
+            for text in this.hotStrings {
+                wc3Chat(text)
+            }
+        }
     }
 }
