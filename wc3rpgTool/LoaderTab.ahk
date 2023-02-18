@@ -136,9 +136,9 @@ class LoaderTab {
                 for key, value in hiddenFilesMap {
                     hiddenFilesArray.Push(key)
                 }
-                try FileDelete(A_ScriptDir "\HiddenFiles.txt")
-                FileAppend(Join("`n", hiddenFilesArray*), hiddenFilesAddress)
-                updateFileList()    
+                FileDelete(A_ScriptDir "\HiddenFiles.txt")
+                FileAppend(hiddenFilesArray.Length > 0 ? Join("`n", hiddenFilesArray*) : " ", hiddenFilesAddress)
+                updateFileList()
             } catch Error as e {
                 ToolTip(fileList.GetText(lvSelectedRow) " is not Hidden")
                 SetTimer () => ToolTip(), 5000
@@ -233,6 +233,11 @@ class LoaderTab {
             fileList.ModifyCol
             fileList.ModifyCol(3, 0)
             fileList.ModifyCol(4, 80)
+            if !showHidden {
+                fileList.ModifyCol(5, 0)
+            } else {
+                fileList.ModifyCol(5, 60)
+            }
         }
     }
 }
