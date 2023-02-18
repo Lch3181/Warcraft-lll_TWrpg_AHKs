@@ -13,6 +13,7 @@ class ToolTab {
     __New(MainGui, Tab) {
         ; init tab
         Tab.UseTab("Tool")
+        Tab.OnEvent("Change", onChnageTab)
 
         ; remap spells
         MainGui.AddGroupBox("Section w340 h540", "Remap Spells")
@@ -202,6 +203,13 @@ class ToolTab {
         onClickCheckbox(Button, Info) {
             IniWrite(Button.Value, iniFileName, "ToolTab", Button.Name)
             this.registerHotkeys()
+        }
+
+        onChnageTab(Tab, Info) {
+            ih.Stop()
+            if Tab.Text == "Tool" {
+                ih.OnEnd := endCaptureInput
+            }
         }
 
         ; functions

@@ -14,7 +14,7 @@ KeyWaitCombo()
     return ih.EndMods . ih.EndKey    ; Return a string like <^<+Esc
 }
 
-ReadableHotkey(hotkey) {
+ReadableHotkey(hotkey, fullName := false) {
     hotkeyMap1 := Map(
         "<", "L",
         ">", "R")
@@ -26,12 +26,20 @@ ReadableHotkey(hotkey) {
         "+", "S + "
     )
 
+    hotkeyMap2FullName := Map(
+        "#", "Win + ",
+        "!", "Alt + ",
+        "^", "Ctrl + ",
+        "+", "Shift + "
+    )
+
     hotkey := StrUpper(hotkey)
     for key, value in hotkeyMap1 {
         hotkey := StrReplace(hotkey, "$", "")
+        hotkey := StrReplace(hotkey, "~", "")
         hotkey := StrReplace(hotkey, key, value)
     }
-    for key, value in hotkeyMap2 {
+    for key, value in (fullName ? hotkeyMap2FullName : hotkeyMap2) {
         newHotkey := StrReplace(hotkey, key, value)
         if newHotkey != hotkey {
             hotkey := newHotkey
