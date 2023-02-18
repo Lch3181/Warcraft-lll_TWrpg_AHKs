@@ -2,6 +2,11 @@
 #Include Helper.ahk
 
 class LoaderTab {
+    fileList := Gui.ListView
+    TWRPGFolder := Gui.Edit
+    showHidden := false
+    hiddenFilesMap := Map()
+    
     __New(MainGui, Tab) {
         ; init tab
         Tab.UseTab("Loader")
@@ -17,10 +22,10 @@ class LoaderTab {
 
         ; files
         MainGui.AddGroupBox("Section xs ys y+30 w550 h340", "Files")
-        fileList := MainGui.AddListView("xp+20 yp+30 w510 h280 Sort", ["Name", "Date", "Hidden Date", "Size(KB)", "Status"])
-        fileList.OnEvent("Click", onClickRow)
-        fileList.OnEvent("DoubleClick", onDoubleClickRow)
-        fileList.OnEvent("ContextMenu", onRightClickRow)
+        this.fileList := MainGui.AddListView("xp+20 yp+30 w510 h280 Sort", ["Name", "Date", "Hidden Date", "Size(KB)", "Status"])
+        this.fileList.OnEvent("Click", onClickRow)
+        this.fileList.OnEvent("DoubleClick", onDoubleClickRow)
+        this.fileList.OnEvent("ContextMenu", onRightClickRow)
 
         ; file Menu
         fileMenu := Menu()
@@ -34,23 +39,23 @@ class LoaderTab {
         convertNameCheckBox := MainGui.AddCheckbox("xp+20 yp+20", "Convert Name for Warcraft III Reforged")
         convertNameCheckBox.OnEvent("Click", onClickConvertNameCheckBox)
         MainGui.AddText("yp+25", "TWRPG Folder:")
-        TWRPGFolder := MainGui.AddEdit("w350 r1 ReadOnly", "")
+        this.TWRPGFolder := MainGui.AddEdit("w350 r1 ReadOnly", "")
         MainGui.AddButton("x+20 w60", "Select").OnEvent("Click", selectButton)
         MainGui.AddButton("x+20 w60", "Open").OnEvent("Click", openButton)
 
         ; init variables
         sortAsc := false
         lvSelectedRow := 0
-        showHidden := false
+        this.showHidden := false
         hiddenFilesAddress := A_ScriptDir "\HiddenFiles.txt"
         hiddenFilesArray := []
-        hiddenFilesMap := Map()
+        this.hiddenFilesMap := Map()
 
         getHiddenFiles()
         SelectedFile.Text := IniRead(iniFileName, "LoaderTab", "selectedFile", "N/A")
-        TWRPGFolder.Text := IniRead(iniFileName, "LoaderTab", "TWRPGFolder", A_MyDocuments "\Warcraft III\CustomMapData\TWRPG")
+        this.TWRPGFolder.Text := IniRead(iniFileName, "LoaderTab", "this.TWRPGFolder", A_MyDocuments "\Warcraft III\CustomMapData\TWRPG")
         convertNameCheckBox.Value := IniRead(iniFileName, "LoaderTab", "convertNameCheckBox", true)
-        updateFileList()
+        this.updateFileList()
 
         ; hotstrings
         HotIfWinactive(WarcraftIII)
@@ -61,13 +66,13 @@ class LoaderTab {
         selectButton(Button, Info) {
             Folder := SelectFolder()
             if Folder != "" {
-                TWRPGFolder.Text := Folder
-                IniWrite(TWRPGFolder.Text, iniFileName, "LoaderTab", "TWRPGFolder")
+                this.TWRPGFolder.Text := Folder
+                IniWrite(this.TWRPGFolder.Text, iniFileName, "LoaderTab", "this.TWRPGFolder")
             }
         }
 
         openButton(Button, Info) {
-            Run(TWRPGFolder.Text)
+            Run(this.TWRPGFolder.Text)
         }
 
         loadButton(Button, Info) {
@@ -86,7 +91,7 @@ class LoaderTab {
             fileNames := []
             for file in FileArray {
                 if InStr(file, ".txt") {
-                    FileCopy(file, TWRPGFolder.Text "\", 1)
+                    FileCopy(file, this.TWRPGFolder.Text "\", 1)
                     split := StrSplit(file, "\")
                     fileNames.Push(StrReplace(split.Pop(), ".txt", ""))
                 }
@@ -109,7 +114,7 @@ class LoaderTab {
         }
 
         onDoubleClickRow(LV, Info) {
-            Run(TWRPGFolder.Text "\" LV.GetText(Info))
+            Run(this.TWRPGFolder.Text "\" LV.GetText(Info))
         }
 
         onRightClickRow(LV, Info, IsRightClick, X, Y) {
@@ -118,41 +123,41 @@ class LoaderTab {
         }
 
         fileMenuOpenFile(*) {
-            SelectedFile.Text := fileList.GetText(lvSelectedRow)
+            SelectedFile.Text := this.fileList.GetText(lvSelectedRow)
         }
 
         fileMenuHideFile(*) {
-            hiddenFilesArray.Push(fileList.GetText(lvSelectedRow))
-            hiddenFilesMap.Set(fileList.GetText(lvSelectedRow), 0)
+            hiddenFilesArray.Push(this.fileList.GetText(lvSelectedRow))
+            this.hiddenFilesMap.Set(this.fileList.GetText(lvSelectedRow), 0)
             try FileDelete(A_ScriptDir "\HiddenFiles.txt")
             FileAppend(Join("`n", hiddenFilesArray*), hiddenFilesAddress)
-            updateFileList()
+            this.updateFileList()
         }
 
         fileMenuShowFile(*) {
             try {
-                hiddenFilesMap.Delete(fileList.GetText(lvSelectedRow))
+                this.hiddenFilesMap.Delete(this.fileList.GetText(lvSelectedRow))
                 hiddenFilesArray := []
-                for key, value in hiddenFilesMap {
+                for key, value in this.hiddenFilesMap {
                     hiddenFilesArray.Push(key)
                 }
                 FileDelete(A_ScriptDir "\HiddenFiles.txt")
                 FileAppend(hiddenFilesArray.Length > 0 ? Join("`n", hiddenFilesArray*) : " ", hiddenFilesAddress)
-                updateFileList()
+                this.updateFileList()
             } catch Error as e {
-                ToolTip(fileList.GetText(lvSelectedRow) " is not Hidden")
+                ToolTip(this.fileList.GetText(lvSelectedRow) " is not Hidden")
                 SetTimer () => ToolTip(), 5000
             }
         }
         
         fileMenuShowHideHiddenFiles(*) {
-            showHidden := !showHidden
-            updateFileList()
+            this.showHidden := !this.showHidden
+            this.updateFileList()
         }
 
         ; functions
         loadSaveFile(thishotkey?) {
-            path := TWRPGFolder.Text "\" selectedFile.Text
+            path := this.TWRPGFolder.Text "\" selectedFile.Text
 
             ; save last load
             IniWrite(selectedFile.Text, iniFileName, "LoaderTab", "selectedFile")
@@ -209,43 +214,44 @@ class LoaderTab {
                 hiddenFilesString := FileRead(hiddenFilesAddress)
                 hiddenFilesArray := StrSplit(hiddenFilesString, "`n")
                 for hiddenFile in hiddenFilesArray {
-                    hiddenFilesMap.Set(hiddenFile, 0)
+                    this.hiddenFilesMap.Set(hiddenFile, 0)
                 }
-            }
-        }
-
-        updateFileList() {
-            fileList.Delete()
-
-            Loop Files, TWRPGFolder.Text "\*.txt" {
-                status := ""
-
-                ; skip black listed file
-                if hiddenFilesMap.Has(A_LoopFileName) {
-                    if !showHidden {
-                        continue
-                    }
-
-                    status := "Hidden"
-                }
-
-                ; skip non save file
-                text := FileRead(A_LoopFileFullPath)
-                if (RegExMatch(text, '(----------(?|Hero Inventory|영웅 아이템)----------)') == 0) {
-                    continue
-                }
-
-                fileList.Add(, A_LoopFileName, FormatTime(A_LoopFileTimeModified, "MM/dd/yyyy   hh:mm tt"), A_LoopFileTimeModified, A_LoopFileSize, status)
-            }
-
-            fileList.ModifyCol
-            fileList.ModifyCol(3, 0)
-            fileList.ModifyCol(4, 80)
-            if !showHidden {
-                fileList.ModifyCol(5, 0)
-            } else {
-                fileList.ModifyCol(5, 60)
             }
         }
     }
+
+    updateFileList() {
+        this.fileList.Delete()
+
+        Loop Files, this.TWRPGFolder.Text "\*.txt" {
+            status := ""
+
+            ; skip black listed file
+            if this.hiddenFilesMap.Has(A_LoopFileName) {
+                if !this.showHidden {
+                    continue
+                }
+
+                status := "Hidden"
+            }
+
+            ; skip non save file
+            text := FileRead(A_LoopFileFullPath)
+            if (RegExMatch(text, '(----------(?|Hero Inventory|영웅 아이템)----------)') == 0) {
+                continue
+            }
+
+            this.fileList.Add(, A_LoopFileName, FormatTime(A_LoopFileTimeModified, "MM/dd/yyyy   hh:mm tt"), A_LoopFileTimeModified, A_LoopFileSize, status)
+        }
+
+        this.fileList.ModifyCol
+        this.fileList.ModifyCol(3, 0)
+        this.fileList.ModifyCol(4, 80)
+        if !this.showHidden {
+            this.fileList.ModifyCol(5, 0)
+        } else {
+            this.fileList.ModifyCol(5, 60)
+        }
+    }
+
 }

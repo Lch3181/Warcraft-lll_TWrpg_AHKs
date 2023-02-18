@@ -25,7 +25,7 @@ if not A_IsAdmin {
 
 ;GUI
 MainGui := Gui()
-Tab3 := MainGui.AddTab3("x0 y0 W580 H580 -Theme Choose3", ["Loader", "Tool", "Hot String", "Host", "Map", "Settings"])
+Tab3 := MainGui.AddTab3("x0 y0 W580 H580 -Theme Choose1", ["Loader", "Tool", "Hot String", "Host", "Map", "Settings"])
 loader := LoaderTab(MainGui, Tab3)
 tool := ToolTab(MainGui, Tab3)
 hs := HotStringTab(MainGui, Tab3)
@@ -64,7 +64,7 @@ $~f8::
     showMainGui := !showMainGui
     if showMainGui {
         ; reload loader tab
-        loader := LoaderTab(MainGui, Tab3)
+        loader.updateFileList()
         MainGui.Show("W580 H580")
     } else {
         MainGui.Hide()
