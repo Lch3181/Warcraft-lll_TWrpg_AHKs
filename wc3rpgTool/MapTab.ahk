@@ -72,7 +72,7 @@ class MapTab {
 
             Loop Files, mapFolder.Text "\*.w3x" {
                 if (InStr(A_LoopFileName, filter)) {
-                    mapList.Add(, A_LoopFileName, FormatTime(A_LoopFileTimeCreated, "MM/dd/yyyy hh/mm tt"), A_LoopFileTimeCreated, Format("{:.2f}", A_LoopFileSizeKB / 1024))
+                    mapList.Add(, A_LoopFileName, FormatTime(A_LoopFileTimeCreated, "MM/dd/yyyy hh:mm tt"), A_LoopFileTimeCreated, Format("{:.2f}", A_LoopFileSizeKB / 1024))
                 }
             }
 
