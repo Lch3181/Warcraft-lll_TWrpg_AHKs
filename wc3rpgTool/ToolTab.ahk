@@ -176,7 +176,10 @@ class ToolTab {
             
             ; capture input
             this.focusedHotKey := Button
-            if not ih.InProgress {
+
+            if InStr(Button.Name, "originalSpellHK") {
+                KeyWaitAny()
+            } else {
                 KeyWaitCombo()
             }
         }

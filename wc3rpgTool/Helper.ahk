@@ -3,6 +3,15 @@ iniFileName := "wc3rpgToolData.ini"
 WarcraftIII := "Warcraft III"
 ih := InputHook("V", "{Esc}")
 
+KeyWaitAny()
+{
+    ih.VisibleNonText := false
+    ih.KeyOpt("{All}", "E")  ; End
+    ih.Start()
+    ih.Wait()
+    return ih.EndKey  ; Return the key name
+}
+
 KeyWaitCombo()
 {
     ih.VisibleNonText := false
@@ -13,6 +22,7 @@ KeyWaitCombo()
     ErrorLevel := ih.Wait()    ; Store EndReason in ErrorLevel
     return ih.EndMods . ih.EndKey    ; Return a string like <^<+Esc
 }
+
 
 ReadableHotkey(hotkey, fullName := false) {
     hotkeyMap1 := Map(
