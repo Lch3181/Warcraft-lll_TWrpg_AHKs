@@ -9,6 +9,8 @@
 #Include Settings.ahk
 
 toolEnabled := true
+toolEnableHistory := true
+chatting := false
 showMainGui := false
 showOverlay := false
 
@@ -91,12 +93,26 @@ $!esc:: ExitApp
 ; toggle tool
 $~f2::
 $~f10::
+{
+    global
+    toolEnabled := !toolEnabled
+    ol.updateText()
+    tool.registerHotkeys()
+    hs.updateHotStrings()
+}
 $~+Enter::    ; Shift Enter
 $~NumpadEnter::    ; numpad Enter
 $~Enter::    ; Regular Enter
 {
     global
-    toolEnabled := !toolEnabled
+    if !chatting {
+        chatting := true
+        toolEnableHistory := toolEnabled
+        toolEnabled := false
+    } else {
+        chatting := false
+        toolEnabled := toolEnableHistory
+    }
     ol.updateText()
     tool.registerHotkeys()
     hs.updateHotStrings()
@@ -113,7 +129,10 @@ $~LButton::    ; Left Click - Might be problematic if user clicks in UI area ins
 $~Esc::    ; Escape
 {
     global
-    toolEnabled := true
+    if chatting {
+        chatting := false
+        toolEnabled := toolEnableHistory
+    }
     ol.updateText()
     tool.registerHotkeys()
     hs.updateHotStrings()
