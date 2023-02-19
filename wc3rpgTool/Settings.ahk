@@ -10,12 +10,16 @@ class Settings {
         Tab.UseTab("Settings")
 
         ; toggle tool
-        toggleTool := MainGui.AddText("x+20 y+20 w120 h20 Section Border 0x200 Center Disabled", "F2 / F10 / Enter")
-        MainGui.AddText("x+20 yp+2", "Toggle On Off Tool In WC3")
+        toggleTool := MainGui.AddText("x+20 y+20 w120 h20 Section Border 0x200 Center Disabled", "F2 / F10")
+        MainGui.AddText("x+20 yp+2", "Toggle On / Off Tool In WC3")
 
-        ; toggle on tool
+        ; toggle on off tool if chatting
+        toggleChatting := MainGui.AddText("xs y+20 w120 h20 Section Border 0x200 Center Disabled", "Enter")
+        MainGui.AddText("x+20 yp+2", "If Tool is Enabled, Toggle On / Off Tool In WC3 if the User Open / Close Message Box")
+
+        ; toggle on tool if it was chatting
         toggleOnTool := MainGui.AddText("xs y+20 w120 h20 Section Border 0x200 Center Disabled", "Left Click / Esc")
-        MainGui.AddText("x+20 yp+2", "Toggle On Tool in WC3 To Cancel Chat")
+        MainGui.AddText("x+20 yp+2", "If Tool is Enabled, Toggle On Tool in WC3 if User Close Message Box")
 
         ; hide main gui
         hideMain := MainGui.AddText("xs y+20 w120 h20 Section Border 0x200 Center Disabled", "Esc")
@@ -34,8 +38,12 @@ class Settings {
         MainGui.AddText("x+20 yp+2", "Pause Game In WC3")
 
         ; load savefile
-        loadSaveFile := MainGui.AddText("xs y+20 w120 h20 Section Border 0x200 Center Disabled", "-l")
-        MainGui.AddText("x+20 yp+2", "Load Save File Ingame With Command")
+        loadSaveFile := MainGui.AddText("xs y+20 w120 h20 Section Border 0x200 Center Disabled", "-l / -laod")
+        MainGui.AddText("x+20 yp+2", "Load Selected Save File Ingame With Command")
+
+        ; load last loaded save file
+        loadSaveFileHistory := MainGui.AddText("xs y+20 w120 h20 Section Border 0x200 Center Disabled", "-ll / -loadlast")
+        MainGui.AddText("x+20 yp+2", "Load Last Save File History Ingame With Command")
 
         ; register hotkey
         registerHotkey := MainGui.AddText("xs y+20 w120 h20 Section Border 0x200 Center Disabled", "Left Click")
@@ -64,12 +72,14 @@ class Settings {
         ; var
         this.hotkeys := [
             toggleTool,
+            toggleChatting,
             toggleOnTool,
             hideMain,
             showhideMain,
             showhideOverlay,
             pauseGame,
             loadSaveFile,
+            loadSaveFileHistory,
             registerHotkey,
             toggleQuickcast,
             exitApp

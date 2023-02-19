@@ -60,6 +60,9 @@ class LoaderTab {
         ; hotstrings
         HotIfWinactive(WarcraftIII)
         Hotstring(":XB0:-l", loadSaveFile)
+        Hotstring(":XB0:-load", loadSaveFile)
+        Hotstring(":XB0:-ll", loadLastSaveFileHistory)
+        Hotstring(":XB0:-loadlast", loadLastSaveFileHistory)
         HotIfWinactive()
 
         ; events
@@ -157,6 +160,8 @@ class LoaderTab {
 
         ; functions
         loadSaveFile(thishotkey?) {
+            MainGui.Hide()
+            global showMainGui := false
             path := this.TWRPGFolder.Text "\" selectedFile.Text
 
             ; save last load
@@ -207,6 +212,60 @@ class LoaderTab {
                 wc3Chat(code)
             }
             wc3Chat("-refresh")
+        }
+
+        loadLastSaveFileHistory(thishotkey?) {
+            MainGui.Hide()
+            global showMainGui := false
+            lastSavedFileHistory := IniRead(iniFileName, "LoaderTab", "selectedFile", "N/A")
+            path := this.TWRPGFolder.Text "\" lastSavedFileHistory
+
+            ; read save file
+            if not FileExist(path) {
+                ToolTip("File does not exist")
+                SetTimer () => ToolTip(), -5000
+                return
+            }
+
+            ; read file
+            text := FileRead(path)
+            ; count load codes
+            StrReplace(text, "-load", "-load", , &count)
+
+            ; get username
+            pattern := '(User Name|아이디):\s((?:[^""]|\\"")*)'
+            if (RegExMatch(text, pattern, &Matches) <= 0) {
+                return
+            }
+            userName := Matches[2]
+
+            ; get code
+            i := 1
+            codes := []
+            while (i <= count) {
+                pos := InStr(text, "-load", , 1, i)
+                RegExMatch(text, "(-load [a-zA-Z\d\?@#$%&-]*)", &Match, pos)
+                codes.Push(Match[1])
+
+                i += 1
+            }
+
+            if WinExist(WarcraftIII) && !WinActivate(WarcraftIII) {
+                WinActivate
+            } else {
+                ToolTip("Warcraft III not found")
+                SetTimer () => ToolTip(), -5000
+                return
+            }        
+
+            if convertNameCheckBox.Value {
+                wc3Chat("-convert " userName)
+            }
+            for code in codes {
+                wc3Chat(code)
+            }
+            wc3Chat("-refresh")
+
         }
 
         getHiddenFiles() {
