@@ -23,7 +23,6 @@ KeyWaitCombo()
     return ih.EndMods . ih.EndKey    ; Return a string like <^<+Esc
 }
 
-
 ReadableHotkey(hotkey, fullName := false) {
     hotkeyMap1 := Map(
         "<", "L",

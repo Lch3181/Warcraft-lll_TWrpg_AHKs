@@ -82,6 +82,10 @@ class HotStringTab {
             text := hotStringEditGui.Text
             hk := hotkeyButton.Text
 
+            if !text || !hk {
+                return
+            }
+
             hotStringLV.Add(, hk, text)
             this.hotStringArrayMap.Push(Map(
                 "hotkey", currenHotkey,
@@ -99,6 +103,10 @@ class HotStringTab {
         }
 
         onClickUpdate(Button, Info) {
+            if !selectedRow {
+                return
+            }
+
             newText := hotStringEditGui.Text
             newhk := currenHotkey
             this.hotStringArrayMap[selectedRow]["text"] := newText
@@ -116,6 +124,13 @@ class HotStringTab {
         }
 
         onClickDelete(Button, Info) {
+            if !selectedRow {
+                return
+            }
+
+            hotkeyButton.Text := ""
+            hotStringEditGui.Text := ""
+            selectedRow := 0
             this.hotStringArrayMap.RemoveAt(selectedRow)
             IniDelete(iniFileName, this.tabName)
 
