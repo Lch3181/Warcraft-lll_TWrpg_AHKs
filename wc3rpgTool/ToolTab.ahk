@@ -76,9 +76,9 @@ class ToolTab {
         ; settings
         MainGui.AddGroupBox("Section xs ys y+30 w190 h125", "Settings")
         MainGui.AddText("xp+20 yp+20", "Enable: ")
-        enableRemapSpells := MainGui.AddCheckbox("xp+0 y+10 venableRemapSpells", "Remap Spells")
-        enableRemapInventory := MainGui.AddCheckbox("xp+0 y+10 venableRemapInventory", "Remap Inventory")
-        enableRemapMouse := MainGui.AddCheckbox("xp+0 y+10 venableRemapMouse", "Remap Mouse")
+        enableRemapSpells := MainGui.AddCheckbox("xp+0 y+10 -TabStop venableRemapSpells", "Remap Spells")
+        enableRemapInventory := MainGui.AddCheckbox("xp+0 y+10 -TabStop venableRemapInventory", "Remap Inventory")
+        enableRemapMouse := MainGui.AddCheckbox("xp+0 y+10 -TabStop venableRemapMouse", "Remap Mouse")
 
         this.settings := [
             enableRemapSpells,

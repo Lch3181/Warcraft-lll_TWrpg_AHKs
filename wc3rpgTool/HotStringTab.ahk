@@ -18,23 +18,23 @@ class HotStringTab {
         MainGui.AddText("xp+20 yp+20 w100 h22", "Hotkey: ")
         MainGui.AddText("x+20", "Text: ")
 
-        hotkeyButton := MainGui.AddButton("xs+20 y+5 w100", "")
+        hotkeyButton := MainGui.AddButton("xs+20 y+5 w100 -TabStop", "")
         hotkeyButton.OnEvent("Click", onClickHotkey)
         hotStringEditGui := MainGui.AddEdit("x+20 h20 r1 w390")
         hotStringEditGui.OnEvent("Focus", onFocusEdit)
 
-        addButton := MainGui.AddButton("xs+20 y+20 w100 h20", "Add")
+        addButton := MainGui.AddButton("xs+20 y+20 w100 h20 -TabStop", "Add")
         addButton.OnEvent("Click", onClickAdd)
 
-        updateButton := MainGui.AddButton("x+20 w100", "Update")
+        updateButton := MainGui.AddButton("x+20 w100 -TabStop", "Update")
         updateButton.OnEvent("Click", onClickUpdate)
 
-        deleteButton := MainGui.AddButton("x+20 w100", "Delete")
+        deleteButton := MainGui.AddButton("x+20 w100 -TabStop", "Delete")
         deleteButton.OnEvent("Click", onClickDelete)
 
         ; hot strings list view
         MainGui.AddGroupBox("xs ys y+40 w550 h390", "Hot Strings")
-        hotStringLV := MainGui.AddListView("xp+20 yp+30 w510 h340 NoSort -Multi", ["Hotkey", "Text"])
+        hotStringLV := MainGui.AddListView("xp+20 yp+30 w510 h340 NoSort -Multi -TabStop", ["Hotkey", "Text"])
         hotStringLV.OnEvent("Click", onClickRow)
         hotStringLV.ModifyCol(1, 100)
         hotStringLV.ModifyCol(2, 400)
@@ -64,6 +64,7 @@ class HotStringTab {
         onChangeTab(Tab, Info) {
             ih.Stop()
             if Tab.Text == "Hot String" {
+                hotStringEditGui.Focus()
                 ih.OnEnd := endCaptureInput
             }
         }

@@ -58,13 +58,13 @@ class Settings {
         MainGui.AddText("x+20 yp+2", "Exit App")
 
         ; show main window at start
-        hideMainCheckbox := MainGui.AddCheckbox("xs y+20 Section vhideMain", "Hide Main Window at Start")
+        hideMainCheckbox := MainGui.AddCheckbox("xs y+20 Section vhideMain -TabStop", "Hide Main Window at Start")
 
         ; show overlay at start
-        hideOverlayCheckbox := MainGui.AddCheckbox("xs y+20 Section vhideOverlay", "Hide Overlay at Start")
+        hideOverlayCheckbox := MainGui.AddCheckbox("xs y+20 Section vhideOverlay -TabStop", "Hide Overlay at Start")
 
         ; reset settings button
-        resetButton := MainGui.AddButton("xs y+20 w120 h20", "Reset")
+        resetButton := MainGui.AddButton("xs y+20 w120 h20 -TabStop", "Reset")
         resetButton.SetFont("s10 w500")
         resetButton.OnEvent("Click", onClickReset)
         MainGui.AddText("x+20 yp+2", "Initialize All Settings")

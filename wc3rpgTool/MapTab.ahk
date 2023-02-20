@@ -7,6 +7,7 @@ class MapTab {
     __New(MainGui, Tab) {
         ; init tab
         Tab.UseTab("Map")
+        Tab.OnEvent("Change", onChangeTab)
 
         ; drag and drop map
         MainGUI.OnEvent("DropFiles", dropMap)
@@ -18,16 +19,16 @@ class MapTab {
         ; settings
         MainGui.AddGroupBox("Section xs ys y+30 w550 h80", "Settings")
         MainGui.AddText("xp+20 yp+25", "Map Folder:")
-        mapFolder := MainGui.AddEdit("w350 ReadOnly", "")
-        MainGui.AddButton("x+20 w60", "Select").OnEvent("Click", selectMapFolder)
-        MainGui.AddButton("x+20 w60", "Open").OnEvent("Click", openMapFolder)
+        mapFolder := MainGui.AddEdit("w350 ReadOnly -TabStop", "")
+        MainGui.AddButton("x+20 w60 -TabStop", "Select").OnEvent("Click", selectMapFolder)
+        MainGui.AddButton("x+20 w60 -TabStop", "Open").OnEvent("Click", openMapFolder)
         
         ; maps
         MainGui.AddGroupBox("Section xs ys y+30 w550 h370", "Maps")
         MainGui.AddText("xp+20 yp+20", "Map Filter:")
         filter := MainGui.AddEdit("w350", "twrpg")
         filter.OnEvent("Change", onChangeMapFilter)
-        mapList := MainGui.AddListView("yp+30 w510 h280 SortDesc", ["Name", "Date", "Hidden Date", "Size(MB)"])
+        mapList := MainGui.AddListView("yp+30 w510 h280 SortDesc -TabStop", ["Name", "Date", "Hidden Date", "Size(MB)"])
         mapList.OnEvent("ColClick", onClickCol)
 
         ; init variables
@@ -45,6 +46,12 @@ class MapTab {
         DllCall("ChangeWindowMessageFilterEx", "Ptr", MainGui.Hwnd, "UInt", WM_DROPFILES, "UInt", MSGFLT_ALLOW, "Ptr", 0)
 
         ; events
+        onChangeTab(Tab, Info) {
+            if Tab.Text == "Map" {
+                filter.Focus()
+            }
+        }
+
         selectMapFolder(Button, Info) {
             Folder := SelectFolder()
             if Folder != "" {
