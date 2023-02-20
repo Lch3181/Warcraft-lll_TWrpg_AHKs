@@ -43,6 +43,21 @@ enable/disable sections on bot right checkboxes
 hotkey cant be duplicated  
 original keys can be any single key, just make sure they match ur wc3, leaving them empty will result new remaped key sending empty key
 
+Mouse buttons cannot be detected when assigning a key for inventory/quick cast, but user can edit the data.ini file to make mouse button works. I cannot find a way to detect mouse buttons on ahk, let me know if any knows how to do it.
+
+Examples: Common mouse buttons Mbutton = Middle button, XButton1 = Mouse button 3, XButton2 = Mouse button 4.
+
+Different mouse has different buttons name.
+
+```
+inventoryHK1=$MButton
+inventoryHK2=$XButton1
+inventoryHK3=$XButton2
+inventoryHK4=$4
+inventoryHK5=$5
+inventoryHK6=$6
+```
+
 ![Imgur](https://imgur.com/B8Ss8Nl.png)
 
 ## Quick message
