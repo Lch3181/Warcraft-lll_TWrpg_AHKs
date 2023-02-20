@@ -20,9 +20,18 @@ class LoaderTab {
         MainGui.AddButton("x+20 ys+20 w100 default", "Load").OnEvent("Click", loadButton)
         MainGui.AddText("x+20 yp+5", "Drag and drop new save file to anywhere")
 
+        ; hot strings
+        MainGui.AddGroupBox("xs ys y+30 Section w550 h100", "Hotstrings")
+        MainGui.AddText("xp+20 yp+25 w120 h20 Border 0x200 Center Disabled", "-l / -load").SetFont("s10 w700")
+        MainGui.AddText("x+20 yp+2", "wc3 Ingame Command to Load Selected Save File")
+
+        MainGui.AddText("xs+20 y+20 w120 h20 Border 0x200 Center Disabled", "-ll / -loadlast").SetFont("s10 w700")
+        MainGui.AddText("x+20 yp+2", "wc3 Ingame Command to Load Last Loaded Save File")
+        
+
         ; files
-        MainGui.AddGroupBox("Section xs ys y+30 w550 h340", "Files")
-        this.fileList := MainGui.AddListView("xp+20 yp+30 w510 h280 Sort -TabStop", ["Name", "Date", "Hidden Date", "Size(KB)", "Status"])
+        MainGui.AddGroupBox("Section xs ys y+30 w550 h240", "Files")
+        this.fileList := MainGui.AddListView("xp+20 yp+20 w510 h200 Sort -TabStop", ["Name", "Date", "Hidden Date", "Size(KB)", "Status"])
         this.fileList.OnEvent("Click", onClickRow)
         this.fileList.OnEvent("DoubleClick", onDoubleClickRow)
         this.fileList.OnEvent("ContextMenu", onRightClickRow)
@@ -35,7 +44,7 @@ class LoaderTab {
         fileMenu.Add("Show / Hide Hidden Files", fileMenuShowHideHiddenFiles)
 
         ; settings
-        MainGui.AddGroupBox("Section xs ys y+50 w550 h100", "Settings")
+        MainGui.AddGroupBox("Section xs ys y+30 w550 h100", "Settings")
         convertNameCheckBox := MainGui.AddCheckbox("xp+20 yp+20 -TabStop", "Convert Name for Warcraft III Reforged")
         convertNameCheckBox.OnEvent("Click", onClickConvertNameCheckBox)
         MainGui.AddText("yp+25", "TWRPG Folder:")
