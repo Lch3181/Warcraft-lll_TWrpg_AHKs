@@ -10,7 +10,7 @@ class HotStringTab {
 
     __New(MainGui, Tab) {
         ; init tab
-        Tab.UseTab("Hot String")
+        Tab.UseTab("Hotstring")
         Tab.OnEvent("Change", onChangeTab)
 
         ; assign
@@ -63,14 +63,14 @@ class HotStringTab {
 
         onChangeTab(Tab, Info) {
             ih.Stop()
-            if Tab.Text == "Hot String" {
+            if Tab.Text == "Hotstring" {
                 hotStringEditGui.Focus()
                 ih.OnEnd := endCaptureInput
             }
         }
 
         endCaptureInput(inputObj) {
-            if (!WinActive(A_ScriptName) && Tab.Text != "Hot String") || this.focused != hotkeyButton {
+            if (!WinActive(A_ScriptName) && Tab.Text != "Hotstring") || this.focused != hotkeyButton {
                 return
             }
 
