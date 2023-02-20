@@ -5,7 +5,7 @@
 class HotStringTab {
     tabName := "HotStringTab"
     hotStringArrayMap := []
-    hotStrings := []
+    hotStrings := Map()
     focused := Gui.Control
 
     __New(MainGui, Tab) {
@@ -108,6 +108,13 @@ class HotStringTab {
                 return
             }
 
+            ; disable old hotstring
+            hsMap := this.hotStringArrayMap.Get(selectedRow)
+            hs := this.hotStrings.Get(hsMap["hotkey"])
+            hs.enabled := false
+            hs.registerHotkey()
+
+            ; update hotstring
             newText := hotStringEditGui.Text
             newhk := currenHotkey
             this.hotStringArrayMap[selectedRow]["text"] := newText
@@ -128,6 +135,13 @@ class HotStringTab {
             if !selectedRow {
                 return
             }
+
+            ; disable old hotstring
+            hsMap := this.hotStringArrayMap.Get(selectedRow)
+            hs := this.hotStrings.Get(hsMap["hotkey"])
+            hs.enabled := false
+            hs.registerHotkey()
+
 
             hotkeyButton.Text := ""
             hotStringEditGui.Text := ""
@@ -183,7 +197,7 @@ class HotStringTab {
     }
 
     registerHotkeys() {
-        this.hotStrings := []
+        this.hotStrings := Map()
         hotStringsTextMap := Map()
         hotStringIndexKey := Map()
 
@@ -199,13 +213,13 @@ class HotStringTab {
         ; register hotstrings
         for key, value in hotStringsTextMap {
             index := hotStringIndexKey.Get(key)
-            this.hotStrings.Push(RemapHK("hotkey" index, this.tabName, WarcraftIII, "",, true, value))
+            this.hotStrings.Set(key, RemapHK("hotkey" index, this.tabName, WarcraftIII, "",, true, value))
         }
     }
 
     updateHotStrings() {
-        for hk in this.hotStrings {
-            hk.registerHotkey()
+        for index, hs in this.hotStrings {
+            hs.registerHotkey()
         }
     }
 }
