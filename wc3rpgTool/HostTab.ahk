@@ -87,10 +87,12 @@ class HostTab {
 
 
         ; hotstring
+        HotIfWinactive(WarcraftIII)
         Hotstring(":XB0:-h", hostPriv)
         Hotstring(":XB0:-host", hostPriv)
         Hotstring(":XB0:-hp", hostPub)
         Hotstring(":XB0:-hostpub", hostPub)
+        HotIfWinactive()
 
         ; events
         onClickClear(Button, Info) {
@@ -245,9 +247,14 @@ class HostTab {
                 lobbyType := "pub"
             }
 
-            wc3Chat("/w " botNameCB.Text " " triggerCB.Text exCommandBeforeCB.Text)
+            if exCommandBeforeCB.Text {
+                wc3Chat("/w " botNameCB.Text " " triggerCB.Text exCommandBeforeCB.Text)
+
+            }
             wc3Chat("/w " botNameCB.Text " " triggerCB.Text lobbyType " " gameNameCB.Text)
-            wc3Chat("/w " botNameCB.Text " " triggerCB.Text exCommandAfterCB.Text)
+            if exCommandAfterCB.Text {
+                wc3Chat("/w " botNameCB.Text " " triggerCB.Text exCommandAfterCB.Text)
+            }
             wc3Chat("Game Name: " gameNameCB.Text)
 
             ; write ini
