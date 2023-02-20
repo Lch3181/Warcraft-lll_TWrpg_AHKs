@@ -131,8 +131,9 @@ class HotStringTab {
 
             hotkeyButton.Text := ""
             hotStringEditGui.Text := ""
-            selectedRow := 0
             this.hotStringArrayMap.RemoveAt(selectedRow)
+            selectedRow := 0
+
             IniDelete(iniFileName, this.tabName)
 
             for index, value in this.hotStringArrayMap {
