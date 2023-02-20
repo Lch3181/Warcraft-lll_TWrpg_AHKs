@@ -71,7 +71,20 @@ GetFileNamesInFolder(path) {
     return fileNames
 }
 
+ArrayItemExist(item, params*) {
+    for index, param in params {
+        if param == item {
+            return true
+        }
+    }
+    return false
+}
+
 Join(sep, params*) {
+    if !params || params.Length == 0 {
+        return ""
+    }
+
     for index, param in params
         str .= param . sep
     return SubStr(str, 1, -StrLen(sep))
