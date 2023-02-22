@@ -79,7 +79,7 @@ $~f7::
     global
     showOverlay := !showOverlay
     if showOverlay {
-        ol.overlayGui.Show()
+        ol.overlayGui.Show("x0 y0")
     } else {
         ol.overlayGui.Hide()
     }
