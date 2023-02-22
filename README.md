@@ -1,269 +1,113 @@
-# Twrpg AHK
-Make life ~~lazier~~ easier
+Any feedbacks or request are welcome, do it quick when I still have passion on this.
 
-## TWRPG Loader 2 (Based on Lee's loader but more user friendly)
-Lee's old twrpg loader: [Script to load characters](https://www.twrpg.com/viewtopic.php?f=2&t=4845)
+this tool works on reforged and eb(run as admin)
+unlike wfe, this one simulate the real input of user instead of altering ram for wc3 only
 
-![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/wc3rpgOverlayGUI.png)
+tool auto disable on pressing enter(ingame chat) and re-enable after pressing enter/esc/left click again(finish ingame chat)
 
-![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/wc3rpgLoaderGUI.png)
-![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/wc3rpgHerosEditorGUI.png)
-![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/wc3rpgHostGUI.png)
-![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/wc3rpgInventoryGUI.png)
-![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/wc3rpgQuickCastGUI.png)
-![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/wc3rpgProbeGUI.png)
-![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/wc3rpgNoMouseGUI.png)
-![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/wc3rpgSettingsGUI.png)
-![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/wc3rpgSettingsGUI2.png)
+unlike wfe it cant detect if ur in lobby or ingame, so better disable it with f2 when ur in lobby
 
-## How to use:
-Loading hero on first time, select the twrpg save folder on the bottom; next, click the add button to add heros, download URL if any, and the loading String if you want; then, click add/update; finally, select the hero you would like to load and click the load button.
+## Loader
+click any of ur savefile and then click load  
+or in game type -l / -load will load ur selected savefile  
+or in game type -ll / -loadlast will load ur last loaded savefile  
+after load will save the history of ur last loaded savefile
 
-Scan save files to add all heros at once.
+can drag and drop new save file into ui  
+right click save file can hide unwanted saves
 
-Hosting on the first time, type the bot's name, map load command if any, and game name; then click private/public to host. Everything will be saved for the next time when you want to host. Click Delete Bot History to delete the selected bot info.
+![Imgur](https://imgur.com/8Y0g9Ef.png)
 
-## Tools:
-Default F2 enable/disable all.
+## remap keyboard
 
-Checkbox for enable that specific tool in each tab
+Original spells are the current wc3 spell hotkeys on ur bot right UI grid
 
-## Inventory
-Click the button then click a key on your keyboard to remap that key for inventory. Checkbox for quick cast.
+New spells are the one u want to press to send the corresponding hotkey to wc3
 
-**Right Click the button to unsign the hotkey**
+Original Inventory hotkeys are  
+numpad7 numpad8  
+numpad4 numpad5  
+numpad1 numpad2
 
-Note: Mouse buttons cannot be detected when assigning a key for inventory/quick cast, but user can edit the data.ini file to make mouse button works. I cannot find a way to detect mouse buttons on ahk, let me know if any knows how to do it.
+mouse hotkeys u know  
+left and right click
 
-Examples: Common mouse buttons Mbutton = Middle button, XButton1 = Mouse button 3, XButton2 = Mouse button 4. 
+**control**  
+click on the button box to remove then click any key or key combination on keyboard to register a new one
 
-Note: Different mouse has different buttons name.
+right click button box to enable/disable quickcast (left click after pressing hotkey)
+
+enable/disable sections on bot right checkboxes
+
+**note**  
+hotkey cant be duplicated  
+original keys can be any single key, just make sure they match ur wc3, leaving them empty will result new remaped key sending empty key
+
+Mouse buttons cannot be detected when assigning a key for inventory/quick cast, but user can edit the data.ini file to make mouse button works. I cannot find a way to detect mouse buttons on ahk, let me know if any knows how to do it.
+
+Examples: Common mouse buttons Mbutton = Middle button, XButton1 = Mouse button 3, XButton2 = Mouse button 4.
+
+Different mouse has different buttons name.
 
 ```
-Numpad7=$MButton
-Numpad8=$XButton1
-Numpad4=$Xbutton2
-Numpad5=$~4
-Numpad1=$~5
+inventoryHK1=$MButton
+inventoryHK2=$XButton1
+inventoryHK3=$XButton2
+inventoryHK4=$4
+inventoryHK5=$5
+inventoryHK6=$6
 ```
-## Quick Cast
-The assigned key is also the spell for quick cast, unsign spells that do not need quick cast.
 
-## Probe Quick Cast
-only can be assign to number 1-8
+![Imgur](https://imgur.com/B8Ss8Nl.png)
 
-**Quick cast meaning: its basically cast that spell on mouse hover without needing to left click or right click.**
+## Quick message
+send message with hotkey
 
-## No Mouse
-For laptop users to remap a key to left click or right click
+**control**  
+click the hotkey button to remove then click any key or key combination on keyboard for the trigger u want
 
-## Default hotkeys:
-Enter: temporary disable all inventory and quick cast functions for wc3 ingame chat. Can be turnned off in settings
+type any message to the textbox of u want
 
-Pause/Break: pause wc3 game (using F10 pause game)
+click add to register that quick message
 
-F8: show/hide wc3 rpg tool
+select row then edit on hotkey button or textbox message, then click update
 
-F7: show/hide overlay
+select row then click delete to delete
 
-F2: Toggle Inventory function
+**note**  
+hotkey cant be duplicated from any other
+can have more then one message for the same hotkey
 
-1: numpad7
+![Imgur](https://imgur.com/8dLlDGV.png)
 
-2: numpad8
+## Host
+one click messaging bot
 
-3: numpad5
+**control**  
+just type or select from the combo box
 
-4: numpad4
+then click the host button or type the hotstrings ingame
 
-5: numpad1
+**note**  
+settings will be saved after hosting
 
-6: probe1
+![Imgur](https://imgur.com/lKyUxRN.png)
 
-7: probe2
+## Map
+really just for lazy me dont want to open download folder and paste map there
 
-8: probe3
+**control**  
+just drag and drop any map into the UI
 
-qweradfp: quickcast
+**note**  
+can drop more than 1
 
-Alt+Esc: exit wc3 rpg tool
+![Imgur](https://imgur.com/LcWvSSY.png)
 
-Pause/Break: pause the game
-## Important:
-Download URL has to be a direct download link instead of a share link(google if you do not know how to get it from a share link)
+## Settings
 
-## Installation:
-[Download](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/releases)
+currently is just showing what are the things u can do
 
-Download from release or the link above. Unzip it and run the .exe file in anywhere else. Note: there will be extra files generated after running the .exe file
+hotkeys will be editable later
 
-## Planned next:
-summon quick cast, quick call, No mouse(laptop users like me)
-
-## FQA:
-Q: My anti-virus/windows defender said it contains virus when I download it.
-
-A: They do that on 95% of the times when you download any .EXE file on the internet. The raw code is here if u question if it is safe of not.
-
-Q: My spacebar is not working after I assigned it into a hotkey even if the functions are disabled.
-
-A: Uncheck the Disable hotkeys' Native Function in Settings.
-
-## Thanks
-Weirman, boomer QA Tester
-
-RockLee, contributor
-
-## Independent scripts(Users need to edit them manually)
-![GUI](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/blob/master/Readme_Images/GUI.png)
-
-## Quick Calls
-[Download](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/tree/master/Independent/QuickCalls.ahk)
-
-f6: On/Off
-
-Shift+J: DeathFiend
-
-Shift+K: Valtora
-
-Shift+L: Ifrit
-
-J:Sylvanas
-
-K:Succubus
-
-L:Hellhound
-
-DeathFiend
-
-Z: >> Coil <<
-
-X: >> Howl <<
-
-C: >> 30% get ready <<
-
-V: >> PROCCING 20% <<
-
-B: >> DF READY <<
-
-
-
-Valtora
-
-Shift+W: >> Top Line <<
-
-Shift+A: >> Left Line <<
-
-Shift+S: >> Bottom Line <<
-
-Shift+D: >> Right Line <<
-
-Z: >> MAGNET DIED <<
-
-X: >> LINK DIED <<
-
-C: >> HAMMER DIED <<
-
-V: 
-
-B:
-
-
-Ifrit
-
-Shift+W: >> Charging Top <<
-
-Shift+A: >> Charging Left <<
-
-Shift+S: >> Charging Bottom <<
-
-Shift+D: >> Charging Right <<
-
-Z: >> ELS <<
-
-X: >> BOMBS <<
-
-C: >> CLEANSING BOMB <<
-
-V: >> CHARGING <<
-
-B:
-
-
-Sylvanas
-
-Z: >> 11111 <<
-
-X: >> 22222 <<
-
-C: >> 33333 <<
-
-V: >> 4444444 Arrow <<
-
-B: >> SYL READY <<
-
-
-
-Succubus
-
-Z: >> TELEPORTING <<
-
-X: >> WAVE <<
-
-C: 
-
-V: 
-
-B: >> SUCC READY <<
-
-
-Hellhound
-
-Z: >> CHARGING <<
-
-X: >> ORBS <<
-
-C: >> HH NEEDS HELP <<
-
-V:
-
-B: >> HH READY <<
-
-## Inventory
-[Download](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/tree/master/Independent/inventory.ahk)
-
-f2:On/Off
-
-1 = NUMPAD 7
-
-2 = NUMPAD 8
-
-3 = NUMPAD 4
-
-4 = NUMPAD 5
-
-5 = NUMPAD 1
-
-6 = NUMPAD 2
-
-## Quick Cast
-[Download](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/tree/master/Independent/QuickCast.ahk)
-
-Automatically left click after clicking spells' hotkeys
-
-f3: On/Off
-
-Q W E R T F
-
-1 = NUMPAD 7
-
-2 = NUMPAD 8
-
-## No Mouse
-[Download](https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/tree/master/Independent/NoMouse.ahk)
-
-For laptop users
-
-f4:On/Off
-
-Space bar = right click
+![Imgur](https://imgur.com/3VVAYJ0.png)
