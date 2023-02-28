@@ -138,6 +138,7 @@ class LoaderTab {
 
         fileMenuOpenFile(*) {
             SelectedFile.Text := this.fileList.GetText(lvSelectedRow)
+            Run(this.TWRPGFolder.Text "\" SelectedFile.Text)
         }
 
         fileMenuHideFile(*) {
