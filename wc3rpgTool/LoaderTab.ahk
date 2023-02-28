@@ -112,6 +112,8 @@ class LoaderTab {
             if (fileNames.Length > 0) {
                 MsgBox("Added: `n" Join("`n", fileNames*))
             }
+
+            this.updateFileList()
         }
 
         onClickCol(LV, Info) {
