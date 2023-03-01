@@ -2,11 +2,12 @@
 #Include Helper.ahk
 
 class LoaderTab {
+    tabName := "LoaderTab"
     fileList := Gui.ListView
+    filter := ""
     TWRPGFolder := Gui.Edit
     showHidden := false
     hiddenFilesMap := Map()
-    tabName := "LoaderTab"
     
     __New(MainGui, Tab) {
         ; init tab
@@ -22,7 +23,7 @@ class LoaderTab {
         MainGui.AddText("x+20 yp+5", "Drag and drop new save file to anywhere")
 
         ; hot strings
-        MainGui.AddGroupBox("xs ys y+30 Section w550 h100", "Hotstrings")
+        MainGui.AddGroupBox("xs ys y+25 Section w550 h100", "Hotstrings")
         MainGui.AddText("xp+20 yp+25 w120 h20 Border 0x200 Center Disabled", "-l / -load").SetFont("s10 w700")
         MainGui.AddText("x+20 yp+2", "wc3 Ingame Command to Load Selected Save File")
 
@@ -31,8 +32,10 @@ class LoaderTab {
         
 
         ; files
-        MainGui.AddGroupBox("Section xs ys y+30 w550 h240", "Files")
-        this.fileList := MainGui.AddListView("xp+20 yp+20 w510 h200 Sort -TabStop", ["Name", "Date", "Hidden Date", "Status", "Loading Message"])
+        MainGui.AddGroupBox("Section xs ys y+30 w550 h265", "Files")
+        MainGui.AddText("xp+20 yp+20 w510", "Search: ")
+        MainGui.AddEdit("xs+20 y+5 w510 -TabStop", this.filter).OnEvent("Change", onChangeFilterText)
+        this.fileList := MainGui.AddListView("xs+20 y+10 w510 h180 Sort -TabStop", ["Name", "Date", "Hidden Date", "Status", "Loading Message"])
         this.fileList.OnEvent("Click", onClickRow)
         this.fileList.OnEvent("DoubleClick", onDoubleClickRow)
         this.fileList.OnEvent("ContextMenu", onRightClickRow)
@@ -41,14 +44,14 @@ class LoaderTab {
         fileMenu := Menu()
         fileMenu.Add("Open", fileMenuOpenFile)
         fileMenu.Add()
-        fileMenu.Add("Add Loading Text", fileMenuAddLoadingMessage)
+        fileMenu.Add("Add Loading Message", fileMenuAddLoadingMessage)
         fileMenu.Add()
         fileMenu.Add("Hide File", fileMenuHideFile)
         fileMenu.Add("Show File", fileMenuShowFile)
         fileMenu.Add("Show / Hide Hidden Files", fileMenuShowHideHiddenFiles)
 
         ; settings
-        MainGui.AddGroupBox("Section xs ys y+30 w550 h100", "Settings")
+        MainGui.AddGroupBox("Section xs ys y+20 w550 h100", "Settings")
         convertNameCheckBox := MainGui.AddCheckbox("xp+20 yp+20 -TabStop", "Convert Name for Warcraft III Reforged")
         convertNameCheckBox.OnEvent("Click", onClickConvertNameCheckBox)
         MainGui.AddText("yp+25", "TWRPG Folder:")
@@ -119,6 +122,11 @@ class LoaderTab {
                 MsgBox("Added: `n" Join("`n", fileNames*))
             }
 
+            this.updateFileList()
+        }
+
+        onChangeFilterText(Edit, Info) {
+            this.filter := Edit.Text
             this.updateFileList()
         }
 
@@ -194,6 +202,14 @@ class LoaderTab {
             this.updateFileList()
         }
 
+        loadSaveFileHK(thishotkey?) {
+            loadSaveFile()
+        }
+
+        loadLastSaveFileHistoryHK(thishotkey?) {
+            loadSaveFile(true)
+        }
+
         ; functions
         loadSaveFile(lastSaveFile := false) {
             MainGui.Hide()
@@ -265,14 +281,6 @@ class LoaderTab {
             wc3Chat("-refresh")
         }
 
-        loadSaveFileHK(thishotkey?) {
-            loadSaveFile()
-        }
-
-        loadLastSaveFileHistoryHK(thishotkey?) {
-            loadSaveFile(true)
-        }
-
         getHiddenFiles() {
             try {
                 hiddenFilesString := FileRead(hiddenFilesAddress)
@@ -289,6 +297,9 @@ class LoaderTab {
         hasLoadingMessage := false
 
         Loop Files, this.TWRPGFolder.Text "\*.txt" {
+            if (this.filter && !InStr(A_LoopFileName, this.filter)) {
+                continue
+            }
             status := ""
 
             ; skip black listed file
@@ -315,7 +326,8 @@ class LoaderTab {
             this.fileList.Add(, A_LoopFileName, FormatTime(A_LoopFileTimeModified, "MM/dd/yyyy   hh:mm tt"), A_LoopFileTimeModified, status, message)
         }
 
-        this.fileList.ModifyCol()
+        this.fileList.ModifyCol(1, "Auto")
+        this.fileList.ModifyCol(2, "Auto")
         this.fileList.ModifyCol(3, 0)
         if !this.showHidden {
             this.fileList.ModifyCol(4, 0)
@@ -324,6 +336,8 @@ class LoaderTab {
         }
         if !hasLoadingMessage {
             this.fileList.ModifyCol(5, 0)
+        } else {
+            this.fileList.ModifyCol(5, "Auto")
         }
     }
 }
