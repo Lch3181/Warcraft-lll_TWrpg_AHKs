@@ -16,7 +16,7 @@ class HotStringTab {
         ; assign
         MainGui.AddGroupBox("Section w550 h120", "Assign")
         MainGui.AddText("xp+20 yp+20 w100 h22", "Hotkey: ")
-        MainGui.AddText("x+20", "Text: ")
+        MainGui.AddText("x+20", "Message: ")
 
         hotkeyButton := MainGui.AddButton("xs+20 y+5 w100 -TabStop", "")
         hotkeyButton.OnEvent("Click", onClickHotkey)
@@ -34,7 +34,7 @@ class HotStringTab {
 
         ; hot strings list view
         MainGui.AddGroupBox("xs ys y+40 w550 h390", "Hot Strings")
-        hotStringLV := MainGui.AddListView("xp+20 yp+30 w510 h340 NoSort -Multi -TabStop", ["Hotkey", "Text"])
+        hotStringLV := MainGui.AddListView("xp+20 yp+30 w510 h340 NoSort -Multi -TabStop", ["Hotkey", "Message"])
         hotStringLV.OnEvent("Click", onClickRow)
         hotStringLV.ModifyCol(1, 100)
         hotStringLV.ModifyCol(2, 400)

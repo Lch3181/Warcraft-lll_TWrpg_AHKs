@@ -6,6 +6,7 @@ class LoaderTab {
     TWRPGFolder := Gui.Edit
     showHidden := false
     hiddenFilesMap := Map()
+    tabName := "LoaderTab"
     
     __New(MainGui, Tab) {
         ; init tab
@@ -31,7 +32,7 @@ class LoaderTab {
 
         ; files
         MainGui.AddGroupBox("Section xs ys y+30 w550 h240", "Files")
-        this.fileList := MainGui.AddListView("xp+20 yp+20 w510 h200 Sort -TabStop", ["Name", "Date", "Hidden Date", "Size(KB)", "Status"])
+        this.fileList := MainGui.AddListView("xp+20 yp+20 w510 h200 Sort -TabStop", ["Name", "Date", "Hidden Date", "Status", "Loading Message"])
         this.fileList.OnEvent("Click", onClickRow)
         this.fileList.OnEvent("DoubleClick", onDoubleClickRow)
         this.fileList.OnEvent("ContextMenu", onRightClickRow)
@@ -39,6 +40,9 @@ class LoaderTab {
         ; file Menu
         fileMenu := Menu()
         fileMenu.Add("Open", fileMenuOpenFile)
+        fileMenu.Add()
+        fileMenu.Add("Add Loading Text", fileMenuAddLoadingMessage)
+        fileMenu.Add()
         fileMenu.Add("Hide File", fileMenuHideFile)
         fileMenu.Add("Show File", fileMenuShowFile)
         fileMenu.Add("Show / Hide Hidden Files", fileMenuShowHideHiddenFiles)
@@ -61,17 +65,19 @@ class LoaderTab {
         this.hiddenFilesMap := Map()
 
         getHiddenFiles()
-        SelectedFile.Text := IniRead(iniFileName, "LoaderTab", "selectedFile", "N/A")
-        this.TWRPGFolder.Text := IniRead(iniFileName, "LoaderTab", "this.TWRPGFolder", A_MyDocuments "\Warcraft III\CustomMapData\TWRPG")
-        convertNameCheckBox.Value := IniRead(iniFileName, "LoaderTab", "convertNameCheckBox", true)
+        SelectedFile.Text := IniRead(iniFileName, this.tabName, "selectedFile", "N/A")
+        this.TWRPGFolder.Text := IniRead(iniFileName, this.tabName, "this.TWRPGFolder", A_MyDocuments "\Warcraft III\CustomMapData\TWRPG")
+        convertNameCheckBox.Value := IniRead(iniFileName, this.tabName, "convertNameCheckBox", true)
         this.updateFileList()
 
         ; hotstrings
         HotIfWinactive(WarcraftIII)
-        Hotstring(":XB0:-l", loadSaveFile)
-        Hotstring(":XB0:-load", loadSaveFile)
-        Hotstring(":XB0:-ll", loadLastSaveFileHistory)
-        Hotstring(":XB0:-loadlast", loadLastSaveFileHistory)
+        #Hotstring EndChars `n
+        Hotstring(":XB0:-l", loadSaveFileHK)
+        Hotstring(":XB0:-load", loadSaveFileHK)
+        Hotstring(":XB0:-ll", loadLastSaveFileHistoryHK)
+        Hotstring(":XB0:-loadlast", loadLastSaveFileHistoryHK)
+        #Hotstring
         HotIfWinactive()
 
         ; events
@@ -79,7 +85,7 @@ class LoaderTab {
             Folder := SelectFolder()
             if Folder != "" {
                 this.TWRPGFolder.Text := Folder
-                IniWrite(this.TWRPGFolder.Text, iniFileName, "LoaderTab", "this.TWRPGFolder")
+                IniWrite(this.TWRPGFolder.Text, iniFileName, this.tabName, "this.TWRPGFolder")
             }
         }
 
@@ -92,7 +98,7 @@ class LoaderTab {
         }
 
         onClickConvertNameCheckBox(CheckBox, Info) {
-            IniWrite(CheckBox.Value, iniFileName, "LoaderTab", "convertNameCheckBox")
+            IniWrite(CheckBox.Value, iniFileName, this.tabName, "convertNameCheckBox")
         }
 
         dropSaveFiles(GuiObj, GuiCtrlObj, FileArray, X, Y) {
@@ -141,6 +147,24 @@ class LoaderTab {
             Run(this.TWRPGFolder.Text "\" SelectedFile.Text)
         }
 
+        fileMenuAddLoadingMessage(*) {
+            ; get filename
+            file := this.fileList.GetText(lvSelectedRow)
+
+            ; get existing message if any
+            message := IniRead(iniFileName, this.tabName, file, "")
+
+            ; promote for input
+            IB := InputBox("Enter the message you want to show when loading", "Loading Message", "h100", message)
+            if IB.Result == "Cancel" {
+                return
+            }
+
+            ; store message
+            IniWrite(IB.Value, iniFileName, this.tabName, file)
+            this.updateFileList()
+        }
+
         fileMenuHideFile(*) {
             hiddenFilesArray.Push(this.fileList.GetText(lvSelectedRow))
             this.hiddenFilesMap.Set(this.fileList.GetText(lvSelectedRow), 0)
@@ -171,13 +195,18 @@ class LoaderTab {
         }
 
         ; functions
-        loadSaveFile(thishotkey?) {
+        loadSaveFile(lastSaveFile := false) {
             MainGui.Hide()
             global showMainGui := false
-            path := this.TWRPGFolder.Text "\" selectedFile.Text
+            saveFileName := selectedFile.Text
+            if lastSaveFile {
+                saveFileName := IniRead(iniFileName, this.tabName, "selectedFile", SelectedFile.Text)
+            }
+            path := this.TWRPGFolder.Text "\" saveFileName
+
 
             ; save last load
-            IniWrite(selectedFile.Text, iniFileName, "LoaderTab", "selectedFile")
+            IniWrite(selectedFile.Text, iniFileName, this.tabName, "selectedFile")
 
             ; read save file
             if not FileExist(path) {
@@ -215,69 +244,33 @@ class LoaderTab {
                 ToolTip("Warcraft III not found")
                 SetTimer () => ToolTip(), -5000
                 return
-            }        
+            }
 
+
+            ; loading message
+            message := IniRead(iniFileName, this.tabName, saveFileName, "")
+            if message {
+                wc3Chat(message)
+            }
+            ; convert name
             if convertNameCheckBox.Value {
                 wc3Chat("-convert " userName)
             }
+            ; loadcodes
             for code in codes {
                 wc3Chat(code)
+                Sleep(100)
             }
+            ; clean screen
             wc3Chat("-refresh")
         }
 
-        loadLastSaveFileHistory(thishotkey?) {
-            MainGui.Hide()
-            global showMainGui := false
-            lastSavedFileHistory := IniRead(iniFileName, "LoaderTab", "selectedFile", "N/A")
-            path := this.TWRPGFolder.Text "\" lastSavedFileHistory
+        loadSaveFileHK(thishotkey?) {
+            loadSaveFile()
+        }
 
-            ; read save file
-            if not FileExist(path) {
-                ToolTip("File does not exist")
-                SetTimer () => ToolTip(), -5000
-                return
-            }
-
-            ; read file
-            text := FileRead(path)
-            ; count load codes
-            StrReplace(text, "-load", "-load", , &count)
-
-            ; get username
-            pattern := '(User Name|아이디):\s((?:[^""]|\\"")*)'
-            if (RegExMatch(text, pattern, &Matches) <= 0) {
-                return
-            }
-            userName := Matches[2]
-
-            ; get code
-            i := 1
-            codes := []
-            while (i <= count) {
-                pos := InStr(text, "-load", , 1, i)
-                RegExMatch(text, "(-load [a-zA-Z\d\?@#$%&-]*)", &Match, pos)
-                codes.Push(Match[1])
-
-                i += 1
-            }
-
-            if WinExist(WarcraftIII) && !WinActivate(WarcraftIII) {
-                WinActivate
-            } else {
-                ToolTip("Warcraft III not found")
-                SetTimer () => ToolTip(), -5000
-                return
-            }        
-
-            if convertNameCheckBox.Value {
-                wc3Chat("-convert " userName)
-            }
-            for code in codes {
-                wc3Chat(code)
-            }
-            wc3Chat("-refresh")
-
+        loadLastSaveFileHistoryHK(thishotkey?) {
+            loadSaveFile(true)
         }
 
         getHiddenFiles() {
@@ -293,6 +286,7 @@ class LoaderTab {
 
     updateFileList() {
         this.fileList.Delete()
+        hasLoadingMessage := false
 
         Loop Files, this.TWRPGFolder.Text "\*.txt" {
             status := ""
@@ -312,17 +306,24 @@ class LoaderTab {
                 continue
             }
 
-            this.fileList.Add(, A_LoopFileName, FormatTime(A_LoopFileTimeModified, "MM/dd/yyyy   hh:mm tt"), A_LoopFileTimeModified, A_LoopFileSize, status)
+            ; get loading message
+            message := IniRead(iniFileName, this.tabName, A_LoopFileName, "")
+            if message {
+                hasLoadingMessage := true
+            }
+
+            this.fileList.Add(, A_LoopFileName, FormatTime(A_LoopFileTimeModified, "MM/dd/yyyy   hh:mm tt"), A_LoopFileTimeModified, status, message)
         }
 
-        this.fileList.ModifyCol
+        this.fileList.ModifyCol()
         this.fileList.ModifyCol(3, 0)
-        this.fileList.ModifyCol(4, 80)
         if !this.showHidden {
-            this.fileList.ModifyCol(5, 0)
+            this.fileList.ModifyCol(4, 0)
         } else {
-            this.fileList.ModifyCol(5, 60)
+            this.fileList.ModifyCol(4, 60)
+        }
+        if !hasLoadingMessage {
+            this.fileList.ModifyCol(5, 0)
         }
     }
-
 }
