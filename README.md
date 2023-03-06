@@ -14,9 +14,12 @@ or in game type -ll / -loadlast will load ur last loaded savefile
 after load will save the history of ur last loaded savefile
 
 can drag and drop new save file into ui  
-right click save file can hide unwanted saves
+can search/filter out save files in textbox  
+right click save file can hide unwanted saves  
+right click save file can add loading message to send when loading character in wc3
 
 ![Imgur](https://imgur.com/8Y0g9Ef.png)
+![Imgur](https://imgur.com/mk01Gnq.png)
 
 ## remap keyboard
 
