@@ -37,14 +37,6 @@ class Settings {
         pauseGame := MainGui.AddText("xs y+20 w120 h20 Section Border 0x200 Center Disabled", "Pause")
         MainGui.AddText("x+20 yp+2", "Pause Game In WC3")
 
-        ; load savefile
-        loadSaveFile := MainGui.AddText("xs y+20 w120 h20 Section Border 0x200 Center Disabled", "-l / -laod")
-        MainGui.AddText("x+20 yp+2", "Load Selected Save File Ingame With Command")
-
-        ; load last loaded save file
-        loadSaveFileHistory := MainGui.AddText("xs y+20 w120 h20 Section Border 0x200 Center Disabled", "-ll / -loadlast")
-        MainGui.AddText("x+20 yp+2", "Load Last Save File History Ingame With Command")
-
         ; register hotkey
         registerHotkey := MainGui.AddText("xs y+20 w120 h20 Section Border 0x200 Center Disabled", "Left Click")
         MainGui.AddText("x+20 yp+2", "Remove and Register Hotkey")
@@ -78,8 +70,6 @@ class Settings {
             showhideMain,
             showhideOverlay,
             pauseGame,
-            loadSaveFile,
-            loadSaveFileHistory,
             registerHotkey,
             toggleQuickcast,
             exitApp

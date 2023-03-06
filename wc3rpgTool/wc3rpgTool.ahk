@@ -8,6 +8,7 @@
 #Include overlay.ahk
 #Include Settings.ahk
 
+version := "1.1"
 toolEnabled := true
 toolEnableHistory := true
 chatting := false
@@ -27,6 +28,7 @@ if not A_IsAdmin {
 
 ;GUI
 MainGui := Gui()
+MainGui.Title := "wc3rpgTool v" version
 Tab3 := MainGui.AddTab3("x0 y0 W580 H580 -Theme -TabStop Choose1", ["Loader", "Tool", "Hotstring", "Host", "Map", "Settings"])
 loader := LoaderTab(MainGui, Tab3)
 tool := ToolTab(MainGui, Tab3)
@@ -67,6 +69,7 @@ $~f8::
     if showMainGui {
         ; reload loader tab
         loader.updateFileList()
+        Tab3.Choose("Loader")
         MainGui.Show("W580 H580")
     } else {
         MainGui.Hide()
