@@ -213,7 +213,6 @@ class LoaderTab {
 
         ; functions
         loadSaveFile(lastSaveFile := false) {
-            MainGui.Hide()
             global showMainGui := false
             saveFileName := selectedFile.Text
             if lastSaveFile {
@@ -231,6 +230,8 @@ class LoaderTab {
                 SetTimer () => ToolTip(), -5000
                 return
             }
+
+            MainGui.Hide()
 
             ; read file
             text := FileRead(path)

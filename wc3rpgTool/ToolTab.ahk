@@ -227,13 +227,13 @@ class ToolTab {
 
                 writeQuickcastIni(this.focusedHotKey)
 
-                this.registerHotkeys()
+                this.updateHotkeys()
             }
         }
 
         onClickCheckbox(Button, Info) {
             IniWrite(Button.Value, iniFileName, "ToolTab", Button.Name)
-            this.registerHotkeys()
+            this.updateHotkeys()
         }
 
         onChnageTab(Tab, Info) {
