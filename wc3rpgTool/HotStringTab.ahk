@@ -1,6 +1,6 @@
 #Requires AutoHotkey v2.0
 #Include Helper.ahk
-#Include RemapHK.ahk
+#Include RegisterHotkey.ahk
 
 class HotStringTab {
     tabName := "HotStringTab"
@@ -111,8 +111,8 @@ class HotStringTab {
             ; disable old hotstring
             hsMap := this.hotStringArrayMap.Get(selectedRow)
             hs := this.hotStrings.Get(hsMap["hotkey"])
-            hs.enabled := false
-            hs.registerHotkey()
+            hs.enable := false
+            hs.updateHotkey()
 
             ; update hotstring
             newText := hotStringEditGui.Text
@@ -139,8 +139,8 @@ class HotStringTab {
             ; disable old hotstring
             hsMap := this.hotStringArrayMap.Get(selectedRow)
             hs := this.hotStrings.Get(hsMap["hotkey"])
-            hs.enabled := false
-            hs.registerHotkey()
+            hs.enable := false
+            hs.updateHotkey()
 
 
             hotkeyButton.Text := ""
@@ -162,6 +162,9 @@ class HotStringTab {
         }
 
         onClickRow(LV, Row) {
+            if !Row {
+                return
+            }
             selectedRow := Row
             hotkeyButton.Text := LV.GetText(Row, 1)
             hotStringEditGui.Text := LV.GetText(Row, 2)
@@ -192,34 +195,40 @@ class HotStringTab {
                 }
             }
 
-            this.registerHotkeys()
+            registerHotkeys()
         }
-    }
 
-    registerHotkeys() {
-        this.hotStrings := Map()
-        hotStringsTextMap := Map()
-        hotStringIndexKey := Map()
+        registerHotkeys() {
+            this.hotStrings := Map()
+            hotStringsTextMap := Map()
+            hotStringIndexKey := Map()
 
-        ; filter same hotkey and hot strings together
-        for index, value in this.hotStringArrayMap {
-            if !hotStringsTextMap.Has(value["hotkey"]) {
-                hotStringsTextMap.Set(value["hotkey"], [])
-                hotStringIndexKey.Set(value["hotkey"], index)
+            ; filter same hotkey and hot strings together
+            for index, value in this.hotStringArrayMap {
+                if !hotStringsTextMap.Has(value["hotkey"]) {
+                    hotStringsTextMap.Set(value["hotkey"], [])
+                    hotStringIndexKey.Set(value["hotkey"], index)
+                }
+                hotStringsTextMap[value["hotkey"]].Push(value["text"])
             }
-            hotStringsTextMap[value["hotkey"]].Push(value["text"])
-        }
 
-        ; register hotstrings
-        for key, value in hotStringsTextMap {
-            index := hotStringIndexKey.Get(key)
-            this.hotStrings.Set(key, RemapHK("hotkey" index, this.tabName, WarcraftIII, "",, true, value))
+            ; register hotstrings
+            for key, value in hotStringsTextMap {
+                index := hotStringIndexKey.Get(key)
+                this.hotStrings.Set(key, RegisterHotkey(key, sendMessages.Bind(value), WarcraftIII, true))
+            }
+        }
+        
+        sendMessages(messages) {
+            for text in messages {
+                wc3Chat(text)
+            }
         }
     }
 
     updateHotStrings() {
         for index, hs in this.hotStrings {
-            hs.registerHotkey()
+            hs.updateHotkey()
         }
     }
 }

@@ -9,7 +9,7 @@
 #Include Settings.ahk
 
 version := "1.1"
-toolEnabled := false
+toolEnabled := true
 toolEnableHistory := true
 chatting := false
 showMainGui := false
@@ -100,7 +100,7 @@ $~f10::
     global
     toolEnabled := !toolEnabled
     ol.updateText()
-    tool.registerHotkeys()
+    tool.updateHotkeys()
     hs.updateHotStrings()
 }
 $~+Enter::    ; Shift Enter
@@ -117,7 +117,7 @@ $~Enter::    ; Regular Enter
         toolEnabled := toolEnableHistory
     }
     ol.updateText()
-    tool.registerHotkeys()
+    tool.updateHotkeys()
     hs.updateHotStrings()
 }
 
@@ -137,7 +137,7 @@ $~Esc::    ; Escape
         toolEnabled := toolEnableHistory
     }
     ol.updateText()
-    tool.registerHotkeys()
+    tool.updateHotkeys()
     hs.updateHotStrings()
 }
 #HotIf
