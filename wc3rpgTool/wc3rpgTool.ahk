@@ -6,6 +6,7 @@
 #Include HotStringTab.ahk
 #Include HostTab.ahk
 #Include overlay.ahk
+#Include HotkeysTab.ahk
 #Include Settings.ahk
 
 version := "1.1"
@@ -29,12 +30,13 @@ if not A_IsAdmin {
 ;GUI
 MainGui := Gui()
 MainGui.Title := "wc3rpgTool v" version
-Tab3 := MainGui.AddTab3("x0 y0 W580 H580 -Theme -TabStop Choose1", ["Loader", "Tool", "Hotstring", "Host", "Map", "Settings"])
+Tab3 := MainGui.AddTab3("x0 y0 W580 H580 -Theme -TabStop Choose1", ["Loader", "Tool", "Hotstring", "Host", "Map", "Hotkeys", "Settings"])
 loader := LoaderTab(MainGui, Tab3)
 tool := ToolTab(MainGui, Tab3)
 hs := HotStringTab(MainGui, Tab3)
 HostTab(MainGui, Tab3)
 MapTab(MainGui, Tab3)
+HotkeyTab(MainGui, Tab3)
 Settings(MainGui, Tab3)
 ol := Overlay()
 if !IniRead(iniFileName, "Settings", "hideMain", false) {
