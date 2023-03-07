@@ -13,11 +13,11 @@ class HotkeyTab {
 
         ; toggle on off tool if chatting
         toggleChatting := MainGui.AddText("xs y+20 w120 h20 Section Border 0x200 Center Disabled", "Enter")
-        MainGui.AddText("x+20 yp+2", "If Tool is Enabled, Toggle On / Off Tool In WC3 if the User Open / Close Message Box")
+        MainGui.AddText("x+20 yp+2", "If Tool is Enabled, Toggle On / Off Tool In WC3 for Messaging")
 
         ; toggle on tool if it was chatting
         toggleOnTool := MainGui.AddText("xs y+20 w120 h20 Section Border 0x200 Center Disabled", "Left Click / Esc")
-        MainGui.AddText("x+20 yp+2", "If Tool is Enabled, Toggle On Tool in WC3 if User Close Message Box")
+        MainGui.AddText("x+20 yp+2", "If Tool is Enabled, Toggle On Tool in WC3 for Closing Message Box")
 
         ; hide main gui
         hideMain := MainGui.AddText("xs y+20 w120 h20 Section Border 0x200 Center Disabled", "Esc")
@@ -37,11 +37,11 @@ class HotkeyTab {
 
         ; register hotkey
         registerHotkey := MainGui.AddText("xs y+20 w120 h20 Section Border 0x200 Center Disabled", "Left Click")
-        MainGui.AddText("x+20 yp+2", "Remove and Register Hotkey")
+        MainGui.AddText("x+20 yp+2", "Remove and Register Hotkey in Tool")
 
         ; toggle on off quickcast
         toggleQuickcast := MainGui.AddText("xs y+20 w120 h20 Section Border 0x200 Center Disabled", "Right Click")
-        MainGui.AddText("x+20 yp+2", "Toggle On Off Quickcast")
+        MainGui.AddText("x+20 yp+2", "Toggle On Off Quickcast in Tool")
 
         ; exit app
         exitApp := MainGui.AddText("xs y+20 w120 h20 Section Border 0x200 Center Disabled", "Alt + Esc")
