@@ -9,7 +9,7 @@
 #Include HotkeysTab.ahk
 #Include Settings.ahk
 
-version := "1.2"
+version := "1.2.0"
 toolEnabled := true
 toolEnableHistory := true
 chatting := false
