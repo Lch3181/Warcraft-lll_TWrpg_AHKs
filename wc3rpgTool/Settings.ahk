@@ -1,13 +1,19 @@
 #Requires AutoHotkey v2.0
-#Include Helper.ahk
 
 class Settings {
+    tabName := "SettingsTab"
     hotkeys := [Gui.Text]
     checkboxes := [Gui.CheckBox]
 
     __New(MainGui, Tab) {
         ; init tab
         Tab.UseTab("Settings")
+
+        ; enable tool after load
+        enableToolAfterLoadCheckbox := MainGui.AddCheckbox("xs y+20 Section venableToolAfterLoad -TabStop", "Enable Tool After Loading Savefile")
+
+        ; summon bag after load
+        summonBagAfterLoadCheckbox := MainGui.AddCheckbox("xs y+20 Section vsummonBagAfterLoad -TabStop", "Summon bag After Loading Savefile")
 
         ; show main window at start
         hideMainCheckbox := MainGui.AddCheckbox("xs y+20 Section vhideMain -TabStop", "Hide Main Window at Start")
@@ -24,13 +30,15 @@ class Settings {
         ; var
 
         this.checkboxes := [
+            enableToolAfterLoadCheckbox,
+            summonBagAfterLoadCheckbox,
             hideMainCheckbox,
             hideOverlayCheckbox
         ]
 
         for checkbox in this.checkboxes {
             checkbox.OnEvent("Click", onClickCheckbox)
-            checkbox.Value := IniRead(iniFileName, "Settings", checkbox.Name, false)
+            checkbox.Value := IniRead(iniFileName, this.tabName, checkbox.Name, false)
         }
 
         ; events
@@ -43,7 +51,7 @@ class Settings {
         }
 
         onClickCheckbox(Button, Info) {
-            IniWrite(Button.Value, iniFileName, "Settings", Button.Name)
+            IniWrite(Button.Value, iniFileName, this.tabName, Button.Name)
         }
     }
 }

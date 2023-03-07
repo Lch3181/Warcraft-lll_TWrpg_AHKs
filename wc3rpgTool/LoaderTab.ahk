@@ -1,4 +1,5 @@
 #Requires AutoHotkey v2.0
+#Include wc3rpgTool.ahk
 #Include Helper.ahk
 
 class LoaderTab {
@@ -279,6 +280,17 @@ class LoaderTab {
             }
             ; clean screen
             wc3Chat("-refresh")
+
+            ; summon bag after loading
+            if IniRead(iniFileName, "SettingsTab", "summonBagAfterLoad", false) {
+                SendInput("{Esc}")
+            }
+            
+            ; enable tool after loading
+            
+            if IniRead(iniFileName, "SettingsTab", "enableToolAfterLoad", false) {
+                toggleTool(true)
+            }
         }
 
         getHiddenFiles() {

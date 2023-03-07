@@ -9,7 +9,7 @@
 #Include HotkeysTab.ahk
 #Include Settings.ahk
 
-version := "1.1"
+version := "1.2"
 toolEnabled := true
 toolEnableHistory := true
 chatting := false
@@ -49,6 +49,15 @@ MainGui.OnEvent("Close", onCloseGui)
 ; events
 onCloseGui(GuiObj) {
     global showMainGui := false
+}
+
+; functions
+toggleTool(enable := false) {
+    global
+    toolEnabled := enable
+    ol.updateText()
+    tool.updateHotkeys()
+    hs.updateHotStrings()
 }
 
 ; common hotkeys
@@ -99,11 +108,7 @@ $!esc:: ExitApp
 $~f2::
 $~f10::
 {
-    global
-    toolEnabled := !toolEnabled
-    ol.updateText()
-    tool.updateHotkeys()
-    hs.updateHotStrings()
+    toggleTool(!toolEnabled)
 }
 $~+Enter::    ; Shift Enter
 $~NumpadEnter::    ; numpad Enter
