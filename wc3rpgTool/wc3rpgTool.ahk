@@ -9,7 +9,7 @@
 #Include Settings.ahk
 
 version := "1.1"
-toolEnabled := true
+toolEnabled := false
 toolEnableHistory := true
 chatting := false
 showMainGui := false
@@ -50,7 +50,7 @@ onCloseGui(GuiObj) {
 }
 
 ; common hotkeys
-#HotIf WinActive(A_ScriptName)
+#HotIf WinActive(MainGui.Title)
 ; hide main gui
 $~Esc::
 {

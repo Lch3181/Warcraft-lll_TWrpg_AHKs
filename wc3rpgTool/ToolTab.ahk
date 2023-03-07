@@ -189,7 +189,7 @@ class ToolTab {
         }
 
         endCaptureInput(inputObj) {
-            if (WinActive(A_ScriptName) && Tab.Text == "Tool") {
+            if (WinActive(MainGui.Title) && Tab.Text == "Tool") {
                 ; captured input
                 hk := ih.EndMods . ih.EndKey
                 this.focusedHotKey.Text := ReadableHotkey(hk)

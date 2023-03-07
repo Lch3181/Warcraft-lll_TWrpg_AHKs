@@ -70,7 +70,7 @@ class HotStringTab {
         }
 
         endCaptureInput(inputObj) {
-            if (!WinActive(A_ScriptName) && Tab.Text != "Hotstring") || this.focused != hotkeyButton {
+            if (!WinActive(MainGui.Title) && Tab.Text != "Hotstring") || this.focused != hotkeyButton {
                 return
             }
 
