@@ -1,4 +1,5 @@
 #Requires AutoHotkey v2.0
+#Include wc3rpgTool.ahk
 
 class Settings {
     tabName := "SettingsTab"
@@ -49,13 +50,23 @@ class Settings {
 
         ; events
         onClickCheck(Button, Info) {
-            getNewestVersionTag()
+            newestVersion := getNewestVersionTag()
+            message := "The Newest Version is " newestVersion "`nDownload and Install New Version?"
+            if version == newestVersion {
+                message := "Current Version is the Newest"
+            }
+
+            ; output message box
+            result := MsgBox(message, "Check Updates" , "OC Owner" MainGui.Hwnd)
+
+            if result == "OK" && version != newestVersion {
+                downloadNewVersion(newestVersion)
+            }
         }
 
         onClickReset(Button, Info) {
             try {
-                OutputDebug(A_ScriptDir "\" iniFileName)
-                FileDelete(A_ScriptDir "\" iniFileName)
+                try FileDelete(A_ScriptDir "\" iniFileName)
                 Reload
             }
         }
@@ -80,12 +91,34 @@ class Settings {
             }
             version := Matches[1]
 
-            ; output message box
-            result := MsgBox("The Newest Version is " version "`nOpen Download Page?", "Check Updates" , "OC Owner" MainGui.Hwnd)
+            return version
+        }
 
-            if result == "OK" {
-                Run("https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/releases")
+        downloadNewVersion(version) {
+            target := "wc3rpgTool.exe"
+            if !A_Is64bitOS {
+                target := "wc3rpgTool_86.exe"
             }
+
+            downloadUrl := "https://github.com/Lch3181/Warcraft-lll_TWrpg_AHKs/releases/download/" version "/" target
+            downloadTo := A_Temp "\" target
+
+            Download(downloadUrl, downloadTo)
+
+            batFileNameLocation := A_Temp "\wc3tooldownload.bat"
+
+            try FileDelete(batFileNameLocation)
+            FileAppend
+            (
+                "@ECHO OFF
+                taskkill /f /im " A_ScriptName "
+                ROBOCOPY `"" A_Temp "`" `"" A_ScriptDir "`" " target "
+                start /d " A_ScriptDir " " A_ScriptDir "\" target
+            ), batFileNameLocation
+
+            Run(batFileNameLocation, , "Hide")
+
+            ExitApp
         }
     }
 }
