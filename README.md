@@ -119,4 +119,8 @@ hotkeys will be editable later
 
 checkboxes to toggle different things
 
+check updates 
+
+reset everything
+
 ![Imgur](https://imgur.com/nwTbTra.png)
