@@ -6,7 +6,6 @@
 class ToolTab {
     tabName := "ToolTab"
     focusedHotKey := Gui.Control
-    settings := [Gui.Control]
     newHK := Map()
 
     __New(MainGui, Tab) {
@@ -79,65 +78,66 @@ class ToolTab {
         enableRemapInventory := MainGui.AddCheckbox("xp+0 y+10 -TabStop venableRemapInventory", "Remap Inventory")
         enableRemapMouse := MainGui.AddCheckbox("xp+0 y+10 -TabStop venableRemapMouse", "Remap Mouse")
 
-        this.settings := [
+        settings := [
             enableRemapSpells,
             enableRemapInventory,
             enableRemapMouse
         ]
 
-        for setting in this.settings {
+        for setting in settings {
             setting.OnEvent("Click", onClickCheckbox)
 
             setting.Value := IniRead(iniFileName, "ToolTab", setting.Name, 1)
         }
 
-        this.newHK := Map(
-            newSpellHK1, RegisterHotkey(),
-            newSpellHK2, RegisterHotkey(),
-            newSpellHK3, RegisterHotkey(),
-            newSpellHK4, RegisterHotkey(),
-            newSpellHK5, RegisterHotkey(),
-            newSpellHK6, RegisterHotkey(),
-            newSpellHK7, RegisterHotkey(),
-            newSpellHK8, RegisterHotkey(),
-            newSpellHK9, RegisterHotkey(),
-            newSpellHK10, RegisterHotkey(),
-            newSpellHK11, RegisterHotkey(),
-            newSpellHK12, RegisterHotkey(),
-            originalSpellHK1, RegisterHotkey(),
-            originalSpellHK2, RegisterHotkey(),
-            originalSpellHK3, RegisterHotkey(),
-            originalSpellHK4, RegisterHotkey(),
-            originalSpellHK5, RegisterHotkey(),
-            originalSpellHK6, RegisterHotkey(),
-            originalSpellHK7, RegisterHotkey(),
-            originalSpellHK8, RegisterHotkey(),
-            originalSpellHK9, RegisterHotkey(),
-            originalSpellHK10, RegisterHotkey(),
-            originalSpellHK11, RegisterHotkey(),
-            originalSpellHK12, RegisterHotkey(),
-            inventoryHK1, RegisterHotkey(),
-            inventoryHK2, RegisterHotkey(),
-            inventoryHK3, RegisterHotkey(),
-            inventoryHK4, RegisterHotkey(),
-            inventoryHK5, RegisterHotkey(),
-            inventoryHK6, RegisterHotkey(),
-            mouseHK1, RegisterHotkey(),
-            mouseHK2, RegisterHotkey()
-        )
+        HKGuis := [
+            newSpellHK1,
+            newSpellHK2,
+            newSpellHK3,
+            newSpellHK4,
+            newSpellHK5,
+            newSpellHK6,
+            newSpellHK7,
+            newSpellHK8,
+            newSpellHK9,
+            newSpellHK10,
+            newSpellHK11,
+            newSpellHK12,
+            originalSpellHK1,
+            originalSpellHK2,
+            originalSpellHK3,
+            originalSpellHK4,
+            originalSpellHK5,
+            originalSpellHK6,
+            originalSpellHK7,
+            originalSpellHK8,
+            originalSpellHK9,
+            originalSpellHK10,
+            originalSpellHK11,
+            originalSpellHK12,
+            inventoryHK1,
+            inventoryHK2,
+            inventoryHK3,
+            inventoryHK4,
+            inventoryHK5,
+            inventoryHK6,
+            mouseHK1,
+            mouseHK2
+        ]
 
-        for gui, hk in this.newHK {
+        for gui in HKGuis {
             gui.Opt("0x200 Center")
             gui.SetFont("s12 w550")
             gui.OnEvent("Click", onClickHK)
 
             ; get set hotkey
-            inihk := IniRead(iniFileName, this.tabName, gui.Name, "")
-            if !inihk && gui.Text {
-                inihk := "$" StrLower(gui.Text)
+            inihk := IniRead(iniFileName, this.tabName, gui.Name, "ERROR")
+            if inihk == "ERROR" {
+                inihk := StrLower(gui.Text)
                 gui.Text := ReadableHotkey(inihk)
-            } else if !inihk {
-                writeHotkeyIni(StrLower(gui.Text), gui)
+                writeHotkeyIni(inihk, gui)
+            } else {
+                gui.Text := ReadableHotkey(inihk)
             }
 
             ; quickcast
@@ -147,44 +147,9 @@ class ToolTab {
                 ; write quickcast to ini
                 writeQuickcastIni(gui)
             }
-
-
-            ; register hotkey
-            quickcast := IniRead(iniFileName, this.tabName, gui.Name "Quickcast", false)
-            switch true {
-                case InStr(gui.Name, "newSpellHK"):
-                    RegExMatch(gui.Name, "(\d+)", &pos)
-                    originalKey := IniRead(iniFileName, this.tabName, "originalSpellHK" pos[1], "")
-
-                    this.newHK.Set(gui, RegisterHotkey(inihk, remapSpell.Bind(originalKey, quickcast), WarcraftIII, this.settings[1].Value))
-                case InStr(gui.Name, "inventoryHK"):
-                    switch gui.Name {
-                        case "inventoryHK1":
-                            this.newHK.Set(gui, RegisterHotkey(inihk, remapSpell.Bind("Numpad7", quickcast), WarcraftIII, this.settings[2].Value))
-                        case "inventoryHK2":
-                            this.newHK.Set(gui, RegisterHotkey(inihk, remapSpell.Bind("Numpad8", quickcast), WarcraftIII, this.settings[2].Value))
-                        case "inventoryHK3":
-                            this.newHK.Set(gui, RegisterHotkey(inihk, remapSpell.Bind("Numpad4", quickcast), WarcraftIII, this.settings[2].Value))
-                        case "inventoryHK4":
-                            this.newHK.Set(gui, RegisterHotkey(inihk, remapSpell.Bind("Numpad5", quickcast), WarcraftIII, this.settings[2].Value))
-                        case "inventoryHK5":
-                            this.newHK.Set(gui, RegisterHotkey(inihk, remapSpell.Bind("Numpad1", quickcast), WarcraftIII, this.settings[2].Value))
-                        case "inventoryHK6":
-                            this.newHK.Set(gui, RegisterHotkey(inihk, remapSpell.Bind("Numpad2", quickcast), WarcraftIII, this.settings[2].Value))
-                        default:
-                            return
-                    }
-                case InStr(gui.Name, "mouseHK"):
-                    switch gui.Name {
-                        case "mouseHK1":
-                            this.newHK.Set(gui, RegisterHotkey(inihk, remapMouse.Bind("Left"), WarcraftIII, this.settings[3].Value))
-                        case "mouseHK2":
-                            this.newHK.Set(gui, RegisterHotkey(inihk, remapMouse.Bind("Right"), WarcraftIII, this.settings[3].Value))
-                        default:
-                    }
-                default:
-            }
         }
+
+        registerAllHK()
 
         ; var
         ih.OnEnd := endCaptureInput
@@ -197,9 +162,10 @@ class ToolTab {
 
             ; disable old hotkey
             try {
-                HK := this.remapedHK.Get(Button)
-                HK.enabled := false
-                HK.registerHotkey()
+                HK := this.newHK.Get(Button)
+                HK.enable := false
+                HK.updateHotkey()
+                registerAllHK()
             }
             
             ; capture input
@@ -227,7 +193,7 @@ class ToolTab {
 
                 writeQuickcastIni(this.focusedHotKey)
 
-                this.updateHotkeys()
+                registerAllHK()
             }
         }
 
@@ -280,6 +246,53 @@ class ToolTab {
             } else {
                 IniWrite(true, iniFileName, "ToolTab", TextGui.Name "Quickcast")
                 TextGui.SetFont("cGreen")
+            }
+
+            registerHK(TextGui, inihk)
+        }
+
+        registerAllHK() {
+            for gui in HKGuis {
+                inihk := IniRead(iniFileName, this.tabName, gui.Name, "ERROR")
+                registerHK(gui, inihk)
+            }
+        }
+
+        registerHK(gui, hk) {
+            ; register hotkey
+            quickcast := IniRead(iniFileName, this.tabName, gui.Name "Quickcast", false)
+            switch true {
+                case InStr(gui.Name, "newSpellHK"):
+                    RegExMatch(gui.Name, "(\d+)", &pos)
+                    originalKey := IniRead(iniFileName, this.tabName, "originalSpellHK" pos[1], "")
+
+                    this.newHK.Set(gui, RegisterHotkey(inihk, remapSpell.Bind(originalKey, quickcast), WarcraftIII, settings[1].Value))
+                case InStr(gui.Name, "inventoryHK"):
+                    switch gui.Name {
+                        case "inventoryHK1":
+                            this.newHK.Set(gui, RegisterHotkey(inihk, remapSpell.Bind("Numpad7", quickcast), WarcraftIII, settings[2].Value))
+                        case "inventoryHK2":
+                            this.newHK.Set(gui, RegisterHotkey(inihk, remapSpell.Bind("Numpad8", quickcast), WarcraftIII, settings[2].Value))
+                        case "inventoryHK3":
+                            this.newHK.Set(gui, RegisterHotkey(inihk, remapSpell.Bind("Numpad4", quickcast), WarcraftIII, settings[2].Value))
+                        case "inventoryHK4":
+                            this.newHK.Set(gui, RegisterHotkey(inihk, remapSpell.Bind("Numpad5", quickcast), WarcraftIII, settings[2].Value))
+                        case "inventoryHK5":
+                            this.newHK.Set(gui, RegisterHotkey(inihk, remapSpell.Bind("Numpad1", quickcast), WarcraftIII, settings[2].Value))
+                        case "inventoryHK6":
+                            this.newHK.Set(gui, RegisterHotkey(inihk, remapSpell.Bind("Numpad2", quickcast), WarcraftIII, settings[2].Value))
+                        default:
+                            return
+                    }
+                case InStr(gui.Name, "mouseHK"):
+                    switch gui.Name {
+                        case "mouseHK1":
+                            this.newHK.Set(gui, RegisterHotkey(inihk, remapMouse.Bind("Left"), WarcraftIII, settings[3].Value))
+                        case "mouseHK2":
+                            this.newHK.Set(gui, RegisterHotkey(inihk, remapMouse.Bind("Right"), WarcraftIII, settings[3].Value))
+                        default:
+                    }
+                default:
             }
         }
 
