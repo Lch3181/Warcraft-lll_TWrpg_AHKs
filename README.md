@@ -107,10 +107,16 @@ can drop more than 1
 
 ![Imgur](https://imgur.com/LcWvSSY.png)
 
-## Settings
+## Hotkeys
 
 currently is just showing what are the things u can do
 
 hotkeys will be editable later
 
-![Imgur](https://imgur.com/3VVAYJ0.png)
+![Imgur](https://imgur.com/oFrB1my.png)
+
+## Settings
+
+checkboxes to toggle different things
+
+![Imgur](https://imgur.com/nwTbTra.png)
