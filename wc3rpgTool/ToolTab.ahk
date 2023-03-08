@@ -199,7 +199,7 @@ class ToolTab {
 
         onClickCheckbox(Button, Info) {
             IniWrite(Button.Value, iniFileName, "ToolTab", Button.Name)
-            this.updateHotkeys()
+            registerAllHK()
         }
 
         onChnageTab(Tab, Info) {
