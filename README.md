@@ -9,7 +9,7 @@ unlike wfe it cant detect if ur in lobby or ingame, so better disable it with f2
 
 ## Loader
 click any of ur savefile and then click load  
-or in game type -l / -load will load ur selected savefile  
+or in game type -l (filename) / -load (filename) will load ur filename(optional, can leave empty) or selected savefile  
 or in game type -ll / -loadlast will load ur last loaded savefile  
 after load will save the history of ur last loaded savefile
 
