@@ -23,6 +23,18 @@ KeyWaitCombo()
     return ih.EndMods . ih.EndKey    ; Return a string like <^<+Esc
 }
 
+GetInput()
+{
+    ih := InputHook("V", "{Enter}")
+    ih.VisibleNonText := false
+    ih.Start()
+    ErrorLevel := ih.Wait()
+    if (ErrorLevel = "EndKey")
+        ErrorLevel .= ":" ih.EndKey
+    OutputVar := ih.Input
+    return OutputVar
+}
+
 ReadableHotkey(hotkey, fullName := false) {
     hotkeyMap1 := Map(
         "<", "L",

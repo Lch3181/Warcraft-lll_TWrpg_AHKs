@@ -76,9 +76,9 @@ class LoaderTab {
 
         ; hotstrings
         HotIfWinactive(WarcraftIII)
+        Hotstring(":*XB0:-l", loadSaveFileHK)
+        Hotstring(":*XB0:-load", loadSaveFileHK)
         #Hotstring EndChars `n
-        Hotstring(":XB0:-l", loadSaveFileHK)
-        Hotstring(":XB0:-load", loadSaveFileHK)
         Hotstring(":XB0:-ll", loadLastSaveFileHistoryHK)
         Hotstring(":XB0:-loadlast", loadLastSaveFileHistoryHK)
         #Hotstring
@@ -204,7 +204,19 @@ class LoaderTab {
         }
 
         loadSaveFileHK(thishotkey?) {
-            loadSaveFile()
+            outputVar := GetInput()
+            if !outputVar {
+                outputVar := SelectedFile.Text
+            } else if SubStr(outputVar, 1, 1) == " " {
+                outputVar := SubStr(outputVar, 2)
+            } else {
+                return
+            }
+            
+            if !InStr(outputVar, ".txt") {
+                outputVar .= ".txt"
+            }
+            loadSaveFile(false, outputVar)
         }
 
         loadLastSaveFileHistoryHK(thishotkey?) {
@@ -212,9 +224,8 @@ class LoaderTab {
         }
 
         ; functions
-        loadSaveFile(lastSaveFile := false) {
+        loadSaveFile(lastSaveFile := false, saveFileName := SelectedFile.Text) {
             global showMainGui := false
-            saveFileName := selectedFile.Text
             if lastSaveFile {
                 saveFileName := IniRead(iniFileName, this.tabName, "selectedFile", SelectedFile.Text)
             }
