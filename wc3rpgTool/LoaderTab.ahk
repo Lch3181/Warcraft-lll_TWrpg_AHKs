@@ -25,11 +25,11 @@ class LoaderTab {
 
         ; hot strings
         MainGui.AddGroupBox("xs ys y+25 Section w550 h100", "Hotstrings")
-        MainGui.AddText("xp+20 yp+25 w120 h20 Border 0x200 Center Disabled", "-l / -load").SetFont("s10 w700")
-        MainGui.AddText("x+20 yp+2", "wc3 Ingame Command to Load Selected Save File")
+        MainGui.AddText("xp+20 yp+25 w200 h20 Border 0x200 Center", "-l (filename) / -load (filename)").SetFont("s10")
+        MainGui.AddText("x+20 yp+2", "wc3 ingame command to Load (optional filename) or selected file")
 
-        MainGui.AddText("xs+20 y+20 w120 h20 Border 0x200 Center Disabled", "-ll / -loadlast").SetFont("s10 w700")
-        MainGui.AddText("x+20 yp+2", "wc3 Ingame Command to Load Last Loaded Save File")
+        MainGui.AddText("xs+20 y+20 w200 h20 Border 0x200 Center", "-ll / -loadlast").SetFont("s10")
+        MainGui.AddText("x+20 yp+2", "wc3 ingame command to Load Last Loaded Save File")
         
 
         ; files

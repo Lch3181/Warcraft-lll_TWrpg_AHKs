@@ -62,7 +62,7 @@ class HotkeyTab {
         ]
 
         for hkGui in this.hotkeys {
-            hkGui.SetFont("s10 w700")
+            hkGui.SetFont("s10")
         }
     }
 }

@@ -57,10 +57,10 @@ class HostTab {
 
         ; hotstrings
         MainGui.AddGroupBox("xs ys y+40 Section w550 h100", "Hotstrings")
-        MainGui.AddText("xp+20 yp+25 w120 h20 Border 0x200 Center Disabled", "-h / -host").SetFont("s10 w700")
+        MainGui.AddText("xp+20 yp+25 w120 h20 Border 0x200 Center", "-h / -host").SetFont("s10")
         MainGui.AddText("x+20 yp+2", "wc3 Ingame Command to Host Private Lobby")
 
-        MainGui.AddText("xs+20 y+20 w120 h20 Border 0x200 Center Disabled", "-hp / -hostpub").SetFont("s10 w700")
+        MainGui.AddText("xs+20 y+20 w120 h20 Border 0x200 Center", "-hp / -hostpub").SetFont("s10")
         MainGui.AddText("x+20 yp+2", "wc3 Ingame Command to Host Public Lobby")
 
         ; init
