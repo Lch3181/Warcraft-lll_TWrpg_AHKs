@@ -276,8 +276,8 @@ class LoaderTab {
             }
             ; loadcodes
             for code in codes {
+                Sleep(200)
                 wc3Chat(code)
-                Sleep(100)
             }
             ; clean screen
             wc3Chat("-refresh")
