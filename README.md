@@ -119,7 +119,7 @@ hotkeys will be editable later
 
 checkboxes to toggle different things
 
-check updates 
+check updates and promote to download and install newest version if there is one
 
 reset everything
 
