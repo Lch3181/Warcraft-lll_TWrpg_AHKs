@@ -17,10 +17,10 @@ class Settings {
         summonBagAfterLoadCheckbox := MainGui.AddCheckbox("xs y+20 Section vsummonBagAfterLoad -TabStop", "Summon bag After Loading Savefile")
 
         ; show main window at start
-        hideMainCheckbox := MainGui.AddCheckbox("xs y+20 Section vhideMain -TabStop", "Hide Main Window at Start")
+        hideMainCheckbox := MainGui.AddCheckbox("xs y+20 Section vhideMainCheckbox -TabStop", "Hide Main Window at Start")
 
         ; show overlay at start
-        hideOverlayCheckbox := MainGui.AddCheckbox("xs y+20 Section vhideOverlay -TabStop", "Hide Overlay at Start")
+        hideOverlayCheckbox := MainGui.AddCheckbox("xs y+20 Section vhideOverlayCheckbox -TabStop", "Hide Overlay at Start")
 
         
         ; check update button

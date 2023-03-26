@@ -152,7 +152,6 @@ class ToolTab {
         registerAllHK()
 
         ; var
-        ih.OnEnd := endCaptureInput
 
         ; events
         onClickHK(Button, Info) {
@@ -170,6 +169,7 @@ class ToolTab {
             
             ; capture input
             this.focusedHotKey := Button
+            ih.OnEnd := endCaptureInput
 
             if InStr(Button.Name, "originalSpellHK") {
                 KeyWaitAny()
@@ -253,7 +253,7 @@ class ToolTab {
 
         registerAllHK() {
             for gui in HKGuis {
-                inihk := IniRead(iniFileName, this.tabName, gui.Name, "ERROR")
+                inihk := IniRead(iniFileName, this.tabName, gui.Name, "")
                 registerHK(gui, inihk)
             }
         }
@@ -266,30 +266,30 @@ class ToolTab {
                     RegExMatch(gui.Name, "(\d+)", &pos)
                     originalKey := IniRead(iniFileName, this.tabName, "originalSpellHK" pos[1], "")
 
-                    this.newHK.Set(gui, RegisterHotkey(inihk, remapSpell.Bind(originalKey, quickcast), WarcraftIII, settings[1].Value))
+                    this.newHK.Set(gui, RegisterHotkey(hk, remapSpell.Bind(originalKey, quickcast), WarcraftIII, settings[1].Value))
                 case InStr(gui.Name, "inventoryHK"):
                     switch gui.Name {
                         case "inventoryHK1":
-                            this.newHK.Set(gui, RegisterHotkey(inihk, remapSpell.Bind("Numpad7", quickcast), WarcraftIII, settings[2].Value))
+                            this.newHK.Set(gui, RegisterHotkey(hk, remapSpell.Bind("Numpad7", quickcast), WarcraftIII, settings[2].Value))
                         case "inventoryHK2":
-                            this.newHK.Set(gui, RegisterHotkey(inihk, remapSpell.Bind("Numpad8", quickcast), WarcraftIII, settings[2].Value))
+                            this.newHK.Set(gui, RegisterHotkey(hk, remapSpell.Bind("Numpad8", quickcast), WarcraftIII, settings[2].Value))
                         case "inventoryHK3":
-                            this.newHK.Set(gui, RegisterHotkey(inihk, remapSpell.Bind("Numpad4", quickcast), WarcraftIII, settings[2].Value))
+                            this.newHK.Set(gui, RegisterHotkey(hk, remapSpell.Bind("Numpad4", quickcast), WarcraftIII, settings[2].Value))
                         case "inventoryHK4":
-                            this.newHK.Set(gui, RegisterHotkey(inihk, remapSpell.Bind("Numpad5", quickcast), WarcraftIII, settings[2].Value))
+                            this.newHK.Set(gui, RegisterHotkey(hk, remapSpell.Bind("Numpad5", quickcast), WarcraftIII, settings[2].Value))
                         case "inventoryHK5":
-                            this.newHK.Set(gui, RegisterHotkey(inihk, remapSpell.Bind("Numpad1", quickcast), WarcraftIII, settings[2].Value))
+                            this.newHK.Set(gui, RegisterHotkey(hk, remapSpell.Bind("Numpad1", quickcast), WarcraftIII, settings[2].Value))
                         case "inventoryHK6":
-                            this.newHK.Set(gui, RegisterHotkey(inihk, remapSpell.Bind("Numpad2", quickcast), WarcraftIII, settings[2].Value))
+                            this.newHK.Set(gui, RegisterHotkey(hk, remapSpell.Bind("Numpad2", quickcast), WarcraftIII, settings[2].Value))
                         default:
                             return
                     }
                 case InStr(gui.Name, "mouseHK"):
                     switch gui.Name {
                         case "mouseHK1":
-                            this.newHK.Set(gui, RegisterHotkey(inihk, remapMouse.Bind("Left"), WarcraftIII, settings[3].Value))
+                            this.newHK.Set(gui, RegisterHotkey(hk, remapMouse.Bind("Left"), WarcraftIII, settings[3].Value))
                         case "mouseHK2":
-                            this.newHK.Set(gui, RegisterHotkey(inihk, remapMouse.Bind("Right"), WarcraftIII, settings[3].Value))
+                            this.newHK.Set(gui, RegisterHotkey(hk, remapMouse.Bind("Right"), WarcraftIII, settings[3].Value))
                         default:
                     }
                 default:

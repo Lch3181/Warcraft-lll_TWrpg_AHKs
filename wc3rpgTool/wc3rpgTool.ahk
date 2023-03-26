@@ -9,7 +9,7 @@
 #Include HotkeysTab.ahk
 #Include Settings.ahk
 
-version := "v1.2.3"
+version := "v1.3.0"
 toolEnabled := true
 toolEnableHistory := true
 chatting := false
@@ -52,12 +52,39 @@ onCloseGui(GuiObj) {
 }
 
 ; functions
-toggleTool(enable := false) {
+toggleTool() {
     global
-    toolEnabled := enable
+    toolEnabled := !toolEnabled
     ol.updateText()
     tool.updateHotkeys()
     hs.updateHotStrings()
+}
+
+showHideMainGui() {
+    global
+    showMainGui := !showMainGui
+    if showMainGui {
+        ; reload loader tab
+        loader.updateFileList()
+        Tab3.Choose("Loader")
+        MainGui.Show("W580 H580")
+    } else {
+        MainGui.Hide()
+    }
+}
+
+showHideOverlay() {
+    global
+    showOverlay := !showOverlay
+    if showOverlay {
+        ol.overlayGui.Show("x0 y0")
+    } else {
+        ol.overlayGui.Hide()
+    }
+}
+
+pauseGame() {
+    SendInput("{f10}{m}{f10}")
 }
 
 ; common hotkeys
@@ -72,43 +99,15 @@ $~Esc::
 }
 #HotIf
 
-; show hide main gui
-$~f8::
-{
-    global
-    showMainGui := !showMainGui
-    if showMainGui {
-        ; reload loader tab
-        loader.updateFileList()
-        Tab3.Choose("Loader")
-        MainGui.Show("W580 H580")
-    } else {
-        MainGui.Hide()
-    }
-}
-
-; show hide overlay
-$~f7::
-{
-    global
-    showOverlay := !showOverlay
-    if showOverlay {
-        ol.overlayGui.Show("x0 y0")
-    } else {
-        ol.overlayGui.Hide()
-    }
-}
-
 ; exit app alt+esc
 $!esc:: ExitApp
 
 ; wc3 hotkeys
 #HotIf WinActive(WarcraftIII)
 ; toggle tool
-$~f2::
 $~f10::
 {
-    toggleTool(!toolEnabled)
+    toggleTool()
 }
 $~+Enter::    ; Shift Enter
 $~NumpadEnter::    ; numpad Enter
@@ -126,12 +125,6 @@ $~Enter::    ; Regular Enter
     ol.updateText()
     tool.updateHotkeys()
     hs.updateHotStrings()
-}
-
-; pause game
-$~Pause::
-{
-    SendInput("{f10}{m}{f10}")
 }
 
 ; enable tool If chatting was canceled

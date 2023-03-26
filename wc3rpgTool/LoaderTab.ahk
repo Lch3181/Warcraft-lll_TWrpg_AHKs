@@ -302,7 +302,8 @@ class LoaderTab {
             
             ; enable tool after loading
             if IniRead(iniFileName, "SettingsTab", "enableToolAfterLoad", false) {
-                toggleTool(true)
+                global toolEnabled := false
+                toggleTool()
             }
         }
 
