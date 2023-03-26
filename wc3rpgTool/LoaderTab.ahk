@@ -231,7 +231,6 @@ class LoaderTab {
             }
             path := this.TWRPGFolder.Text "\" saveFileName
 
-
             ; save last load
             IniWrite(selectedFile.Text, iniFileName, this.tabName, "selectedFile")
 
@@ -275,7 +274,6 @@ class LoaderTab {
                 return
             }
 
-
             ; loading message
             message := IniRead(iniFileName, this.tabName, saveFileName, "")
             if message {
@@ -293,13 +291,16 @@ class LoaderTab {
             ; clean screen
             wc3Chat("-refresh")
 
+            ; bind hero to 1
+            Sleep(1000)
+            ControlSend("{f1}{Ctrl Down}{1}{Ctrl Up}",, WarcraftIII)
+
             ; summon bag after loading
             if IniRead(iniFileName, "SettingsTab", "summonBagAfterLoad", false) {
-                SendInput("{Esc}")
+                ControlSend("{Esc}",, WarcraftIII)
             }
             
             ; enable tool after loading
-            
             if IniRead(iniFileName, "SettingsTab", "enableToolAfterLoad", false) {
                 toggleTool(true)
             }
