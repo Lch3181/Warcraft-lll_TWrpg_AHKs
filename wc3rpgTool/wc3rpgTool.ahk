@@ -9,7 +9,7 @@
 #Include HotkeysTab.ahk
 #Include Settings.ahk
 
-version := "v1.3.0"
+version := "v1.3.1"
 toolEnabled := true
 toolEnableHistory := true
 chatting := false
@@ -39,7 +39,7 @@ MapTab(MainGui, Tab3)
 HotkeyTab(MainGui, Tab3)
 Settings(MainGui, Tab3)
 ol := Overlay()
-if !IniRead(iniFileName, "Settings", "hideMain", false) {
+if !IniRead(iniFileName, "SettingsTab", "hideMainCheckbox", false) {
     MainGui.Show("W580 H580")
     showMainGui := true
 }
