@@ -70,7 +70,7 @@ class LoaderTab {
 
         getHiddenFiles()
         SelectedFile.Text := IniRead(iniFileName, this.tabName, "selectedFile", "N/A")
-        this.TWRPGFolder.Text := IniRead(iniFileName, this.tabName, "this.TWRPGFolder", A_MyDocuments "\Warcraft III\CustomMapData\TWRPG")
+        this.TWRPGFolder.Text := IniRead(iniFileName, this.tabName, "TWRPGFolder", A_MyDocuments "\Warcraft III\CustomMapData\TWRPG")
         convertNameCheckBox.Value := IniRead(iniFileName, this.tabName, "convertNameCheckBox", true)
         this.updateFileList()
 
@@ -89,7 +89,8 @@ class LoaderTab {
             Folder := SelectFolder()
             if Folder != "" {
                 this.TWRPGFolder.Text := Folder
-                IniWrite(this.TWRPGFolder.Text, iniFileName, this.tabName, "this.TWRPGFolder")
+                IniWrite(this.TWRPGFolder.Text, iniFileName, this.tabName, "TWRPGFolder")
+                this.updateFileList()
             }
         }
 
