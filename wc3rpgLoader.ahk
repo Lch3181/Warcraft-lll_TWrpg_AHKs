@@ -262,6 +262,7 @@ twrpg:
             WC3Chat(char)
 
             i := i + 1
+            sleep, 1000
         }
         WC3Chat("-refresh")
         code =
