@@ -9,7 +9,7 @@
 #Include HotkeysTab.ahk
 #Include Settings.ahk
 
-version := "v1.3.4"
+version := "v1.3.5"
 toolEnabled := true
 toolEnableHistory := true
 chatting := false
@@ -118,7 +118,7 @@ $~NumpadEnter::    ; numpad Enter
 $~Enter::    ; Regular Enter
 {
     global
-    if IniRead(iniFileName, "SettingsTab", "autoToggleToolCheckbox", false) {
+    if !IniRead(iniFileName, "SettingsTab", "autoToggleToolCheckbox", false) {
         return
     }
     if !chatting {

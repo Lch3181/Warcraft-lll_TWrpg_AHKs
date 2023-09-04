@@ -298,7 +298,7 @@ class ToolTab {
 
         ; hotkey functions
         remapSpell(originalKey, quickcast) {
-            SendInput("{Blind}{" originalKey "}")
+            SendInput("{" originalKey "}")
             if quickcast {
                 SendInput("{Ctrl Down}{9}{0}{Ctrl Up}")
                 MouseClick("Left")
