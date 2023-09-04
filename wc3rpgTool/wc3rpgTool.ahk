@@ -9,8 +9,8 @@
 #Include HotkeysTab.ahk
 #Include Settings.ahk
 
-version := "v1.3.3"
-toolEnabled := IniRead(iniFileName, "SettingsTab", "enableToolonStartCheckbox", false)
+version := "v1.3.4"
+toolEnabled := true
 toolEnableHistory := true
 chatting := false
 showMainGui := false
@@ -39,12 +39,16 @@ MapTab(MainGui, Tab3)
 HotkeyTab(MainGui, Tab3)
 Settings(MainGui, Tab3)
 ol := Overlay()
+if !IniRead(iniFileName, "SettingsTab", "enableToolonStartCheckbox", false) {
+    toggleTool()
+}
 if !IniRead(iniFileName, "SettingsTab", "hideMainCheckbox", false) {
     MainGui.Show("W580 H580")
     showMainGui := true
 }
 
 MainGui.OnEvent("Close", onCloseGui)
+
 
 ; events
 onCloseGui(GuiObj) {
