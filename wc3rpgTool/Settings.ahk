@@ -10,6 +10,9 @@ class Settings {
         ; init tab
         Tab.UseTab("Settings")
 
+        ; enable tool at start
+        enableToolonStartCheckbox := MainGui.AddCheckbox("xs y+20 Section venableToolonStartCheckbox -TabStop", "Enable Tool at Start")
+
         ; enable tool after load
         enableToolAfterLoadCheckbox := MainGui.AddCheckbox("xs y+20 Section venableToolAfterLoad -TabStop", "Enable Tool After Loading Savefile")
 
@@ -22,7 +25,9 @@ class Settings {
         ; show overlay at start
         hideOverlayCheckbox := MainGui.AddCheckbox("xs y+20 Section vhideOverlayCheckbox -TabStop", "Hide Overlay at Start")
 
-        
+        ; auto toggle tool on enter (for messaging in game)
+        autoToggleToolCheckbox := MainGui.AddCheckbox("xs y+20 Section vautoToggleToolCheckbox -TabStop", "Auto Toggle Tool on Enter / Left Click / Esc (For Messaging in Game)")
+
         ; check update button
         checkButton := MainGui.AddButton("xs y+20 w120 h20 -TabStop", "Check")
         checkButton.SetFont("s10 w500")
@@ -37,10 +42,12 @@ class Settings {
 
         ; var
         this.checkboxes := [
+            enableToolonStartCheckbox,
             enableToolAfterLoadCheckbox,
             summonBagAfterLoadCheckbox,
             hideMainCheckbox,
-            hideOverlayCheckbox
+            hideOverlayCheckbox,
+            autoToggleToolCheckbox
         ]
 
         for checkbox in this.checkboxes {

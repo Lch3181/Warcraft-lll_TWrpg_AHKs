@@ -9,7 +9,7 @@ class RegisterHotkey {
     enable := false
 
     __New(key := "", function := "", targetWindow := "", enable := false) {
-        this.key := key
+        this.key := "*" . key
         this.function := function
         this.targetWindow := targetWindow
         this.enable := enable

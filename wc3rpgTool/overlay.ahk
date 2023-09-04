@@ -12,6 +12,8 @@ class Overlay {
         this.textGui.SetFont("s12 cRed")
         this.overlayGui.BackColor := "EEAA99"
         WinSetTransColor("EEAA99", this.overlayGui.Hwnd)
+
+        ; show hide overlay at start
         if !IniRead(iniFileName, "SettingsTab", "hideOverlayCheckbox", false) {
             this.overlayGui.Show("x0 y0")
             global showOverlay := true
