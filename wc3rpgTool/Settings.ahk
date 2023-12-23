@@ -28,6 +28,13 @@ class Settings {
         ; auto toggle tool on enter (for messaging in game)
         autoToggleToolCheckbox := MainGui.AddCheckbox("xs y+20 Section vautoToggleToolCheckbox -TabStop", "Auto Toggle Tool on Enter / Left Click / Esc (For Messaging in Game)")
 
+        ; key delay
+        MainGui.AddText("xs y+20", "Delay between keys(ms): ")
+        keyDelayTextbox := MainGui.AddEdit("x+10 yp-3 Number Limit2 -WantReturn vkeyDelay -TabStop w50", "10")
+        applyButton := MainGui.AddButton("x+10 w120 h20 -TabStop", "Apply")
+        applyButton.SetFont("s10 w500")
+        applyButton.OnEvent("Click", onClickApply)
+
         ; check update button
         checkButton := MainGui.AddButton("xs y+20 w120 h20 -TabStop", "Check")
         checkButton.SetFont("s10 w500")
@@ -75,6 +82,19 @@ class Settings {
             try {
                 try FileDelete(A_ScriptDir "\" iniFileName)
                 Reload
+            }
+        }
+
+        onClickApply(Button, Info) {
+            delay := keyDelayTextbox.text
+            if IsInteger(delay) {
+                SetKeyDelay(Integer(keyDelayTextbox.text))
+                IniWrite(Integer(delay), iniFileName, this.tabName, "keyDelay")
+                ToolTip("updated")
+                SetTimer () => ToolTip(), -5000
+            } else {
+                ToolTip("key delay has to be a number")
+                SetTimer () => ToolTip(), -5000
             }
         }
 

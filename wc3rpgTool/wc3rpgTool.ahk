@@ -9,7 +9,10 @@
 #Include HotkeysTab.ahk
 #Include Settings.ahk
 
-version := "v1.3.5"
+ProcessSetPriority "High"
+SetKeyDelay IniRead(iniFileName, "SettingsTab", "keyDelay", 10)
+
+version := "v1.4.0"
 toolEnabled := true
 toolEnableHistory := true
 chatting := false

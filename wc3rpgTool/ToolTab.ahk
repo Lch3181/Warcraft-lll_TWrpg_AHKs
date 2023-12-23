@@ -266,7 +266,11 @@ class ToolTab {
                     RegExMatch(gui.Name, "(\d+)", &pos)
                     originalKey := IniRead(iniFileName, this.tabName, "originalSpellHK" pos[1], "")
 
-                    this.newHK.Set(gui, RegisterHotkey(hk, remapSpell.Bind(originalKey, quickcast), WarcraftIII, settings[1].Value))
+                    if quickcast {
+                        this.newHK.Set(gui, RegisterHotkey(hk, remapSpellwQC.Bind(originalKey), WarcraftIII, settings[1].Value))
+                    } else {
+                        this.newHK.Set(gui, RegisterHotkey(hk, remapSpellwoQC.Bind(originalKey), WarcraftIII, settings[1].Value))
+                    }
                 case InStr(gui.Name, "inventoryHK"):
                     switch gui.Name {
                         case "inventoryHK1":
@@ -298,12 +302,22 @@ class ToolTab {
 
         ; hotkey functions
         remapSpell(originalKey, quickcast) {
-            SendInput("{" originalKey "}")
             if quickcast {
-                SendInput("{Ctrl Down}{9}{0}{Ctrl Up}")
-                MouseClick("Left")
-                SendInput("{9}{0}")
+                remapSpellwQC(originalKey)
+            } else {
+                remapSpellwoQC(originalKey)
             }
+        }
+
+        remapSpellwQC(originalKey) {
+            SendInput("{Ctrl Down}{9}{0}{Ctrl Up}")
+            SendInput("{" originalKey "}")
+            MouseClick("Left")
+            SendInput("{9}{0}")
+        }
+
+        remapSpellwoQC(originalKey) {
+            SendInput("{" originalKey "}")
         }
 
         remapMouse(originalKey) {
