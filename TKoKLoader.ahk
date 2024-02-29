@@ -2,6 +2,7 @@
 SendMode Input
 SetWorkingDir, %A_ScriptDir%
 GUIShow := true
+global iniFile := % A_WorkingDir . "\tkok.ini"
 global TKoKFolder =
 global heroes = 
 global AccountName = 
@@ -25,7 +26,13 @@ Gui, Add, Text, y+10 w100 vAPT, APT:
 Gui, Add, Text, y+10 w100 vDEDIPTS, DEDI PTS: 
 Gui, Add, Text, y+10, Hero:
 Gui, Add, DropDownList, y+5 r15 gOnSelectHero vTKoKHeroes
-Gui, Add, Text, y+10 w100 vLevel, Level: 
+
+Gui, Add, Text, y+10, Wisp:
+Gui, Add, Edit, y+10 w40 h20 vWisp Limit1 Number, "0"
+Gui, Add, Text, y+10, Fate Card:
+Gui, Add, Edit, y+10 w40 h20 vFateCard Limit2 Number, "0"
+
+Gui, Add, Text, x10 y+10 w100 vLevel, Level: 
 Gui, Add, Text, y+10 w100 vExp, Exp: 
 Gui, Add, Text, y+10 w100 vGold, Gold: 
 Gui, Add, Text, y+10 w100 vStarGlass, Star Glass: 
@@ -36,8 +43,9 @@ Gui, Add, Button, x+10 gLoadAccount, Load Account
 GetSetAccount()
 GetSetHeroes()
 GetHeroInfo()
+GetQuickStart()
 
-Gui, Show, w140 h280, TKoK Loader
+Gui, Show, w140 h390, TKoK Loader
 
 ;end main
 Return
@@ -118,6 +126,16 @@ GetHeroInfo()
     HeroCode2 := Match1
 }
 
+GetQuickStart() {
+    GuiControl,, Wisp, % LoadNumberFromINI("wisp")
+    GuiControl,, FateCard, % LoadNumberFromINI("fatecard")
+}
+
+SetQuickStart() {
+    SaveNumberToINI(GetGuiValue("1", "Wisp"), "wisp")
+    SaveNumberToINI(GetGuiValue("1", "FateCard"), "fatecard")
+}
+
 GetGuiValue(GuiID, GuiVar)
 {
     GuiControlGet, Value, %GuiID%:, %GuiVar%
@@ -131,6 +149,20 @@ WC3Chat(String)
     SendInput, {Enter}
 }
 
+; Function to save the number to an INI file
+SaveNumberToINI(number, location) {
+    IniWrite, %number%, %iniFile%, Storage, %location%
+}
+
+; Function to load the number from the INI file
+LoadNumberFromINI(location) {
+    if FileExist(iniFile) {
+        IniRead, storedNumber, %iniFile%, Storage, %location%
+        return storedNumber
+    }
+    return "0"  ; Return empty string if the INI file doesn't exist
+}
+
 ;labels
 OnSelectHero:
     GetSetAccount()
@@ -140,6 +172,7 @@ Return
 LoadAccount:
     GetSetAccount()
     GetHeroInfo() 
+    SetQuickStart()
 
     ;Find Warcraft III and focus on it
     if WinExist("Warcraft III") 
@@ -156,6 +189,8 @@ LoadAccount:
     WC3Chat("-loadwith "AccountName)
     Sleep, 1000
     WC3Chat(AccountCode)
+    Sleep, 200
+    WC3Chat("-quickstart " . GetGuiValue("1", "Wisp") . " " . RTrim(GetGuiValue("1", "FateCard"), " "))
 
     ;close gui
     Gui, Hide
@@ -165,6 +200,7 @@ Return
 LoadTKoK:
     GetSetAccount()
     GetHeroInfo() 
+    SetQuickStart()
 
     ;Find Warcraft III and focus on it
     if WinExist("Warcraft III") 
@@ -184,6 +220,8 @@ LoadTKoK:
     WC3Chat(HeroCode2)
     Sleep, 2000
     WC3Chat(AccountCode)
+    Sleep, 200
+    WC3Chat("-quickstart " . GetGuiValue("1", "Wisp") . " " . RTrim(GetGuiValue("1", "FateCard"), " "))
 
     ;close gui
     Gui, Hide
@@ -197,7 +235,7 @@ f6::
     {
         GetSetAccount()
         GetHeroInfo()
-        Gui, Show, w140 h280, TKoK Loader
+        Gui, Show, w140 h390, TKoK Loader
     }
     else
         Gui, Hide
