@@ -96,10 +96,6 @@ class MapTab {
         }
 
         dropMap(GuiObj, GuiCtrlObj, FileArray, X, Y) {
-            if (Tab.Text != "Map") {
-                return
-            }
-
             fileNames := []
             for file in FileArray {
                 if InStr(file, ".w3x") {

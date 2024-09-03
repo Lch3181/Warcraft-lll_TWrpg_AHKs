@@ -107,10 +107,6 @@ class LoaderTab {
         }
 
         dropSaveFiles(GuiObj, GuiCtrlObj, FileArray, X, Y) {
-            if (Tab.Text != "Loader") {
-                return
-            }
-
             fileNames := []
             for file in FileArray {
                 if InStr(file, ".txt") {
