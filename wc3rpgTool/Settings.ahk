@@ -62,6 +62,8 @@ class Settings {
             checkbox.Value := IniRead(iniFileName, this.tabName, checkbox.Name, false)
         }
 
+        keyDelayTextbox.text := IniRead(iniFileName, "SettingsTab", "keyDelay", 10)
+
         ; events
         onClickCheck(Button, Info) {
             newestVersion := getNewestVersionTag()
