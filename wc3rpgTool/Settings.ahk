@@ -39,7 +39,7 @@ class Settings {
         checkButton := MainGui.AddButton("xs y+20 w120 h20 -TabStop", "Check")
         checkButton.SetFont("s10 w500")
         checkButton.OnEvent("Click", onClickCheck)
-        MainGui.AddText("x+20 yp+2", "Check updates")
+        MainGui.AddText("x+20 yp+2", "Check updates and download install if needed.")
 
         ; reset settings button
         resetButton := MainGui.AddButton("xs y+20 w120 h20 -TabStop", "Reset")

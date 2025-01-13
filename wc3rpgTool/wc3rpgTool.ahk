@@ -12,7 +12,7 @@
 ProcessSetPriority "High"
 SetKeyDelay IniRead(iniFileName, "SettingsTab", "keyDelay", 10)
 
-version := "v1.4.2"
+version := "v1.4.4"
 toolEnabled := true
 toolEnableHistory := true
 chatting := false

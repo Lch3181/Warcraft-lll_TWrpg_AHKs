@@ -241,7 +241,7 @@ class LoaderTab {
             MainGui.Hide()
 
             ; read file
-            text := FileRead(path)
+            text := FileRead(path, "UTF-8")
             ; count load codes
             StrReplace(text, "-load", "-load", , &count)
 
@@ -306,7 +306,7 @@ class LoaderTab {
 
         getHiddenFiles() {
             try {
-                hiddenFilesString := FileRead(hiddenFilesAddress)
+                hiddenFilesString := FileRead(hiddenFilesAddress, "UTF-8")
                 hiddenFilesArray := StrSplit(hiddenFilesString, "`n")
                 for hiddenFile in hiddenFilesArray {
                     this.hiddenFilesMap.Set(hiddenFile, 0)
@@ -335,7 +335,7 @@ class LoaderTab {
             }
 
             ; skip non save file
-            text := FileRead(A_LoopFileFullPath)
+            text := FileRead(A_LoopFileFullPath, "UTF-8")
             if (RegExMatch(text, '(----------(?|Hero Inventory|영웅 아이템)----------)') == 0) {
                 continue
             }
